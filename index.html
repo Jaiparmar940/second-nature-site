@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Second Nature — Physics-grounded environments and evals for physical AI</title>
-<meta name="description" content="Second Nature builds physics-grounded RL environments and cheat-resistant evals that show whether AI agents can diagnose and repair real physical systems.">
+<meta name="description" content="Second Nature builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Cpath d='M5 13 C9 8 13 8 16 13 S23 18 27 13' stroke='%237a776f' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M5 21 C9 16 13 16 16 21 S23 26 27 21' stroke='%23f5b301' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -577,7 +577,7 @@
 <body>
 
 <div class="announce">
-  no-start-env v0.1 — our first public benchmark of physical diagnosis in frontier models. <a href="#benchmark">Read the results ↗</a>
+  Our first public proof: no-start-env v0.1 measures physical reasoning under real constraints. <a href="#benchmark">Read the results ↗</a>
 </div>
 
 <nav id="nav">
@@ -587,10 +587,10 @@
       Second Nature
     </a>
     <div class="nav-links">
-      <a href="#environments">Environments</a>
+      <a href="#environments">First environment</a>
       <a href="#benchmark">Benchmark</a>
       <a href="#customers">Who it's for</a>
-      <a href="#quickstart">Quickstart</a>
+      <a href="#quickstart">Open proof</a>
     </div>
     <div class="nav-cta">
       <a class="btn" href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
@@ -609,9 +609,9 @@
       </div>
       <div class="hero-copy2">
         <p>
-          AI agents are leaving the chat window and reaching for real machines. Second Nature builds
-          physics-grounded environments and cheat-resistant evals that show whether they can actually
-          diagnose, repair, and operate physical systems — before you trust them with one.
+          AI is leaving the chat window and entering machines. Second Nature builds training
+          environments and evals where models must reason through physical state, causality,
+          tools, and consequences — before they act in the real world.
         </p>
       </div>
       <div class="scroll-cue">Scroll to explore <span class="box">↓</span></div>
@@ -623,11 +623,11 @@
 
   <div class="statement">
     <div class="wrap">
-      <h2 class="reveal">Language benchmarks are saturating.<br>Physical reasoning isn't.</h2>
+      <h2 class="reveal">The physical world is missing<br>from the training set.</h2>
       <p class="reveal">
-        Frontier models still condemn healthy parts and miss faults a first-year technician
-        would catch. Every reading in our environments is computed from circuit physics —
-        zero hand-authored voltages, zero shortcuts for the model to memorize.
+        Manuals capture how machines should work. The knowledge of how they actually fail lives
+        in the hands of people who build, operate, and repair them. We turn that tacit expertise
+        into interactive, physics-grounded tasks with outcomes models cannot talk their way around.
       </p>
     </div>
   </div>
@@ -675,11 +675,11 @@
         </div>
       </div>
       <div class="term-caption">
-        <h3>Reliable evals have no shortcuts.</h3>
+        <h3>One environment. A general method.</h3>
         <p>
-          Agents work through real instruments — DTC scans, PID reads, two-point voltage
-          measurements — against a live resistance-network model. Fixes only count when the
-          engine actually starts.
+          no-start-env is our first public proof: an agent gathers evidence, builds a causal
+          picture, takes action, and is graded by what the simulated system actually does.
+          That pattern extends from fault isolation to robot recovery, maintenance, and operation.
         </p>
       </div>
     </div>
@@ -748,8 +748,8 @@
         </div>
       </div>
       <div class="bench-caption" id="bench-caption">
-        <h3>Where frontier models fail physical diagnosis.</h3>
-        <p>no-start-env v0.1 — 5 fault scenarios × 5 epochs, fix-the-car grading. <em>Showing 7 of 9 models; <a href="https://github.com/Jaiparmar940/rlenv/blob/main/results/scale_curve.md" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:2px;">full table in the repo</a>.</em></p>
+        <h3>A physical-reasoning gap you can measure.</h3>
+        <p>Our first benchmark uses 5 vehicle electrical scenarios × 5 epochs with outcome-based grading. <em>Showing 7 of 9 models; <a href="https://github.com/Jaiparmar940/rlenv/blob/main/results/scale_curve.md" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:2px;">full table in the repo</a>.</em></p>
       </div>
     </div>
   </div>
@@ -757,37 +757,34 @@
   <!-- ============ pillars ============ -->
   <section>
     <div class="wrap">
-      <div class="kicker reveal">The environment</div>
-      <h2 class="reveal" style="max-width: 20ch;">Simulation you can't fool. Grading you can't game.</h2>
+      <div class="kicker reveal">The platform</div>
+      <h2 class="reveal" style="max-width: 20ch;">Training gyms and test rigs for physical intelligence.</h2>
       <div class="pillars">
         <div class="pillar reveal">
           <div class="index">01 / PHYSICS</div>
-          <h3>Grounded in real circuit physics</h3>
+          <h3>Physics, not scripted answers</h3>
           <p>
-            Faults are single resistance or source changes in a full electrical network; every
-            observation is computed, seeded, and deterministic. Load sag, resting monotonicity,
-            and ground-path localization hold by construction — the same invariants that hold
-            under a real multimeter.
+            Agents interact with a live system model, not a tree of hand-authored responses.
+            State, measurements, and consequences are computed from the governing physics, so
+            each task can vary without breaking the rules of the machine.
           </p>
         </div>
         <div class="pillar reveal">
           <div class="index">02 / GRADING</div>
-          <h3>Cheat-resistant by design</h3>
+          <h3>Outcomes, not plausible text</h3>
           <p>
-            A 0–100 rubric scores root cause, parts discipline, and time efficiency against an
-            expert baseline. Red-herring components bait premature conclusions. Fixes must be
-            verified by a successful start — replacing parts until the symptom disappears
-            earns nothing.
+            Graders reward correct causal understanding, disciplined action, and efficient
+            recovery against an expert baseline. The environment state decides whether an
+            intervention worked; confident explanations and brute-force guessing do not.
           </p>
         </div>
         <div class="pillar reveal">
           <div class="index">03 / VERIFICATION</div>
-          <h3>Human-verified domain truth</h3>
+          <h3>Expert verification is the moat</h3>
           <p>
-            Every scenario is played end-to-end by a domain expert before it ships, with the
-            full fault physics documented and signed off. That review has caught bugs no
-            automated suite flagged — plausible-but-wrong is the failure mode we exist to
-            prevent.
+            Models can generate simulations they cannot warrant. Every scenario is played and
+            signed off by someone who understands the real system. In no-start-env, that review
+            caught four plausible physics bugs that had passed the automated suite.
           </p>
         </div>
       </div>
@@ -799,18 +796,18 @@
     <div class="wrap split">
       <div class="copy">
         <div class="kicker reveal">Applications</div>
-        <h2 class="reveal">Evals that actually transfer.</h2>
+        <h2 class="reveal">From model capability to machine reliability.</h2>
         <p class="reveal">
-          Built for the teams putting AI in front of real machines: frontier labs measuring
-          capability honestly, and robotics companies that need agents to understand what a
-          voltage drop means before they touch a torque wrench.
+          Built for frontier labs training general agents, robotics teams testing deployment
+          readiness, and operators turning hard-won machine knowledge into repeatable practice.
+          We measure whether a model can observe, localize, decide, and recover under physical constraints.
         </p>
         <div class="cta-row reveal">
           <a class="btn btn-green" href="#contact">For AI labs →</a>
           <a class="btn btn-ghost-dark" href="#contact">For robotics</a>
         </div>
         <div class="tagrow reveal">
-          <span>INSPECT-NATIVE</span><span>DETERMINISTIC</span><span>RL-READY</span><span>SEEDED</span>
+          <span>INTERACTIVE</span><span>PHYSICS-GROUNDED</span><span>RL-READY</span><span>EXPERT-VERIFIED</span>
         </div>
       </div>
       <div class="stage split-stage" id="split-stage">
@@ -819,8 +816,8 @@
         <div class="wireframe dim" id="split-frame-2" style="inset:2% -2%;"></div>
         <div class="wireframe" id="split-frame-1" style="inset:6% 4%;"></div>
         <div class="split-panel" id="split-panel">
-          <div class="mono-head">FAILURE-MODE TAXONOMY · v0.1</div>
-          <div class="big">Supply-referenced blindness.<br>Framing the innocent part.<br>Coaching dependence.</div>
+          <div class="mono-head">WHAT PHYSICAL EVALS REVEAL · v0.1</div>
+          <div class="big">Tool use without understanding.<br>Plans that break the physics.<br>Coaching dependence.</div>
           <div class="foot"><span>13.6-pt uncoached gap</span><span>4 physics bugs human-caught</span></div>
         </div>
       </div>
@@ -831,12 +828,12 @@
   <section class="quickstart" id="quickstart">
     <div class="wrap qs-grid">
       <div>
-        <div class="kicker reveal">Quickstart</div>
-        <h2 class="reveal">Running in two minutes.</h2>
+        <div class="kicker reveal">Open proof</div>
+        <h2 class="reveal">Inspect our first environment.</h2>
         <p class="section-sub reveal">
-          no-start-env is open source and pip-installable. Sanity checks pin every physical
-          invariant; the eval script produces the full scored table for any Inspect-supported
-          model.
+          no-start-env is open source and pip-installable. See how a physical system model,
+          instrumented action space, outcome-based grader, and expert-verified invariants fit
+          together — then run the benchmark on any Inspect-supported model.
         </p>
       </div>
       <div class="codeblock reveal">
@@ -852,15 +849,15 @@
   <!-- ============ final CTA ============ -->
   <section class="final-cta" id="contact">
     <div class="wrap">
-      <h2 class="reveal">Reality is the eval.<br>We make it repeatable.</h2>
+      <h2 class="reveal">Build the missing<br>training ground.</h2>
       <p class="reveal">
-        We're building the environment suite for physical AI — vehicles first, then the rest
-        of the machines the world runs on. If you're evaluating or training agents that will
-        touch real systems, we'd like to talk.
+        We work with AI labs, robotics teams, and industrial operators to turn real machine
+        behavior and hard-won domain knowledge into interactive training environments and
+        rigorous evals. If your models must reason before they act, we'd like to talk.
       </p>
       <div class="cta-row reveal">
-        <a class="btn btn-green" href="mailto:founders@snlabs.dev">Get in touch</a>
-        <a class="btn btn-ghost-dark" href="#quickstart">Run the benchmark</a>
+        <a class="btn btn-green" href="mailto:founders@snlabs.dev">Build an environment</a>
+        <a class="btn btn-ghost-dark" href="#quickstart">Inspect the open proof</a>
       </div>
     </div>
   </section>
@@ -873,9 +870,9 @@
       <div>
         <div class="kicker reveal">Who's behind this</div>
         <p class="founder-text reveal">
-          Built by Jaivir Parmar — hardware and software: 5-DOF robotic arm, ECU-level
-          automotive diagnosis and repair, fabrication. Every scenario in these environments
-          is played and signed off by hand before it ships.
+          Built by Jaivir Parmar, whose work spans robotics, embedded systems, fabrication,
+          and ECU-level diagnosis. no-start-env begins in a domain he can personally verify;
+          every environment follows the same standard of hands-on domain sign-off before it ships.
         </p>
         <div class="founder-links reveal">
           <a href="https://github.com/Jaiparmar940" target="_blank" rel="noopener">GitHub</a>
@@ -899,9 +896,9 @@
         <div class="foot-cols">
           <div class="foot-col">
             <h4>Product</h4>
-            <a href="#environments">Environments</a>
+            <a href="#environments">First environment</a>
             <a href="#benchmark">Benchmark</a>
-            <a href="#quickstart">Quickstart</a>
+            <a href="#quickstart">Open proof</a>
           </div>
           <div class="foot-col">
             <h4>Resources</h4>
@@ -917,7 +914,7 @@
       </div>
       <div class="foot-legal">
         <span>© 2026 Second Nature. All rights reserved.</span>
-        <span>Made with a multimeter.</span>
+        <span>Built to survive contact with reality.</span>
       </div>
     </div>
   </footer>
