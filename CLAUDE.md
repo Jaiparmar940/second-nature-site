@@ -64,7 +64,8 @@ STALE must be synced with `rlenv/results/results.md` before the site is promoted
   (dark rounded square) and footer (inverted, amber square).
 - ~~GitHub links~~ — RESOLVED 2026-07-17: nav button, footer link, and quickstart clone URL
   all point at the public repo https://github.com/Jaiparmar940/rlenv.
-- `founders@secondnature.dev` — domain not registered.
+- ~~`founders@secondnature.dev`~~ — RESOLVED 2026-07-19: domain was never registered; the
+  contact mailto now points at `jay.parmar@duke.edu` (Jaivir's confirmed address).
 
 ## How the page is built (for editing)
 
