@@ -1,8 +1,9 @@
-# CLAUDE.md — groundtruth-site
+# CLAUDE.md — second-nature-site
 
 ## What this is
 
-The one-page marketing site for the company (working/placeholder brand: **"Groundtruth"**)
+The one-page marketing site for the company (brand: **"Second Nature"**, chosen 2026-07-19;
+previously placeholder "Groundtruth")
 that sells physics-grounded RL environments and evals for physical AI to labs and robotics
 companies. It is a single self-contained `index.html` — no build step, no dependencies, no
 external requests — hosted on **GitHub Pages from `main`** (push to `main` = deploy).
@@ -56,11 +57,14 @@ STALE must be synced with `rlenv/results/results.md` before the site is promoted
 
 ## Placeholders that are not real yet
 
-- **Brand "Groundtruth"** — placeholder name (nod to ground faults + eval ground truth).
-  Swap points: `<title>`, nav logo, footer logo, copyright line, and this file.
+- ~~Brand "Groundtruth"~~ — RESOLVED 2026-07-19: renamed to **"Second Nature"** across
+  `<title>`, meta description, nav logo, hero copy, footer logo, copyright, and this file.
+  Icon is now a two-wave mark (faint first pass above, solid amber second pass below —
+  "practiced until instinct", still signal-flavored): favicon data URI + inline SVGs in nav
+  (dark rounded square) and footer (inverted, amber square).
 - ~~GitHub links~~ — RESOLVED 2026-07-17: nav button, footer link, and quickstart clone URL
   all point at the public repo https://github.com/Jaiparmar940/rlenv.
-- `founders@groundtruth.dev` — domain not registered.
+- `founders@secondnature.dev` — domain not registered.
 
 ## How the page is built (for editing)
 

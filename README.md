@@ -1,6 +1,6 @@
-# groundtruth-site
+# second-nature-site
 
-One-page site for Groundtruth (placeholder brand) — physics-grounded environments and evals
+One-page site for Second Nature — physics-grounded environments and evals
 for physical AI. Single self-contained `index.html`, no build step.
 
 - **View locally:** open `index.html` in a browser, or `python3 -m http.server 8712`.
@@ -9,4 +9,4 @@ for physical AI. Single self-contained `index.html`, no build step.
   page comes from (the [no-start-env] benchmark) and which figures are placeholders or
   pending a final results sync.
 
-[no-start-env]: https://github.com/groundtruth/no-start-env
+[no-start-env]: https://github.com/Jaiparmar940/rlenv
