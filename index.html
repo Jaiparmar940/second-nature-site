@@ -98,14 +98,19 @@
   .btn-ghost-dark { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
   .btn-ghost-dark:hover { border-color: rgba(255, 255, 255, 0.6); }
 
-  /* ================= hero card ================= */
-  .hero-shell { padding: 10px 10px 0; }
+  /* ================= hero: pinned card with two text slides ================= */
+  .hero-shell { height: 200vh; position: relative; }
+  .hero-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+  }
   .hero-card {
+    flex: 1;
     position: relative;
-    border-radius: 18px;
     overflow: hidden;
-    height: calc(100vh - 120px);
-    min-height: 560px;
+    min-height: 0;
     background: #060606;
   }
   .hero-card canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -114,7 +119,7 @@
     inset: 0;
     background:
       radial-gradient(ellipse 75% 60% at 50% 52%, rgba(0, 0, 0, 0.42), transparent 70%),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.25), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.35));
+      linear-gradient(180deg, rgba(0, 0, 0, 0.25), transparent 30%, transparent 66%, rgba(10, 10, 10, 0.6));
   }
   .hero-copy {
     position: absolute;
@@ -157,41 +162,25 @@
 
   .hero-card { will-change: transform; }
   .hero-copy h1 { will-change: transform, opacity; }
-  .hero-tag {
+
+  .hero-copy2 {
     position: absolute;
-    left: 34px;
-    bottom: 28px;
+    inset: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.28em;
-    color: rgba(255, 255, 255, 0.62);
-  }
-  .hero-tag .dot-live {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: blink 2.2s ease-in-out infinite;
-  }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
-
-  .hero-sub {
-    padding: 56px 0 72px;
+    justify-content: center;
     text-align: center;
-  }
-  .hero-sub p {
-    margin: 0 auto;
-    max-width: 62ch;
-    font-size: 18px;
-    line-height: 1.6;
-    color: #454440;
+    padding: 0 24px;
+    opacity: 0;
     will-change: transform, opacity;
   }
-  .reveal-fade { opacity: 0; transition: opacity 0.9s ease; }
-  .reveal-fade.on { opacity: 1; }
+  .hero-copy2 p {
+    max-width: 56ch;
+    font-size: clamp(17px, 1.7vw, 22px);
+    line-height: 1.75;
+    color: #ded9cf;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+  }
 
   /* ================= dark region ================= */
   .dark {
@@ -518,7 +507,6 @@
 
   @media (max-width: 940px) {
     .nav-links { display: none; }
-    .hero-tag { display: none; }
     .split, .qs-grid { grid-template-columns: 1fr; }
     .pillars { grid-template-columns: 1fr; }
     .showcase { height: 200vh; }
@@ -530,9 +518,10 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .scroll-cue .box { animation: none; }
-    .hero-tag .dot-live { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
-    .reveal-fade { transition: none; opacity: 1; }
+    .hero-shell { height: auto; }
+    .hero-pin { position: static; height: 100vh; }
+    .hero-copy2 { opacity: 1; align-items: flex-end; padding-bottom: 9vh; }
   }
 </style>
 </head>
@@ -562,23 +551,23 @@
 </nav>
 
 <div class="hero-shell" id="top">
-  <div class="hero-card">
-    <canvas id="hero-art"></canvas>
-    <div class="hero-veil"></div>
-    <div class="hero-copy">
-      <h1>The physical world doesn't grade on a curve.</h1>
+  <div class="hero-pin">
+    <div class="hero-card">
+      <canvas id="hero-art"></canvas>
+      <div class="hero-veil"></div>
+      <div class="hero-copy">
+        <h1>The physical world doesn't grade on a curve.</h1>
+      </div>
+      <div class="hero-copy2">
+        <p>
+          AI agents are leaving the chat window and reaching for real machines. Groundtruth builds
+          physics-grounded environments and cheat-resistant evals that show whether they can actually
+          diagnose, repair, and operate physical systems — before you trust them with one.
+        </p>
+      </div>
+      <div class="scroll-cue">Scroll to explore <span class="box">↓</span></div>
     </div>
-    <div class="hero-tag"><span class="dot-live"></span><span id="scene-label">TELEMETRY // CRANKING LOAD TEST</span></div>
-    <div class="scroll-cue">Scroll to explore <span class="box">↓</span></div>
   </div>
-</div>
-
-<div class="hero-sub">
-  <p class="reveal-fade">
-    AI agents are leaving the chat window and reaching for real machines. Groundtruth builds
-    physics-grounded environments and cheat-resistant evals that show whether they can actually
-    diagnose, repair, and operate physical systems — before you trust them with one.
-  </p>
 </div>
 
 <div class="dark">
@@ -872,276 +861,59 @@
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  /* ---------- hero art: crystal field backdrop + animated physical-AI vignettes ---------- */
+  /* ---------- hero art: live circuit-trace network + animated physical-AI vignettes ---------- */
   const canvas = document.getElementById('hero-art');
   const hctx = canvas.getContext('2d');
   const heroCardEl = document.querySelector('.hero-card');
+  const heroShell = document.querySelector('.hero-shell');
   const heroH1 = document.querySelector('.hero-copy h1');
-  const heroSubP = document.querySelector('.hero-sub p');
-  const sceneLabelEl = document.getElementById('scene-label');
-  const bgCanvas = document.createElement('canvas');
-  const MONOF = '11px "SF Mono", Menlo, Consolas, monospace';
-  let W = 0, H = 0, DPR = 1, heroH = 1, cloudPts = [];
+  const heroCopy2 = document.querySelector('.hero-copy2');
+  const heroCue = document.querySelector('.scroll-cue');
+  let W = 0, H = 0, DPR = 1, dust = [];
 
-  function paintField(c, w, h) {
-    c.fillStyle = '#050504';
-    c.fillRect(0, 0, w, h);
-    const palette = ['#d9a441', '#e8e2d0', '#7c93c4', '#8a5fa8', '#b4642e', '#c9c2ae'];
-    let seed = 41;
+  /* deep-field drift: sparse dust with depth parallax, slow drift, twinkle */
+  function buildDust() {
+    let seed = 29;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const clusters = Math.round((w * h) / 42000) + 16;
-    for (let k = 0; k < clusters; k++) {
-      const cx = rnd() * w * 1.1 - w * 0.05, cy = rnd() * h * 1.1 - h * 0.05;
-      const base = rnd() * Math.PI * 2;
-      const spread = Math.PI * (0.9 + rnd() * 1.4);
-      const rays = 55 + Math.floor(rnd() * 60);
-      const len = 80 + rnd() * 230;
-      const col = palette[Math.floor(rnd() * palette.length)];
-      const glow = c.createRadialGradient(cx, cy, 0, cx, cy, len * 0.8);
-      glow.addColorStop(0, col + '14');
-      glow.addColorStop(1, 'transparent');
-      c.fillStyle = glow;
-      c.fillRect(cx - len, cy - len, len * 2, len * 2);
-      for (let i = 0; i < rays; i++) {
-        const a = base + (i / rays - 0.5) * spread + (rnd() - 0.5) * 0.06;
-        const L = len * (0.35 + rnd() * 0.65);
-        const bend = (rnd() - 0.5) * 0.5;
-        c.beginPath();
-        c.moveTo(cx, cy);
-        const mx = cx + Math.cos(a + bend * 0.4) * L * 0.55;
-        const my = cy + Math.sin(a + bend * 0.4) * L * 0.55;
-        c.quadraticCurveTo(mx, my, cx + Math.cos(a + bend) * L, cy + Math.sin(a + bend) * L);
-        c.strokeStyle = col;
-        c.globalAlpha = 0.10 + rnd() * 0.30;
-        c.lineWidth = 0.5 + rnd() * 1.4;
-        c.stroke();
-        // feather barbs off the main ray
-        if (rnd() > 0.55) {
-          const t = 0.3 + rnd() * 0.6, bl = L * 0.16 * rnd();
-          const bx = cx + Math.cos(a) * L * t, by = cy + Math.sin(a) * L * t;
-          c.beginPath();
-          c.moveTo(bx, by);
-          c.lineTo(bx + Math.cos(a + 0.9) * bl, by + Math.sin(a + 0.9) * bl);
-          c.globalAlpha = 0.08 + rnd() * 0.15;
-          c.lineWidth = 0.5;
-          c.stroke();
-        }
-      }
-      c.globalAlpha = 1;
-    }
+    dust = Array.from({ length: 260 }, () => ({
+      x: rnd(), y: rnd(),
+      z: 0.25 + rnd() * 0.75,           // depth: drives speed, size, brightness
+      ph: rnd() * 6.28,
+      amber: rnd() < 0.06
+    }));
   }
 
-  function buildCloud() {
-    cloudPts = [];
-    let seed = 7;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const s = Math.min(W * 0.52, 760), left = (W - s) / 2, top = H * 0.40;
-    const O = [
-      [0.02, 0.30], [0.10, 0.27], [0.17, 0.15], [0.31, 0.11], [0.41, 0.02], [0.58, 0.00],
-      [0.70, 0.03], [0.80, 0.11], [0.90, 0.15], [0.98, 0.23], [1.00, 0.30], [0.02, 0.30]
-    ];
-    for (let i = 0; i < O.length - 1; i++) {
-      const [ax, ay] = O[i], [bx, by] = O[i + 1];
-      const n = Math.ceil(Math.hypot(bx - ax, by - ay) * s / 7);
-      for (let j = 0; j < n; j++) {
-        const u = j / n;
-        cloudPts.push({
-          x: left + (ax + (bx - ax) * u) * s + (rnd() - 0.5) * 3,
-          y: top + (ay + (by - ay) * u) * s * 0.9 + (rnd() - 0.5) * 3,
-          p: rnd() * 6.28
-        });
-      }
-    }
-    for (const [wx, wr] of [[0.25, 0.085], [0.78, 0.085]]) {
-      for (let j = 0; j < 70; j++) {
-        const a = rnd() * 6.28, r = wr * s * (0.55 + rnd() * 0.45);
-        cloudPts.push({
-          x: left + wx * s + Math.cos(a) * r,
-          y: top + 0.30 * s * 0.9 + Math.sin(a) * r * 0.9,
-          p: rnd() * 6.28
-        });
-      }
-    }
-  }
-
-  /* voltage curves match current no-start-env physics: 12.58 V rest,
-     ~10.41 V cranking, ~2.75 V ground-path drop */
-  function crankV(x) {
-    if (x < 0.2) return 12.58;
-    if (x < 0.3) return 12.58 - ((x - 0.2) / 0.1) * 2.17;
-    if (x < 0.66) return 10.41 + Math.sin(x * 110) * 0.1;
-    if (x < 0.76) return 10.41 + ((x - 0.66) / 0.1) * 1.9;
-    return 12.31;
-  }
-  function groundV(x) {
-    if (x < 0.2) return 0.05;
-    if (x < 0.3) return 0.05 + ((x - 0.2) / 0.1) * 2.7;
-    if (x < 0.66) return 2.75 + Math.sin(x * 110) * 0.06;
-    if (x < 0.76) return 2.75 - ((x - 0.66) / 0.1) * 2.7;
-    return 0.05;
-  }
-
-  function sceneScope(t, a) {
-    const x0 = W * 0.16, x1 = W * 0.84, span = x1 - x0;
-    const vy = (v) => H * 0.78 - (v / 14) * H * 0.52;
-    const cyc = (t % 6400) / 6400;
-    hctx.font = MONOF;
-    hctx.lineWidth = 1;
-    hctx.setLineDash([3, 6]);
-    hctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    hctx.globalAlpha = a;
-    for (const v of [12.58, 10.41, 2.75]) {
-      hctx.beginPath(); hctx.moveTo(x0, vy(v)); hctx.lineTo(x1, vy(v)); hctx.stroke();
-    }
-    hctx.setLineDash([]);
-    hctx.fillStyle = 'rgba(233,226,208,0.78)';
-    hctx.globalAlpha = a * 0.9;
-    hctx.fillText('12.58 V  rest', x0, vy(12.58) - 8);
-    hctx.fillText('10.41 V  cranking', x0, vy(10.41) + 20);
-    hctx.fillText('2.75 V  battery_negative → engine_block', x0, vy(2.75) - 8);
-    const traces = [[crankV, '#f5b301', 1.6], [groundV, '#7c93c4', 1.3]];
-    for (const [fn, col, lw] of traces) {
-      hctx.beginPath();
-      for (let u = 0; u <= cyc; u += 0.004) {
-        const X = x0 + u * span, Y = vy(fn(u));
-        u === 0 ? hctx.moveTo(X, Y) : hctx.lineTo(X, Y);
-      }
-      hctx.strokeStyle = col;
-      hctx.lineWidth = lw;
-      hctx.globalAlpha = a;
-      hctx.stroke();
-      const hx = x0 + cyc * span, hy = vy(fn(cyc));
-      const g = hctx.createRadialGradient(hx, hy, 0, hx, hy, 22);
-      g.addColorStop(0, col + '66');
-      g.addColorStop(1, col + '00');
-      hctx.fillStyle = g;
-      hctx.fillRect(hx - 22, hy - 22, 44, 44);
-      hctx.fillStyle = col;
-      hctx.beginPath(); hctx.arc(hx, hy, 2.4, 0, 6.29); hctx.fill();
-    }
-    if (cyc > 0.24 && cyc < 0.96) {
-      const head = crankV(cyc);
-      hctx.fillStyle = 'rgba(233,226,208,0.9)';
-      hctx.globalAlpha = a;
-      hctx.fillText(head.toFixed(2) + ' V', x0 + cyc * span + 12, vy(head) - 10);
-    }
-  }
-
-  function sceneArm(t, a) {
-    const bx = W * 0.38, by = H * 0.82;
-    const L1 = H * 0.30, L2 = H * 0.23, L3 = H * 0.11;
-    const a1 = -1.35 + Math.sin(t / 2600) * 0.38;
-    const a2 = a1 + 0.95 + Math.sin(t / 1900 + 1.2) * 0.5;
-    const a3 = a2 + 0.35 + Math.sin(t / 1400 + 2.1) * 0.55;
-    const j1 = [bx + Math.cos(a1) * L1, by + Math.sin(a1) * L1];
-    const j2 = [j1[0] + Math.cos(a2) * L2, j1[1] + Math.sin(a2) * L2];
-    const j3 = [j2[0] + Math.cos(a3) * L3, j2[1] + Math.sin(a3) * L3];
-    hctx.font = MONOF;
-    hctx.lineWidth = 1;
-    hctx.setLineDash([3, 7]);
-    hctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    hctx.globalAlpha = a;
-    hctx.beginPath(); hctx.arc(bx, by, L1 + L2 + L3 * 0.9, Math.PI * 1.02, Math.PI * 1.98); hctx.stroke();
-    hctx.beginPath(); hctx.moveTo(bx - L1 * 0.9, by); hctx.lineTo(bx + L1 * 1.7, by); hctx.stroke();
-    // target node: the ground strap the arm is reaching for
-    const tx = W * 0.63, ty = H * 0.36;
-    hctx.strokeStyle = 'rgba(245,179,1,0.4)';
-    hctx.beginPath(); hctx.moveTo(j3[0], j3[1]); hctx.lineTo(tx, ty); hctx.stroke();
-    hctx.setLineDash([]);
-    const pulse = 0.55 + Math.sin(t / 500) * 0.25;
-    const g = hctx.createRadialGradient(tx, ty, 0, tx, ty, 34);
-    g.addColorStop(0, 'rgba(245,179,1,' + (0.5 * pulse * a).toFixed(3) + ')');
-    g.addColorStop(1, 'rgba(245,179,1,0)');
+  function drawDust(t) {
+    const g = hctx.createRadialGradient(W * 0.5, H * 0.62, 0, W * 0.5, H * 0.62, Math.max(W, H) * 0.7);
+    g.addColorStop(0, 'rgba(40,44,58,0.35)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
     hctx.fillStyle = g;
-    hctx.fillRect(tx - 34, ty - 34, 68, 68);
-    hctx.globalAlpha = a;
-    hctx.strokeStyle = '#f5b301';
-    hctx.beginPath(); hctx.arc(tx, ty, 5, 0, 6.29); hctx.stroke();
-    hctx.fillStyle = 'rgba(233,226,208,0.75)';
-    hctx.fillText('ground_strap', tx + 14, ty + 4);
-    // arm segments + joints
-    hctx.strokeStyle = 'rgba(233,226,208,0.85)';
-    hctx.lineWidth = 2;
-    hctx.beginPath();
-    hctx.moveTo(bx, by); hctx.lineTo(j1[0], j1[1]); hctx.lineTo(j2[0], j2[1]); hctx.lineTo(j3[0], j3[1]);
-    hctx.stroke();
-    hctx.lineWidth = 1.2;
-    for (const [jx, jy] of [[bx, by], j1, j2]) {
-      hctx.beginPath(); hctx.arc(jx, jy, 7, 0, 6.29);
-      hctx.fillStyle = '#050504'; hctx.fill(); hctx.stroke();
+    hctx.fillRect(0, 0, W, H);
+    for (const p of dust) {
+      const x = ((p.x + (t / 90000) * p.z) % 1) * (W + 40) - 20;
+      const y = ((p.y + (t / 260000) * p.z) % 1) * (H + 40) - 20;
+      const tw = 0.55 + Math.sin(t / 1600 + p.ph) * 0.45;
+      const a = (0.1 + p.z * 0.5) * tw;
+      hctx.fillStyle = p.amber ? `rgba(245,179,1,${a})` : `rgba(226,222,210,${a})`;
+      hctx.beginPath(); hctx.arc(x, y, p.z * (p.amber ? 2.2 : 1.7), 0, 6.29); hctx.fill();
     }
-    hctx.lineWidth = 2;
-    for (const off of [0.5, -0.5]) {
-      hctx.beginPath();
-      hctx.moveTo(j3[0], j3[1]);
-      hctx.lineTo(j3[0] + Math.cos(a3 + off) * 14, j3[1] + Math.sin(a3 + off) * 14);
-      hctx.stroke();
-    }
+    hctx.globalAlpha = 1;
   }
-
-  function sceneCloud(t, a) {
-    const s = Math.min(W * 0.52, 760), left = (W - s) / 2;
-    const prog = (t % 5200) / 5200;
-    const sx = left + prog * s;
-    hctx.font = MONOF;
-    for (const pt of cloudPts) {
-      const d = Math.abs(pt.x - sx);
-      const tw = 0.38 + Math.sin(t / 800 + pt.p) * 0.12;
-      if (d < 70) {
-        hctx.fillStyle = '#f5b301';
-        hctx.globalAlpha = a * Math.min(1, 0.9 * (1 - d / 70) + tw);
-      } else {
-        hctx.fillStyle = '#e8e2d0';
-        hctx.globalAlpha = a * tw;
-      }
-      hctx.fillRect(pt.x, pt.y, 2, 2);
-    }
-    hctx.globalAlpha = a * 0.8;
-    hctx.setLineDash([4, 6]);
-    hctx.strokeStyle = 'rgba(245,179,1,0.55)';
-    hctx.lineWidth = 1;
-    hctx.beginPath(); hctx.moveTo(sx, H * 0.34); hctx.lineTo(sx, H * 0.80); hctx.stroke();
-    hctx.setLineDash([]);
-    hctx.fillStyle = 'rgba(233,226,208,0.7)';
-    hctx.globalAlpha = a * 0.9;
-    hctx.fillText('scan ' + String(Math.floor(prog * 2048)).padStart(4, '0') + ' / 2048 pts', left, H * 0.31);
-  }
-
-  const SCENES = [sceneScope, sceneArm, sceneCloud];
-  const SCENE_LABELS = ['TELEMETRY // CRANKING LOAD TEST', 'ACTUATION // KINEMATIC CHAIN', 'PERCEPTION // LIDAR SWEEP'];
-  const SCENE_DUR = 9000, XFADE = 1500;
 
   function drawHero(t) {
     hctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     hctx.globalAlpha = 1;
     hctx.fillStyle = '#050504';
     hctx.fillRect(0, 0, W, H);
-    const dx = Math.sin(t / 9000) * 10, dy = Math.cos(t / 12000) * 7;
-    hctx.globalAlpha = 0.42;
-    hctx.drawImage(bgCanvas, -14 + dx, -10 + dy, W + 28, H + 20);
-    hctx.globalAlpha = 1;
-    const idx = Math.floor(t / SCENE_DUR) % SCENES.length;
-    const pos = t % SCENE_DUR;
-    let k = pos > SCENE_DUR - XFADE ? (pos - (SCENE_DUR - XFADE)) / XFADE : 0;
-    k = k * k * (3 - 2 * k);
-    SCENES[idx](t, 1 - k);
-    if (k > 0) SCENES[(idx + 1) % SCENES.length](t, k);
-    const label = SCENE_LABELS[k > 0.5 ? (idx + 1) % SCENES.length : idx];
-    if (sceneLabelEl.textContent !== label) sceneLabelEl.textContent = label;
-    hctx.globalAlpha = 1;
+    drawDust(t);
   }
 
   function sizeHero() {
     DPR = Math.min(devicePixelRatio || 1, 2);
     W = canvas.clientWidth; H = canvas.clientHeight;
-    heroH = heroCardEl.offsetHeight;
     canvas.width = W * DPR; canvas.height = H * DPR;
-    bgCanvas.width = W * DPR; bgCanvas.height = H * DPR;
-    const c = bgCanvas.getContext('2d');
-    c.setTransform(DPR, 0, 0, DPR, 0, 0);
-    paintField(c, W, H);
-    buildCloud();
-    if (reduced) drawHero(4300); // single static frame: telemetry mid-crank
+    buildDust();
+    if (reduced) drawHero(4300); // single static dust frame
   }
   sizeHero();
   addEventListener('resize', sizeHero);
@@ -1150,7 +922,7 @@
   const io = new IntersectionObserver((es) => {
     for (const e of es) if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
   }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal, .reveal-fade').forEach((el) => io.observe(el));
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
   /* ---------- terminal lines ---------- */
   const termLines = document.querySelectorAll('#terminal .t-line');
@@ -1200,13 +972,20 @@
   function frame(now) {
     now = now || 0;
     if (!reduced) {
-      // Hero: animated vignettes while on screen, text hands off into the next section.
-      if (scrollY < heroH + 400) drawHero(now);
-      const hp = clamp(scrollY / (heroH * 0.9), 0, 1);
-      heroH1.style.transform = `translateY(${-hp * 120}px) scale(${1 - hp * 0.07})`;
-      heroH1.style.opacity = Math.max(0, 1 - hp * 1.3);
-      heroCardEl.style.transform = `scale(${1 - hp * 0.035})`;
-      heroSubP.style.transform = `translateY(${lerp(56, -18, 1 - Math.pow(1 - hp, 2))}px)`;
+      // Hero: pinned two-slide choreography — headline floats out, sub copy floats
+      // into center, card stays as one continuous background into the dark region.
+      const hr = heroShell.getBoundingClientRect();
+      if (hr.bottom > -100) drawHero(now);
+      const sp = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
+      const aOut = clamp(sp / 0.42, 0, 1);
+      heroH1.style.transform = `translateY(${-aOut * 150}px) scale(${1 - aOut * 0.06})`;
+      heroH1.style.opacity = 1 - aOut;
+      const aIn = clamp((sp - 0.34) / 0.38, 0, 1);
+      const eIn = 1 - Math.pow(1 - aIn, 3);
+      const drift = clamp((sp - 0.84) / 0.16, 0, 1);
+      heroCopy2.style.opacity = Math.min(1, aIn * 1.5) * (1 - drift * 0.25);
+      heroCopy2.style.transform = `translateY(${lerp(260, 0, eIn) - drift * 56}px)`;
+      heroCue.style.opacity = 1 - clamp(sp / 0.1, 0, 1);
 
       // Benchmark stage: settle from a deep tilt to nearly flat.
       let p = stickyProgress(benchSection);

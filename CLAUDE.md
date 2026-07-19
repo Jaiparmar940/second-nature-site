@@ -7,9 +7,10 @@ that sells physics-grounded RL environments and evals for physical AI to labs an
 companies. It is a single self-contained `index.html` — no build step, no dependencies, no
 external requests — hosted on **GitHub Pages from `main`** (push to `main` = deploy).
 
-Art direction is modeled on scale.com (2026-07): light chrome + full-viewport rounded hero
-card, then a dark region with scroll-driven 3D "stages" — tilted panels inside thin wireframe
-frames with dashed contour SVGs and binary mono labels. All copy is original.
+Art direction is modeled on scale.com (2026-07): light chrome + full-bleed pinned hero
+(edge-to-edge animated canvas, no border/rounding), then a dark region with scroll-driven 3D
+"stages" — tilted panels inside thin wireframe frames with dashed contour SVGs and binary
+mono labels. All copy is original.
 
 ## Relationship to `rlenv` (the product repo)
 
@@ -65,13 +66,20 @@ STALE must be synced with `rlenv/results/results.md` before the site is promoted
 
 Everything is in `index.html`:
 
-- **Hero art** is an animated `<canvas>`: `paintField()` prerenders the seeded (seed 41)
-  crystal-fan field to an offscreen canvas once per resize; `drawHero(t)` composites it with
-  slow drift under three cycling physical-AI vignettes (`sceneScope` telemetry / `sceneArm`
-  kinematics / `sceneCloud` lidar car), 9 s per scene with 1.5 s crossfades, scene name
-  shown in the `#scene-label` live tag. Animation only runs while the hero is on screen;
-  `prefers-reduced-motion` gets one static telemetry frame. On scroll the hero headline
-  parallaxes up/fades and the card scales down slightly (handoff into the dark region).
+- **Hero art** is a fully animated `<canvas>` "deep-field drift" (chosen by Jaivir
+  2026-07-18 from four candidates; earlier crystal-fan field, circuit-trace network, and
+  telemetry/arm/lidar vignettes were all rejected as too busy/tacky): `buildDust()`
+  (seed 29) scatters 260 dust motes with a depth value driving size, brightness, and
+  parallax drift speed; `drawDust(t)` renders them with slow diagonal drift, individual
+  twinkle, ~6% amber accents, over a faint slate radial glow. Deliberately calm — no
+  charts, labels, or data imagery. Animation only runs while the hero is on screen;
+  `prefers-reduced-motion` gets one static telemetry frame (and unpins the hero: shell
+  height auto, copy2 shown statically at the bottom). The hero is a pinned 200vh section
+  (`.hero-shell` > sticky `.hero-pin` > full-viewport card): as the user scrolls, the
+  headline floats up/out, then `.hero-copy2` (the intro paragraph, which lives INSIDE the
+  card — there is no light band between hero and dark region) floats into center, then
+  drifts out as the card unpins straight into `.dark` (veil bottom blends to --bg so the
+  seam is invisible).
 - **Scroll motion** is one rAF loop (`frame()`): `stickyProgress()` maps each tall section
   (`.showcase` 240vh, `.term-section` 200vh) to 0–1; panels/wireframes interpolate
   rotateY/rotateX/translate via `lerp`, benchmark bars fill from progress. Tilt constants
