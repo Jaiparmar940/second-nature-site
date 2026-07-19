@@ -89,10 +89,14 @@ Everything is in `index.html`:
   (`.showcase` 185vh, `.term-section` 200vh) to 0–1; panels/wireframes interpolate
   rotateY/rotateX/translate via `lerp`, benchmark bars fill from progress. Tilt constants
   live in `frame()`. `prefers-reduced-motion` bypasses all of it.
-- **Snap assist** (added 2026-07-19, Scale-style): when scrolling stops with `#benchmark`
-  or `#environments` entered ≥35% of the viewport (top still below 0), an easeInOutCubic
-  rAF glide (`snapTo`) aligns the section top to the viewport. Forward-only (`scrollDir`),
-  cancelled by wheel/touchstart/keydown, skipped under reduced motion.
+- **Smooth scroll + snap assist** (added 2026-07-19; verified scale.com ships Lenis with
+  lerp≈0.14 and this hand-rolls the same mechanic): wheel events are preventDefault'd into
+  a virtual `smooth.target`; the top of `frame()` eases the real scroll toward it with an
+  exponential lerp (τ≈110ms). On wheel-idle (200ms) with `#benchmark` or `#environments`
+  entered ≥25% (predicted landing position, `finalTop`), the target moves to the section
+  top — same glide carries you in, forward-only (`scrollDir`). In-page `#anchor` clicks
+  ride the glide too. Touch/keyboard/scrollbar stay native: a scroll event that deviates
+  >1.5px from `smooth.current` re-syncs and deactivates. All skipped under reduced motion.
 - **Terminal typing** (added 2026-07-19): `typeTerminal()` blanks the `.t-line` text nodes
   and retypes them char-by-char (agent lines 14 ms/char, env output 7 ms/char) with a
   blinking `.t-caret`, triggered once by an IntersectionObserver at threshold 0.7 on

@@ -1046,46 +1046,62 @@
     lastY = y;
   }, { passive: true });
 
-  /* ---------- scroll snap assist (Scale-style) ---------- */
-  // When the user stops scrolling with a pinned showcase partially entered
-  // (its top somewhere in the lower ~65% of the viewport), glide the rest of
-  // the way so the section starts cleanly at the top. Forward-only, cancels
-  // instantly on any user input, disabled under reduced motion.
+  /* ---------- smooth wheel scroll + snap assist (Scale/Lenis-style) ---------- */
+  // Wheel deltas move a virtual target; frame() eases the real scroll toward it
+  // with an exponential lerp (~110ms time constant — same feel as Lenis on
+  // scale.com), so flicks glide and the pinned animations play at a comfortable
+  // speed instead of jumping. When input goes idle with a showcase partially
+  // entered, the target moves to the section top and the same glide carries you
+  // in (forward-only). Touch, keyboard, and scrollbar scrolls stay native — an
+  // external scroll just re-syncs the target. Disabled under reduced motion.
   const snapTargets = [document.getElementById('benchmark'), document.getElementById('environments')];
-  let snapping = false, snapRAF = 0, snapTimer = 0;
-  function cancelSnap() {
-    if (snapping) { cancelAnimationFrame(snapRAF); snapping = false; }
-  }
-  function snapTo(targetY) {
-    const from = scrollY, dist = targetY - from, t0 = performance.now();
-    if (Math.abs(dist) < 4) return;
-    const dur = clamp(Math.abs(dist) * 0.85, 350, 900);
-    snapping = true;
-    (function step(now) {
-      if (!snapping) return;
-      const k = clamp((now - t0) / dur, 0, 1);
-      const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-      scrollTo(0, from + dist * e);
-      if (k < 1) snapRAF = requestAnimationFrame(step);
-      else snapping = false;
-    })(t0);
+  const smooth = { target: scrollY, current: scrollY, active: false };
+  const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
+  let snapTimer = 0;
+  function glideTo(y) {
+    smooth.target = clamp(y, 0, maxScroll());
+    smooth.current = scrollY;
+    smooth.active = true;
   }
   function maybeSnap() {
-    if (reduced || snapping || scrollDir < 0) return;
+    if (scrollDir < 0) return;
     for (const el of snapTargets) {
       const top = el.getBoundingClientRect().top;
-      const entered = (innerHeight - top) / innerHeight;
-      if (top > 2 && entered >= 0.35) { snapTo(scrollY + top); return; }
+      const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
+      const entered = (innerHeight - finalTop) / innerHeight;
+      if (finalTop > 2 && entered >= 0.25) { glideTo(scrollY + top); return; }
     }
   }
+  function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
   if (!reduced) {
+    addEventListener('wheel', (e) => {
+      if (e.ctrlKey) return;                                    // pinch-zoom
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;      // horizontal panes
+      e.preventDefault();
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
+      if (!smooth.active) { smooth.target = smooth.current = scrollY; }
+      smooth.target = clamp(smooth.target + e.deltaY * unit, 0, maxScroll());
+      smooth.active = true;
+      if (e.deltaY) scrollDir = e.deltaY > 0 ? 1 : -1;
+      queueSnap(200);
+    }, { passive: false });
     addEventListener('scroll', () => {
-      if (snapping) return;
-      clearTimeout(snapTimer);
-      snapTimer = setTimeout(maybeSnap, 150);
+      // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it
+      if (Math.abs(scrollY - smooth.current) > 1.5) {
+        smooth.target = smooth.current = scrollY;
+        smooth.active = false;
+        queueSnap(160);
+      }
     }, { passive: true });
-    ['wheel', 'touchstart', 'keydown'].forEach((ev) =>
-      addEventListener(ev, cancelSnap, { passive: true }));
+    // in-page anchors ride the same glide instead of jumping
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        const el = document.querySelector(a.getAttribute('href'));
+        if (!el) return;
+        e.preventDefault();
+        glideTo(scrollY + el.getBoundingClientRect().top);
+      });
+    });
   }
 
   /* ---------- scroll-driven 3D stages ---------- */
@@ -1115,8 +1131,21 @@
     return clamp((innerHeight - r.top) / (innerHeight + r.height), 0, 1);
   }
 
+  let lastFrameT = 0;
   function frame(now) {
     now = now || 0;
+    // smooth-scroll step first, so the stages below read the eased position
+    if (!reduced && smooth.active) {
+      const dt = Math.min(64, now - lastFrameT) || 16;
+      const k = 1 - Math.exp(-dt / 110);
+      smooth.current += (smooth.target - smooth.current) * k;
+      if (Math.abs(smooth.target - smooth.current) < 0.4) {
+        smooth.current = smooth.target;
+        smooth.active = false;
+      }
+      scrollTo(0, smooth.current);
+    }
+    lastFrameT = now;
     if (!reduced) {
       // Hero: pinned two-slide choreography — headline floats out, sub copy floats
       // into center, card stays as one continuous background into the dark region.
