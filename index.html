@@ -1100,7 +1100,7 @@
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0;
-  let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0;
+  let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
     smooth.current = scrollY;
@@ -1109,6 +1109,7 @@
   }
   function startGesture() {
     inGesture = true;
+    capHitT = 0;
     const y0 = scrollY;
     // a boundary within ~20% of a viewport counts as "already here", so a
     // gesture starting on a section top can carry into the next section
@@ -1155,8 +1156,11 @@
       // long after the flick landed on its cap, so a fresh swipe would stay
       // pinned to the old boundary and the page felt stuck. Momentum deltas
       // only ever decay — a delta that JUMPS ≥1.5× over the previous event is
-      // a new finger swipe, and only that advances past the cap.
+      // a new finger swipe. But near boundaries the target hits the cap while
+      // the finger is still down and finger deltas are jumpy, so the jump
+      // test alone leaks; require the cap to have been held ≥350ms first.
       else if (dy > 0 && smooth.target >= gestureCap - 2 &&
+               capHitT && e.timeStamp - capHitT > 350 &&
                Math.abs(dy) > Math.max(10, lastAbsDy * 1.5)) startGesture();
       lastAbsDy = Math.abs(dy);
       lastWheelT = e.timeStamp;
@@ -1166,6 +1170,8 @@
       if (!smooth.active) { smooth.target = smooth.current = scrollY; }
       smooth.tau = 110;
       smooth.target = clamp(smooth.target + dy, 0, Math.min(maxScroll(), gestureCap));
+      if (smooth.target < gestureCap - 2) capHitT = 0;
+      else if (!capHitT) capHitT = e.timeStamp; // target just landed on the cap
       smooth.active = true;
       if (dy) scrollDir = dy > 0 ? 1 : -1;
       queueSnap(200);
