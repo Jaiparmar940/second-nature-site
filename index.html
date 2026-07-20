@@ -1083,15 +1083,24 @@
   const heroStopTop = () =>
     heroShellEl.getBoundingClientRect().top + scrollY +
     (heroShellEl.offsetHeight - innerHeight) * 0.75;
+  // The two sticky showcases play their animation across the section's extra
+  // height; a boundary at top + (height − viewport) is the exact point where
+  // the animation has fully played — stop there too, so leaving the finished
+  // demo/results takes its own gesture.
+  const stickyEnds = ['#environments', '#benchmark']
+    .map((s) => document.querySelector(s)).filter(Boolean);
   const boundaryTops = (y0) => {
     const tops = gestureBounds.map((el) => el.getBoundingClientRect().top + y0);
     tops.push(heroStopTop());
+    for (const el of stickyEnds) {
+      tops.push(el.getBoundingClientRect().top + y0 + el.offsetHeight - innerHeight);
+    }
     return tops;
   };
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0;
-  let inGesture = false, gestureCap = Infinity, wheelVel = 0;
+  let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0;
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
     smooth.current = scrollY;
@@ -1144,10 +1153,12 @@
       if (!inGesture || e.timeStamp - lastWheelT > 300) startGesture();
       // trackpad momentum can keep a gesture "alive" (< 300ms between events)
       // long after the flick landed on its cap, so a fresh swipe would stay
-      // pinned to the old boundary and the page felt stuck. A downward delta
-      // that spikes above the decaying momentum tail is a new gesture.
+      // pinned to the old boundary and the page felt stuck. Momentum deltas
+      // only ever decay — a delta that JUMPS ≥1.5× over the previous event is
+      // a new finger swipe, and only that advances past the cap.
       else if (dy > 0 && smooth.target >= gestureCap - 2 &&
-               Math.abs(dy) > Math.max(6, wheelVel * 1.2)) startGesture();
+               Math.abs(dy) > Math.max(10, lastAbsDy * 1.5)) startGesture();
+      lastAbsDy = Math.abs(dy);
       lastWheelT = e.timeStamp;
       clearTimeout(gestureTimer);
       gestureTimer = setTimeout(() => { inGesture = false; }, 300);
