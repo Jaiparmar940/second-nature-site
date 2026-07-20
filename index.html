@@ -41,16 +41,6 @@
   .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
 
   /* ================= light chrome ================= */
-  .announce {
-    background: var(--ink);
-    color: var(--paper);
-    font-size: 12.5px;
-    font-weight: 500;
-    text-align: center;
-    padding: 8px 16px;
-  }
-  .announce a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-
   nav {
     position: sticky;
     top: 0;
@@ -99,11 +89,12 @@
   .btn-ghost-dark:hover { border-color: rgba(255, 255, 255, 0.6); }
 
   /* ================= hero: pinned card with two text slides ================= */
-  .hero-shell { height: 250vh; position: relative; }
+  .hero-shell { height: 220vh; position: relative; }
   .hero-pin {
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100svh; /* mobile Safari: center against the visible viewport, not the URL-bar-hidden one */
     display: flex;
   }
   .hero-card {
@@ -187,7 +178,7 @@
     background: var(--bg);
     color: var(--text);
   }
-  section { padding: 120px 0; }
+  section { padding: 96px 0; }
   .kicker {
     display: flex;
     align-items: center;
@@ -208,8 +199,7 @@
   }
   .statement {
     text-align: center;
-    min-height: 100vh;
-    padding: 80px 0;
+    padding: 20vh 0 16vh;
     display: grid;
     place-items: center;
   }
@@ -286,7 +276,7 @@
   .contours .tri { fill: rgba(255, 255, 255, 0.4); stroke: none; }
 
   /* ================= benchmark showcase ================= */
-  .showcase { height: 185vh; position: relative; }
+  .showcase { height: 165vh; position: relative; }
   .showcase-sticky {
     position: sticky;
     top: 0;
@@ -375,7 +365,7 @@
   .bench-caption p em { font-style: normal; color: var(--text); }
 
   /* ================= terminal showcase ================= */
-  .term-section { height: 200vh; position: relative; }
+  .term-section { height: 170vh; position: relative; }
   .term-sticky {
     position: sticky;
     top: 0;
@@ -505,7 +495,7 @@
   .codeblock .p { color: var(--accent); user-select: none; }
 
   /* ================= final cta + footer ================= */
-  .final-cta { text-align: center; padding: 160px 0; }
+  .final-cta { text-align: center; padding: 120px 0; }
   .final-cta h2 { font-size: clamp(34px, 5vw, 60px); }
   .final-cta p { margin: 22px auto 0; max-width: 52ch; font-size: 16.5px; line-height: 1.6; color: var(--text-dim); }
   .final-cta .cta-row { margin-top: 42px; display: flex; gap: 12px; justify-content: center; }
@@ -531,37 +521,46 @@
     .nav-links { display: none; }
     .split, .qs-grid { grid-template-columns: 1fr; }
     .pillars { grid-template-columns: 1fr; }
-    .showcase { height: 180vh; }
+    .showcase { height: 150vh; }
     .bench-stage { height: 480px; }
     .bench-panel { inset: 4% 2%; padding: 18px; }
     .bench-row, .bench-head { grid-template-columns: 34px 1fr 1.1fr; }
     .bench-row .eps, .bench-head .h-eps { display: none; }
-    section { padding: 84px 0; }
+    section { padding: 72px 0; }
   }
   @media (max-width: 640px) {
     .wrap { padding: 0 20px; }
+    section { padding: 60px 0; }
+    .final-cta { padding: 88px 0; }
     .founder-grid { flex-direction: column; align-items: flex-start; gap: 28px; }
     /* nav: keep buttons on one line */
     .nav-inner { height: 60px; gap: 16px; }
     .nav-cta { gap: 8px; }
     .btn { white-space: nowrap; padding: 9px 14px; font-size: 13px; }
-    /* benchmark: tighter rows so all 7 fit the panel */
-    .bench-stage { height: 500px; }
+    /* the card starts below the 60px nav — lift the at-rest headline so it
+       centers in the visible viewport (copy2 appears mid-pin, already centered) */
+    .hero-copy { padding-bottom: 56px; }
+    /* benchmark: tighter rows so all 7 fit the panel; caption drops into flow
+       below the stage so it can never overlap the panel */
+    .bench-stage { width: calc(100vw - 36px); height: 440px; }
     .bench-panel { padding: 14px; }
     .bench-tabs .tab:nth-child(2), .bench-tabs .tab:nth-child(3) { display: none; }
     .bench-head { padding: 8px 2px 6px; }
     .bench-row { padding: 6px 2px; gap: 10px; font-size: 12px; }
     .bench-row .scorenum small { display: none; }
     .bench-row .bar-track { height: 7px; }
-    .bench-caption { bottom: 3vh; }
-    .bench-caption p { padding: 0 16px; }
-    /* terminal: smaller stage + mono so wrapped lines fit and the settling
-       animation (translateY up to 60px) can't ride over the caption */
-    .term-stage { height: 430px; }
+    .bench-caption { position: static; width: 92vw; margin-top: 20px; }
+    .bench-caption h3 { font-size: 22px; }
+    .bench-caption p { padding: 0 8px; font-size: 14px; }
+    /* terminal: smaller stage + mono so wrapped lines fit, with real margin
+       to the screen edge; settling animation can't ride over the caption */
+    .term-stage { width: calc(100vw - 48px); height: 430px; }
     .terminal { inset: 4% 2%; }
     .terminal-body { padding: 14px 16px; font-size: 11px; line-height: 1.8; }
     .terminal-bar .title { font-size: 10.5px; }
     .term-caption { margin-top: 24px; }
+    .term-caption h3 { font-size: 22px; }
+    .term-caption p { font-size: 14px; padding: 0 12px; }
     /* split panel */
     .split-stage { height: 420px; }
     .split-panel { padding: 24px; }
@@ -578,10 +577,6 @@
 </style>
 </head>
 <body>
-
-<div class="announce">
-  Our first public proof: no-start-env v0.1 measures physical reasoning under real constraints. <a href="#benchmark">Read the results ↗</a>
-</div>
 
 <nav id="nav">
   <div class="wrap nav-inner">
@@ -758,7 +753,7 @@
   </div>
 
   <!-- ============ pillars ============ -->
-  <section>
+  <section id="platform">
     <div class="wrap">
       <div class="kicker reveal">The platform</div>
       <h2 class="reveal" style="max-width: 20ch;">Training gyms and test rigs for physical intelligence.</h2>
@@ -1050,29 +1045,60 @@
   // Wheel deltas move a virtual target; frame() eases the real scroll toward it
   // with an exponential lerp (~110ms time constant — same feel as Lenis on
   // scale.com), so flicks glide and the pinned animations play at a comfortable
-  // speed instead of jumping. When input goes idle with a showcase partially
-  // entered, the target moves to the section top and the same glide carries you
-  // in (forward-only). Touch, keyboard, and scrollbar scrolls stay native — an
-  // external scroll just re-syncs the target. Disabled under reduced motion.
+  // speed instead of jumping. Two assists on top of that:
+  //  1. One continuous wheel gesture (events < 300ms apart, momentum included)
+  //     can advance at most to the top of the NEXT section boundary — a hard
+  //     flick lands exactly on the next section, never through it.
+  //  2. When input goes idle with a showcase partially entered, the target
+  //     moves to the section top and the glide carries you in (forward-only),
+  //     briskly after a fast gesture, gently after a slow one.
+  // Touch, keyboard, and scrollbar scrolls stay native — an external scroll
+  // just re-syncs the target. Disabled under reduced motion.
   const snapTargets = [
-    { el: document.getElementById('environments'), threshold: 0.55 },
+    { el: document.getElementById('environments'), threshold: 0.35 },
     { el: document.getElementById('benchmark'), threshold: 0.25 }
   ];
-  const smooth = { target: scrollY, current: scrollY, active: false };
+  const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
+    '#customers', '#quickstart', '#contact', '#founder']
+    .map((s) => document.querySelector(s)).filter(Boolean);
+  const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
-  let snapTimer = 0;
-  function glideTo(y) {
+  let snapTimer = 0, gestureTimer = 0, lastWheelT = 0;
+  let inGesture = false, gestureCap = Infinity, wheelVel = 0;
+  function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
     smooth.current = scrollY;
+    smooth.tau = tau || 110;
     smooth.active = true;
+  }
+  function startGesture() {
+    inGesture = true;
+    const y0 = scrollY;
+    // a boundary within ~20% of a viewport counts as "already here", so a
+    // gesture starting on a section top can carry into the next section
+    const margin = innerHeight * 0.2;
+    gestureCap = Infinity;
+    for (const el of gestureBounds) {
+      const top = el.getBoundingClientRect().top + y0; // document offset
+      if (top > y0 + margin && top < gestureCap) gestureCap = top;
+    }
   }
   function maybeSnap() {
     if (scrollDir < 0) return;
+    // parked at or just past a section boundary (e.g. a capped flick landed
+    // there)? that's a deliberate stop — never chain-snap into the next section
+    const restY = smooth.active ? smooth.target : scrollY;
+    for (const el of gestureBounds) {
+      const d = restY - (el.getBoundingClientRect().top + scrollY);
+      if (d >= -2 && d < innerHeight * 0.2) return;
+    }
+    // glide pace tracks how hard the user was scrolling
+    const tau = clamp(260 - wheelVel, 120, 260);
     for (const { el, threshold } of snapTargets) {
       const top = el.getBoundingClientRect().top;
       const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
       const entered = (innerHeight - finalTop) / innerHeight;
-      if (finalTop > 2 && entered >= threshold) { glideTo(scrollY + top); return; }
+      if (finalTop > 2 && entered >= threshold) { glideTo(scrollY + top, tau); return; }
     }
   }
   function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
@@ -1082,10 +1108,17 @@
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;      // horizontal panes
       e.preventDefault();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
+      const dy = e.deltaY * unit;
+      if (!inGesture || e.timeStamp - lastWheelT > 300) startGesture();
+      lastWheelT = e.timeStamp;
+      clearTimeout(gestureTimer);
+      gestureTimer = setTimeout(() => { inGesture = false; }, 300);
+      wheelVel = wheelVel * 0.7 + Math.abs(dy) * 0.3;
       if (!smooth.active) { smooth.target = smooth.current = scrollY; }
-      smooth.target = clamp(smooth.target + e.deltaY * unit, 0, maxScroll());
+      smooth.tau = 110;
+      smooth.target = clamp(smooth.target + dy, 0, Math.min(maxScroll(), gestureCap));
       smooth.active = true;
-      if (e.deltaY) scrollDir = e.deltaY > 0 ? 1 : -1;
+      if (dy) scrollDir = dy > 0 ? 1 : -1;
       queueSnap(200);
     }, { passive: false });
     addEventListener('scroll', () => {
@@ -1102,7 +1135,7 @@
         const el = document.querySelector(a.getAttribute('href'));
         if (!el) return;
         e.preventDefault();
-        glideTo(scrollY + el.getBoundingClientRect().top);
+        glideTo(scrollY + el.getBoundingClientRect().top, 150);
       });
     });
   }
@@ -1140,7 +1173,7 @@
     // smooth-scroll step first, so the stages below read the eased position
     if (!reduced && smooth.active) {
       const dt = Math.min(64, now - lastFrameT) || 16;
-      const k = 1 - Math.exp(-dt / 110);
+      const k = 1 - Math.exp(-dt / smooth.tau);
       smooth.current += (smooth.target - smooth.current) * k;
       if (Math.abs(smooth.target - smooth.current) < 0.4) {
         smooth.current = smooth.target;

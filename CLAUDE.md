@@ -80,25 +80,38 @@ Everything is in `index.html`:
   twinkle, ~6% amber accents, over a faint slate radial glow. Deliberately calm — no
   charts, labels, or data imagery. Animation only runs while the hero is on screen;
   `prefers-reduced-motion` gets one static telemetry frame (and unpins the hero: shell
-  height auto, copy2 shown statically at the bottom). The hero is a pinned 250vh section
-  (`.hero-shell` > sticky `.hero-pin` > full-viewport card): as the user scrolls, the
+  height auto, copy2 shown statically at the bottom). The hero is a pinned 220vh section
+  (`.hero-shell` > sticky `.hero-pin` > full-viewport card; pin height is 100svh so mobile
+  Safari centers against the visible viewport, and on ≤640px `.hero-copy` gets 56px
+  bottom padding to offset the 60px nav above the card): as the user scrolls, the
   headline floats up/out, then `.hero-copy2` (the intro paragraph, which lives INSIDE the
   card — there is no light band between hero and dark region) floats into center, then
   drifts out as the card unpins straight into `.dark` (veil bottom blends to --bg so the
-  seam is invisible).
+  seam is invisible). There is no announce banner above the nav (removed 2026-07-20).
 - **Scroll motion** is one rAF loop (`frame()`): `stickyProgress()` maps each tall section
-  (`.showcase` 185vh, `.term-section` 200vh) to 0–1; panels/wireframes interpolate
+  (`.showcase` 165vh, `.term-section` 170vh) to 0–1; panels/wireframes interpolate
   rotateY/rotateX/translate via `lerp`, benchmark bars fill from progress. Tilt constants
-  live in `frame()`. `prefers-reduced-motion` bypasses all of it.
-- **Smooth scroll + snap assist** (added 2026-07-19; verified scale.com ships Lenis with
-  lerp≈0.14 and this hand-rolls the same mechanic): wheel events are preventDefault'd into
-  a virtual `smooth.target`; the top of `frame()` eases the real scroll toward it with an
-  exponential lerp (τ≈110ms). On wheel-idle (200ms), a showcase snaps only after its
-  predicted landing position (`finalTop`) enters far enough: 55% for `#environments`, which
-  protects the full-viewport thesis section, and 25% for `#benchmark`. The same glide carries
-  you to the section top, forward-only (`scrollDir`). In-page `#anchor` clicks
-  ride the glide too. Touch/keyboard/scrollbar stay native: a scroll event that deviates
-  >1.5px from `smooth.current` re-syncs and deactivates. All skipped under reduced motion.
+  live in `frame()`. `prefers-reduced-motion` bypasses all of it. Section spacing was
+  tightened 2026-07-20 after phone review (`.statement` is padded content, ~50–75vh, no
+  longer a full 100vh; `section` 96px desktop / 60px phone) — resist re-inflating it.
+- **Smooth scroll, gesture cap + snap assist** (reworked 2026-07-20): wheel events are
+  preventDefault'd into a virtual `smooth.target`; the top of `frame()` eases the real
+  scroll toward it with an exponential lerp (`smooth.tau`, 110ms for direct wheel input).
+  Wheel events <300ms apart form one "gesture" (trackpad momentum included), and a
+  gesture's target is hard-capped at the next section boundary ≥20% viewport ahead
+  (`gestureBounds` = statement/environments/benchmark/platform/customers/quickstart/
+  contact/founder) — one continuous scroll can land ON the next section, never through
+  it. On wheel-idle (200ms), a showcase snaps in once its predicted landing (`finalTop`)
+  enters ≥35% (`#environments`) / 25% (`#benchmark`), forward-only, at a pace tracking
+  recent wheel velocity (τ 120–260ms) — but never when parked at/just past any boundary
+  (that would chain-snap past the statement). In-page `#anchor` clicks ride the glide.
+  Touch/keyboard/scrollbar stay native: a scroll event deviating >1.5px from
+  `smooth.current` re-syncs and deactivates (so the cap cannot apply to touch; idle snap
+  still can). All skipped under reduced motion.
+- **Phone layout (≤640px)**: `.bench-caption` is static in flow below the stage (it was
+  absolutely positioned and overlapped the panel on phones); `.bench-stage` is
+  `calc(100vw - 36px)` and `.term-stage` `calc(100vw - 48px)` so panels keep a real
+  margin to the screen edge.
 - **Terminal typing** (added 2026-07-19): `typeTerminal()` blanks the `.t-line` text nodes
   and retypes them char-by-char (agent lines 4 ms/char, env output 2 ms/char) with a
   blinking `.t-caret`, triggered once by an IntersectionObserver at threshold 0.7 on
