@@ -1075,6 +1075,19 @@
   const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
     '#customers', '#quickstart', '#contact', '#founder']
     .map((s) => document.querySelector(s)).filter(Boolean);
+  // The hero's second text slide lives INSIDE the pinned hero shell, so it has
+  // no element boundary of its own — without a virtual stop a single flick
+  // carries straight through it. Stop at 75% of the hero's scroll distance,
+  // where the slide is fully faded in (sp 0.75: aIn = 1, drift = 0).
+  const heroShellEl = document.querySelector('.hero-shell');
+  const heroStopTop = () =>
+    heroShellEl.getBoundingClientRect().top + scrollY +
+    (heroShellEl.offsetHeight - innerHeight) * 0.75;
+  const boundaryTops = (y0) => {
+    const tops = gestureBounds.map((el) => el.getBoundingClientRect().top + y0);
+    tops.push(heroStopTop());
+    return tops;
+  };
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0;
@@ -1092,8 +1105,7 @@
     // gesture starting on a section top can carry into the next section
     const margin = innerHeight * 0.2;
     gestureCap = Infinity;
-    for (const el of gestureBounds) {
-      const top = el.getBoundingClientRect().top + y0; // document offset
+    for (const top of boundaryTops(y0)) {
       if (top > y0 + margin && top < gestureCap) gestureCap = top;
     }
   }
@@ -1102,12 +1114,18 @@
     // parked at or just past a section boundary (e.g. a capped flick landed
     // there)? that's a deliberate stop — never chain-snap into the next section
     const restY = smooth.active ? smooth.target : scrollY;
-    for (const el of gestureBounds) {
-      const d = restY - (el.getBoundingClientRect().top + scrollY);
+    for (const top of boundaryTops(scrollY)) {
+      const d = restY - top;
       if (d >= -2 && d < innerHeight * 0.2) return;
     }
     // glide pace tracks how hard the user was scrolling
     const tau = clamp(260 - wheelVel, 120, 260);
+    // idle partway into the hero's second slide → settle on it, so the copy
+    // is read at full opacity instead of half-faded
+    const heroTop = heroShellEl.getBoundingClientRect().top + scrollY;
+    const heroStop = heroStopTop();
+    if (restY > heroTop + (heroShellEl.offsetHeight - innerHeight) * 0.35 &&
+        restY < heroStop - 2) { glideTo(heroStop, tau); return; }
     for (const { el, threshold } of snapTargets) {
       const top = el.getBoundingClientRect().top;
       const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
