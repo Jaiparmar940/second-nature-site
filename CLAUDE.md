@@ -117,11 +117,12 @@ Everything is in `index.html`:
   blinking `.t-caret`. The first line (the `# complaint:` prompt) is exempt: it carries
   `.on` in the markup, is never blanked or retyped, and holds the parked caret so the
   terminal reads as waiting. Retriggered 2026-07-20 from the IntersectionObserver
-  (threshold 0.7) to a SETTLE gate inside `frame()` — typing starts only once the
-  terminal stage's `stickyProgress` ≥ 0.92, i.e. after the panel has finished its tilt
-  and come to rest (0.92 not 1.0 because the ease is quadratic-out — the last 8% is
-  sub-pixel travel, and a literal 1.0 would strand the animation whenever a gesture
-  parks just short of the section end). Reduced motion shows all lines instantly. If the
+  (threshold 0.7) to a SETTLE gate inside `frame()` — typing starts once the terminal
+  stage's `stickyProgress` ≥ 0.75, i.e. three-quarters of the way through the stage's
+  travel, so the transcript overlaps the tail of the tilt (the ease is quadratic-out, so
+  the panel is already within ~6% of its resting angle there). Briefly 0.92 — a full
+  settle — before Jaivir asked for the earlier start. Reduced motion shows all lines
+  instantly. If the
   transcript copy changes, no JS updates are needed — it types whatever is in the markup.
 - Stage scaffolding: `.stage` (perspective) > `.wireframe` frames + `.contours` SVG +
   `.bin` labels + content panel. Reuse these primitives for new sections.

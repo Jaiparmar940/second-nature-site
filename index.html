@@ -1287,11 +1287,11 @@
         `rotateY(${lerp(22, 8, e) * mob}deg) rotateX(${lerp(-10, -3, e) * mob}deg) translateY(${lerp(90, 8, e) * mob}px) translateZ(${-60 * mob}px)`;
       termF2.style.transform =
         `rotateY(${lerp(26, 11, e) * mob}deg) rotateX(${lerp(-12, -4, e) * mob}deg) translateY(${lerp(120, 22, e) * mob}px) translateZ(${-130 * mob}px)`;
-      // SETTLE gate: the transcript starts typing only once the panel has come
-      // to rest. The ease is quadratic-out, so by p 0.92 the remaining travel is
-      // sub-pixel — waiting for a literal 1 would strand the animation whenever
-      // a gesture parks just short of the section end.
-      if (!termTyped && p >= 0.92) { termTyped = true; setTimeout(typeTerminal, 120); }
+      // SETTLE gate: the transcript starts typing three-quarters of the way
+      // through the stage's travel. The ease is quadratic-out, so by p 0.75 the
+      // panel is within ~6% of its resting tilt and still visibly easing in —
+      // the typing overlaps the tail of the motion rather than waiting it out.
+      if (!termTyped && p >= 0.75) { termTyped = true; setTimeout(typeTerminal, 120); }
 
       // Split stage: gentle parallax tilt as it crosses the viewport.
       p = viewProgress(splitStage);
