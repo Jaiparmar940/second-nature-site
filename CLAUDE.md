@@ -116,6 +116,18 @@ Everything is in `index.html`:
   Touch/keyboard/scrollbar stay native: a scroll event deviating >1.5px from
   `smooth.current` re-syncs and deactivates (so the cap cannot apply to touch; idle snap
   still can). All skipped under reduced motion.
+- **Nav-link autoplay** (added 2026-07-20): clicking a nav link whose href is in
+  `autoplayHrefs` (`#environments`, `#benchmark`) does not just park at the section top —
+  that is the stage's *first* frame, deepest tilt, nothing filled in. The click glides to
+  the top as before and sets `pendingAutoplay` to the sticky end
+  (`top + offsetHeight - innerHeight`, i.e. `stickyProgress` 1); `frame()` starts the
+  playback at the moment the glide converges. The playback is its own branch at the top of
+  `frame()` — ease-in-out over a fixed duration (`~3.2s per viewport of travel`, clamped
+  1.2–4.2s, so ≈2.2s for a real section) rather than the exponential glide, which would
+  crawl through the final stretch where the payoff is. It writes `smooth.current/target` in
+  step so the wheel and scroll handlers see a position they wrote. Any real input drops it
+  (`cancelAutoplay`): a wheel (which then seeds a fresh gesture from the current spot),
+  `touchstart`, `keydown`, or a scroll event deviating >1.5px. Other anchors are unchanged.
 - **Phone layout (≤640px)**: `.bench-caption` is static in flow below the stage (it was
   absolutely positioned and overlapped the panel on phones); `.bench-stage` is
   `calc(100vw - 36px)` and `.term-stage` `calc(100vw - 48px)` so panels keep a real

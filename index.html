@@ -1119,6 +1119,26 @@
     smooth.tau = tau || 110;
     smooth.active = true;
   }
+  // Nav links into a sticky section land on its first frame, where the stage is
+  // still at its deepest tilt and nothing has filled in. These play the section
+  // instead: glide to the top, then walk the sticky range at a readable pace so
+  // the tilt settles and the bars/transcript run. Constant-ish speed (eased at
+  // both ends) rather than the exponential glide, which would crawl through the
+  // last stretch — exactly where the payoff is.
+  const autoplayHrefs = ['#environments', '#benchmark'];
+  const autoplay = { active: false, from: 0, to: 0, t0: 0, dur: 0 };
+  let pendingAutoplay = 0;
+  function cancelAutoplay() { autoplay.active = false; pendingAutoplay = 0; }
+  function startAutoplay(from, to, now) {
+    const dist = clamp(to, 0, maxScroll()) - from;
+    if (dist <= 4) return;
+    autoplay.from = from;
+    autoplay.to = from + dist;
+    // ~3.2s per viewport of travel: a sticky range is ~0.7vh, so ≈2.2s end to end
+    autoplay.dur = clamp((dist / innerHeight) * 3200, 1200, 4200);
+    autoplay.t0 = now;
+    autoplay.active = true;
+  }
   function startGesture() {
     inGesture = true;
     capHitT = 0;
@@ -1161,6 +1181,13 @@
       if (e.ctrlKey) return;                                    // pinch-zoom
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;      // horizontal panes
       e.preventDefault();
+      // a wheel during nav-link playback is the user taking over: drop the
+      // playback and let this event seed a normal gesture from where we are
+      if (autoplay.active || pendingAutoplay) {
+        cancelAutoplay();
+        smooth.target = smooth.current = scrollY;
+        inGesture = false;
+      }
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
       const dy = e.deltaY * unit;
       if (!inGesture || e.timeStamp - lastWheelT > 300) startGesture();
@@ -1189,8 +1216,10 @@
       queueSnap(200);
     }, { passive: false });
     addEventListener('scroll', () => {
-      // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it
+      // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it,
+      // and drop any nav-link playback it interrupted
       if (Math.abs(scrollY - smooth.current) > 1.5) {
+        cancelAutoplay();
         smooth.target = smooth.current = scrollY;
         smooth.active = false;
         queueSnap(160);
@@ -1199,12 +1228,22 @@
     // in-page anchors ride the same glide instead of jumping
     document.querySelectorAll('a[href^="#"]').forEach((a) => {
       a.addEventListener('click', (e) => {
-        const el = document.querySelector(a.getAttribute('href'));
+        const href = a.getAttribute('href');
+        const el = document.querySelector(href);
         if (!el) return;
         e.preventDefault();
-        glideTo(scrollY + el.getBoundingClientRect().top, 150);
+        cancelAutoplay();
+        const top = scrollY + el.getBoundingClientRect().top;
+        glideTo(top, 150);
+        // queued, not started: frame() kicks it off once the glide has landed
+        if (autoplayHrefs.includes(href)) {
+          pendingAutoplay = top + (el.offsetHeight - innerHeight);
+        }
       });
     });
+    // any real input hands control back to the user mid-playback
+    ['touchstart', 'keydown'].forEach((ev) =>
+      addEventListener(ev, cancelAutoplay, { passive: true }));
   }
 
   /* ---------- scroll-driven 3D stages ---------- */
@@ -1238,13 +1277,26 @@
   function frame(now) {
     now = now || 0;
     // smooth-scroll step first, so the stages below read the eased position
-    if (!reduced && smooth.active) {
+    if (!reduced && autoplay.active) {
+      // nav-link playback through a sticky section: ease-in-out over a fixed
+      // duration, keeping smooth.* in step so the wheel/scroll handlers see a
+      // position they wrote and don't fight it
+      const k = clamp((now - autoplay.t0) / autoplay.dur, 0, 1);
+      const eK = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      smooth.current = smooth.target = lerp(autoplay.from, autoplay.to, eK);
+      scrollTo(0, smooth.current);
+      if (k >= 1) autoplay.active = false;
+    } else if (!reduced && smooth.active) {
       const dt = Math.min(64, now - lastFrameT) || 16;
       const k = 1 - Math.exp(-dt / smooth.tau);
       smooth.current += (smooth.target - smooth.current) * k;
       if (Math.abs(smooth.target - smooth.current) < 0.4) {
         smooth.current = smooth.target;
         smooth.active = false;
+        if (pendingAutoplay) {
+          startAutoplay(smooth.current, pendingAutoplay, now);
+          pendingAutoplay = 0;
+        }
       }
       scrollTo(0, smooth.current);
     }
