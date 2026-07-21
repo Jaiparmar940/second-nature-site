@@ -408,7 +408,36 @@
     border-bottom: 1px solid #232320;
   }
   .terminal-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #2c2c29; }
-  .terminal-bar .title { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--text-faint); }
+  .terminal-bar .title {
+    min-width: 0;
+    margin-left: 8px;
+    overflow: hidden;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .terminal-replay {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 4px 8px;
+    border: 1px solid #353531;
+    border-radius: 999px;
+    background: #171715;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .terminal-replay:hover { border-color: #595950; background: #1d1d1a; color: var(--text); }
+  .terminal-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .terminal-replay .icon { color: var(--accent); font-size: 13px; }
   .terminal-body {
     padding: 22px 26px;
     font-family: var(--mono);
@@ -580,6 +609,7 @@
     .reveal { transition: none; opacity: 1; transform: none; }
     .t-line { transition: none; opacity: 1; transform: none; }
     .t-caret { display: none; }
+    .terminal-replay { display: none; }
     .hero-shell { height: auto; }
     .hero-pin { position: static; height: 100vh; }
     .hero-copy2 { opacity: 1; align-items: flex-end; padding-bottom: 9vh; }
@@ -668,6 +698,9 @@
           <div class="terminal-bar">
             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
             <span class="title">no-start-env — medium_corroded_ground · seed 41</span>
+            <button class="terminal-replay" id="terminal-replay" type="button" aria-label="Replay terminal transcript">
+              <span class="icon" aria-hidden="true">↻</span> Replay
+            </button>
           </div>
           <div class="terminal-body">
             <div class="t-line on"><span class="t-comment"># complaint: engine cranks slowly, won't start</span></div>
@@ -1003,38 +1036,52 @@
   // Agent lines type out character by character with a blinking caret; env
   // output lines print all at once like a real terminal, with a tiny beat
   // before and after the print. Text nodes are blanked up front and restored
-  // so the colored spans keep their markup. Plays once, only after the terminal
-  // stage has finished its scroll-driven tilt and come to rest.
+  // so the colored spans keep their markup. The first run starts after the
+  // terminal stage settles; the title-bar control can safely restart it later.
   const termLines = [...document.querySelectorAll('#terminal .t-line')];
+  const replayTerminal = document.getElementById('terminal-replay');
   const caret = document.createElement('span');
   caret.className = 't-caret';
   // The complaint is the scenario prompt, not agent output: it is on screen from
   // the start (`.on` in the markup) and never retyped. Only the lines after it
   // type, and the caret waits on the complaint until they do.
   const typeLines = termLines.slice(1);
+  const typeSeq = typeLines.map((line) => {
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) { nodes.push({ node: n, text: n.nodeValue }); }
+    return { line, nodes, isAgent: !!line.querySelector('.t-agent') };
+  });
   if (!reduced) termLines[0].appendChild(caret);
+  let typeRun = 0;
   function typeTerminal() {
     if (reduced) { termLines.forEach((l) => l.classList.add('on')); return; }
-    const seq = typeLines.map((line) => {
-      const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
-      const nodes = [];
-      let n;
-      while ((n = walker.nextNode())) { nodes.push({ node: n, text: n.nodeValue }); }
+    const run = ++typeRun;
+    caret.remove();
+    typeSeq.forEach(({ line, nodes }) => {
+      line.classList.remove('on');
       nodes.forEach((t) => { t.node.nodeValue = ''; });
-      return { line, nodes, isAgent: !!line.querySelector('.t-agent') };
     });
+    termLines[0].appendChild(caret);
+    const later = (fn, delay) => setTimeout(() => {
+      if (run === typeRun) fn();
+    }, delay);
     let li = 0;
     (function nextLine() {
-      if (li >= seq.length) { caret.remove(); return; }
-      const { line, nodes, isAgent } = seq[li++];
+      if (li >= typeSeq.length) {
+        typeSeq[typeSeq.length - 1].line.appendChild(caret);
+        return;
+      }
+      const { line, nodes, isAgent } = typeSeq[li++];
       if (!isAgent) {
         // env output: prints in one shot after a tiny beat, then holds ~500ms
         // before the next agent command starts typing
-        setTimeout(() => {
+        later(() => {
           nodes.forEach((t) => { t.node.nodeValue = t.text; });
           line.classList.add('on');
           line.appendChild(caret);
-          setTimeout(nextLine, 500);
+          later(nextLine, 500);
         }, 60);
         return;
       }
@@ -1043,19 +1090,26 @@
       const speed = 4; // brisk agent typing
       let ni = 0, ci = 0;
       (function tick() {
-        if (ni >= nodes.length) { setTimeout(nextLine, 45); return; }
+        if (run !== typeRun) return;
+        if (ni >= nodes.length) { later(nextLine, 45); return; }
         const t = nodes[ni];
         ci += 1;
         t.node.nodeValue = t.text.slice(0, ci);
         if (ci >= t.text.length) { ni += 1; ci = 0; }
-        setTimeout(tick, speed);
+        later(tick, speed);
       })();
     })();
   }
   // Typing is triggered from frame() once the terminal stage has settled at its
   // final position — see the SETTLE gate there. Reduced motion has no stage
   // animation to wait on, so the transcript is simply there.
-  let termTyped = false;
+  let termTyped = false, termTypeTimer = 0;
+  replayTerminal.addEventListener('click', () => {
+    clearTimeout(termTypeTimer);
+    termTypeTimer = 0;
+    termTyped = true;
+    typeTerminal();
+  });
   if (reduced) { termTyped = true; typeTerminal(); }
 
   /* ---------- nav hide on scroll down ---------- */
@@ -1389,7 +1443,10 @@
       // through the stage's travel. The ease is quadratic-out, so by p 0.75 the
       // panel is within ~6% of its resting tilt and still visibly easing in —
       // the typing overlaps the tail of the motion rather than waiting it out.
-      if (!termTyped && p >= 0.75) { termTyped = true; setTimeout(typeTerminal, 120); }
+      if (!termTyped && p >= 0.75) {
+        termTyped = true;
+        termTypeTimer = setTimeout(typeTerminal, 120);
+      }
 
       // Split stage: gentle parallax tilt as it crosses the viewport.
       p = viewProgress(splitStage);
