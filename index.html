@@ -1082,9 +1082,10 @@
   // Touch, keyboard, and scrollbar scrolls stay native — an external scroll
   // just re-syncs the target. Disabled under reduced motion.
   const termSection = document.getElementById('environments');
+  const benchSection = document.getElementById('benchmark');
   const snapTargets = [
     { el: termSection, threshold: 0.35 },
-    { el: document.getElementById('benchmark'), threshold: 0.25 }
+    { el: benchSection, threshold: 0.25 }
   ];
   const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
     '#customers', '#quickstart', '#contact', '#founder']
@@ -1101,8 +1102,7 @@
   // height; a boundary at top + (height − viewport) is the exact point where
   // the animation has fully played — stop there too, so leaving the finished
   // demo/results takes its own gesture.
-  const stickyEnds = ['#environments', '#benchmark']
-    .map((s) => document.querySelector(s)).filter(Boolean);
+  const stickyEnds = [termSection, benchSection].filter(Boolean);
   const boundaryTops = (y0) => {
     const tops = gestureBounds.map((el) => el.getBoundingClientRect().top + y0);
     tops.push(heroStopTop());
@@ -1186,14 +1186,20 @@
       e.preventDefault();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
       const dy = e.deltaY * unit;
-      // Once the terminal's sticky movement has begun, any downward wheel input
-      // plays the remaining range exactly like its nav link does. Downward input
-      // during that playback leaves it running; upward input falls through and
-      // retains the normal user-takeover behavior below.
-      const termTop = termSection.getBoundingClientRect().top + scrollY;
-      const termEnd = termTop + termSection.offsetHeight - innerHeight;
-      const terminalIsMoving = scrollY >= termTop - 2 && scrollY < termEnd - 4;
-      if (dy > 0 && terminalIsMoving) {
+      // Once either sticky showcase has begun moving, any downward wheel input
+      // plays its remaining range exactly like the matching nav link does.
+      // Downward input during playback leaves it running; upward input falls
+      // through and retains the normal user-takeover behavior below.
+      let activeStickyEnd = 0;
+      for (const el of stickyEnds) {
+        const top = el.getBoundingClientRect().top + scrollY;
+        const end = top + el.offsetHeight - innerHeight;
+        if (scrollY >= top - 2 && scrollY < end - 4) {
+          activeStickyEnd = end;
+          break;
+        }
+      }
+      if (dy > 0 && activeStickyEnd) {
         scrollDir = 1;
         clearTimeout(snapTimer);
         clearTimeout(gestureTimer);
@@ -1202,7 +1208,7 @@
           cancelAutoplay();
           smooth.target = smooth.current = scrollY;
           smooth.active = false;
-          startAutoplay(scrollY, termEnd, e.timeStamp);
+          startAutoplay(scrollY, activeStickyEnd, e.timeStamp);
         }
         return;
       }
@@ -1271,7 +1277,6 @@
   }
 
   /* ---------- scroll-driven 3D stages ---------- */
-  const benchSection = document.getElementById('benchmark');
   const benchPanel = document.getElementById('bench-panel');
   const benchF1 = document.getElementById('bench-frame-1');
   const benchF2 = document.getElementById('bench-frame-2');
