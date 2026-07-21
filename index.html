@@ -341,7 +341,7 @@
   .bench-row .eps { color: #6c6a64; font-size: 12px; }
   .bench-row .scorecell { display: grid; gap: 6px; }
   .bench-row .scorenum { font-size: 12.5px; }
-  .bench-row .scorenum b { font-weight: 700; }
+  .bench-row .scorenum b { font-weight: 700; font-variant-numeric: tabular-nums; }
   .bench-row .scorenum small { color: #8b8983; font-weight: 400; margin-left: 8px; }
   .bench-row .bar-track { height: 9px; border-radius: 5px; border: 1px solid #aeaca5; padding: 1px; }
   .bench-row .bar { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--bar-a); will-change: width; }
@@ -1267,7 +1267,9 @@
         `rotateY(${lerp(-30, -12, e) * mob}deg) rotateX(${lerp(14, 4, e) * mob}deg) translateY(${lerp(140, 24, e) * mob}px) translateZ(${lerp(-240, -90, e) * mob}px)`;
       const bp = p; // bars track the full sticky animation: empty at start, score% at end
       benchBars.forEach((row) => {
-        row.querySelector('.bar').style.width = (parseFloat(row.dataset.score) * bp) + '%';
+        const s = parseFloat(row.dataset.score) * bp;
+        row.querySelector('.bar').style.width = s + '%';
+        row.querySelector('.scorenum b').textContent = s.toFixed(1);
       });
       benchCap.style.opacity = clamp((p - 0.55) / 0.25, 0, 1);
       benchCap.style.transform = `translateY(${lerp(24, 0, clamp((p - 0.55) / 0.25, 0, 1))}px)`;
