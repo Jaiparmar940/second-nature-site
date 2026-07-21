@@ -82,8 +82,9 @@ Everything is in `index.html`:
   `prefers-reduced-motion` gets one static telemetry frame (and unpins the hero: shell
   height auto, copy2 shown statically at the bottom). The hero is a pinned 220vh section
   (`.hero-shell` > sticky `.hero-pin` > full-viewport card; pin height is 100svh so mobile
-  Safari centers against the visible viewport, and on ≤640px `.hero-copy` gets 56px
-  bottom padding to offset the 60px nav above the card): as the user scrolls, the
+  Safari centers against the visible viewport, and `.hero-copy` gets `var(--nav-h)` of
+  bottom padding at every size so the at-rest headline centers in the visible dark band
+  rather than in the card — see the nav-height gotcha below): as the user scrolls, the
   headline floats up/out, then `.hero-copy2` (the intro paragraph, which lives INSIDE the
   card — there is no light band between hero and dark region) floats into center, then
   drifts out as the card unpins straight into `.dark` (veil bottom blends to --bg so the
@@ -92,10 +93,17 @@ Everything is in `index.html`:
   space *above* the pinned hero card — at scrollTop 0 the 100svh card hangs one nav-height
   below the fold, and anything anchored to the card's bottom edge lands off screen at the
   page's opening position. `--nav-h` (68px; 60px ≤640px) is the single source for that
-  height: it sets `.nav-inner`'s height and is added back into `.scroll-cue`'s offset
+  height. Three places pay it back: `.nav-inner`'s own height; `.scroll-cue`'s offset
   (`bottom: calc(28px + var(--nav-h))`), which is why "Scroll to explore" is visible on
-  load at every viewport size — before 2026-07-20 it sat below the fold on laptops and
-  phones. Use `--nav-h`, never a literal, for anything bottom-anchored inside the card.
+  load at every viewport size (before 2026-07-20 it sat below the fold on laptops and
+  phones); and `.hero-copy`'s `padding-bottom`, which lifts the at-rest headline so it
+  centers in the visible dark band instead of in the card — centering in the card leaves
+  it half a nav-height low on screen. That last one was a ≤640px-only 56px literal until
+  2026-07-20, so the headline read low on desktop while phones looked right. Note the
+  factor of two: bottom padding P centers the content at `nav + (V-P)/2`, so `P = nav-h`
+  centers in the dark band and `P = 2 × nav-h` would center on the full glass — the band
+  is the house convention. Use `--nav-h`, never a literal, for anything anchored to the
+  card's bottom edge or centered inside it.
 - **Scroll motion** is one rAF loop (`frame()`): `stickyProgress()` maps each tall section
   (`.showcase` 165vh, `.term-section` 170vh) to 0–1; panels/wireframes interpolate
   rotateY/rotateX/translate via `lerp`, benchmark bars fill from progress. Tilt constants
