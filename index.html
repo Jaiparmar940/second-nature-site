@@ -227,7 +227,7 @@
     position: absolute;
     z-index: 1;
     inset: 0;
-    background: radial-gradient(ellipse 43% 34% at 50% 50%, rgba(10, 10, 10, 0.76), rgba(10, 10, 10, 0.42) 52%, transparent 78%);
+    background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(10, 10, 10, 0.64), rgba(10, 10, 10, 0.24) 54%, transparent 76%);
     pointer-events: none;
   }
   .statement-art {
@@ -394,10 +394,9 @@
   .bench-row.r6 .bar { background: #8b8983; }
   .bench-row.r7 .bar { background: #b4642e; }
   .bench-caption {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 7vh;
+    position: static;
+    width: min(1120px, 94vw);
+    margin-top: 48px;
     text-align: center;
     opacity: 0;
     will-change: opacity, transform;
@@ -1073,7 +1072,7 @@
     trainingCells = Array.from({ length: 360 }, () => ({
       x: rnd(), y: rnd(), z: 0.25 + rnd() * 0.75,
       len: 3 + rnd() * 14, speed: 0.35 + rnd() * 0.8,
-      phase: rnd() * 6.28, amber: rnd() < 0.045
+      phase: rnd() * 6.28, amber: rnd() < 0.07
     }));
   }
   function drawTrainingField(t, progress) {
@@ -1081,7 +1080,7 @@
     sctx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
     sctx.clearRect(0, 0, SW, SH);
     const scene = 0.48 + clamp(progress / 0.45, 0, 1) * 0.52;
-    const drift = t / 150000;
+    const drift = t / 52000;
     for (const cell of trainingCells) {
       const x = (cell.x + drift * cell.speed) % 1;
       const y = (cell.y + drift * cell.speed * 0.28) % 1;
@@ -1090,10 +1089,10 @@
       // Samples dissolve around the copy, making the missing region literal.
       const outsideVoid = clamp((ex * ex + ey * ey - 0.48) / 0.72, 0, 1);
       const edge = clamp(Math.min(x, 1 - x, y, 1 - y) * 12, 0, 1);
-      const pulse = 0.68 + Math.sin(t / 1800 + cell.phase) * 0.32;
-      const alpha = (0.035 + cell.z * 0.17) * outsideVoid * edge * pulse * scene;
+      const pulse = 0.74 + Math.sin(t / 1150 + cell.phase) * 0.26;
+      const alpha = (0.065 + cell.z * 0.28) * outsideVoid * edge * pulse * scene;
       sctx.fillStyle = cell.amber
-        ? `rgba(245,179,1,${alpha * 1.7})`
+        ? `rgba(245,179,1,${alpha * 1.9})`
         : `rgba(173,181,197,${alpha})`;
       sctx.fillRect(x * SW, y * SH, cell.len * cell.z, Math.max(0.7, cell.z * 1.5));
     }
@@ -1101,20 +1100,36 @@
     // Slowly moving contour rings label the boundary of what the data omits.
     sctx.save();
     sctx.translate(SW * 0.5, SH * 0.5);
-    sctx.rotate(Math.sin(t / 9000) * 0.012);
+    sctx.rotate(Math.sin(t / 4000) * 0.026);
+    const breathe = 1 + Math.sin(t / 2100) * 0.018;
+    const voidRX = SW * 0.36 * breathe;
+    const voidRY = SH * 0.29 * breathe;
     sctx.setLineDash([2, 9]);
-    sctx.lineDashOffset = -t / 70;
+    sctx.lineDashOffset = -t / 32;
     sctx.lineWidth = 1;
-    sctx.strokeStyle = `rgba(173,181,197,${0.11 * scene})`;
+    sctx.strokeStyle = `rgba(173,181,197,${0.2 * scene})`;
     sctx.beginPath();
-    sctx.ellipse(0, 0, SW * 0.36, SH * 0.29, 0, 0, Math.PI * 2);
+    sctx.ellipse(0, 0, voidRX, voidRY, 0, 0, Math.PI * 2);
     sctx.stroke();
     sctx.setLineDash([1, 13]);
-    sctx.lineDashOffset = t / 95;
-    sctx.strokeStyle = `rgba(245,179,1,${0.08 * scene})`;
+    sctx.lineDashOffset = t / 48;
+    sctx.strokeStyle = `rgba(245,179,1,${0.14 * scene})`;
     sctx.beginPath();
     sctx.ellipse(0, 0, SW * 0.405, SH * 0.325, 0, 0, Math.PI * 2);
     sctx.stroke();
+    sctx.setLineDash([]);
+    // Orbiting sample markers make the motion legible even at a glance.
+    for (let i = 0; i < 3; i += 1) {
+      const angle = t / 1800 + i * Math.PI * 2 / 3;
+      const x = Math.cos(angle) * voidRX;
+      const y = Math.sin(angle) * voidRY;
+      sctx.fillStyle = i === 0
+        ? `rgba(245,179,1,${0.72 * scene})`
+        : `rgba(173,181,197,${0.46 * scene})`;
+      sctx.beginPath();
+      sctx.arc(x, y, i === 0 ? 2.4 : 1.7, 0, Math.PI * 2);
+      sctx.fill();
+    }
     sctx.restore();
   }
   function sizeStatementArt() {
