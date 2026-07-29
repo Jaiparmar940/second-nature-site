@@ -1,6 +1,6 @@
 # second-nature-site
 
-One-page site for Second Nature — physics-grounded environments and evals
+One-page site for Second Nature Labs — physics-grounded environments and evals
 for physical AI. Single self-contained `index.html`, no build step.
 
 - **View locally:** open `index.html` in a browser, or `python3 -m http.server 8712`.

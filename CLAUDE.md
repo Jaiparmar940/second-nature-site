@@ -2,7 +2,7 @@
 
 ## What this is
 
-The one-page marketing site for the company (brand: **"Second Nature"**, chosen 2026-07-19;
+The one-page marketing site for the company (brand: **"Second Nature Labs"**, chosen 2026-07-19;
 previously placeholder "Groundtruth")
 that sells physics-grounded RL environments and evals for physical AI to labs and robotics
 companies. It is a single self-contained `index.html` — no build step, no dependencies, no
@@ -57,7 +57,7 @@ STALE must be synced with `rlenv/results/results.md` before the site is promoted
 
 ## Placeholders that are not real yet
 
-- ~~Brand "Groundtruth"~~ — RESOLVED 2026-07-19: renamed to **"Second Nature"** across
+- ~~Brand "Groundtruth"~~ — RESOLVED 2026-07-19: renamed to **"Second Nature Labs"** across
   `<title>`, meta description, nav logo, hero copy, footer logo, copyright, and this file.
   Icon REPLACED 2026-07-28 — the two-wave mark is gone. It is now the **collapse mark**:
   three rings nested inside one another, all internally tangent at a single point on the
