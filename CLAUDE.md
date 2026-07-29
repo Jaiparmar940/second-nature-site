@@ -59,9 +59,24 @@ STALE must be synced with `rlenv/results/results.md` before the site is promoted
 
 - ~~Brand "Groundtruth"~~ — RESOLVED 2026-07-19: renamed to **"Second Nature"** across
   `<title>`, meta description, nav logo, hero copy, footer logo, copyright, and this file.
-  Icon is now a two-wave mark (faint first pass above, solid amber second pass below —
-  "practiced until instinct", still signal-flavored): favicon data URI + inline SVGs in nav
-  (dark rounded square) and footer (inverted, amber square).
+  Icon REPLACED 2026-07-28 — the two-wave mark is gone. It is now the **collapse mark**:
+  three rings nested inside one another, all internally tangent at a single point on the
+  lower-right diagonal, with a teal (`#3aa189`) dot drawn FIRST so the ring strokes paint
+  over its lower right and it reads as sitting behind them. Belief narrowing onto the true
+  state. **Construction** (32-unit space; outer ring r 8.5 centered at 16,16, stroke 1.9):
+  tangent point `T = 16 + r·√½ = 22.01`; every inner element of radius `rᵢ` is centered at
+  `T − rᵢ·√½` — ring 5.76 @ 17.94, ring 3.54 @ 19.51, dot 2.66 @ 20.51. The dot's center is
+  set back only 2.125, i.e. LESS than its own radius; that overhang past `T` is the entire
+  reason the rings clip it. Two consequences to know before editing: (1) because all three
+  rings converge at `T`, anything poking past it is crossed by all of them at once — you
+  cannot have only the inner ring cover the dot without abandoning the shared tangency;
+  (2) the outer ring is the bounding element and sits dead center, 20.5% padding each side,
+  so recenter on the OUTER ring, never on the mark's bounding box. Three copies must stay
+  in sync: favicon data URI, nav inline SVG (dark rounded square, paper rings), footer
+  inline SVG (paper square, ink rings — was an amber square, changed because amber fights
+  the teal). 300×300 masters live at `logo-300.svg` / `logo-300-transparent.svg` (+ PNGs);
+  nothing on the page references them, so the page stays self-contained. Note the mark's
+  accent is teal while `--accent` is still amber `#f5b301` — deliberate for now, unresolved.
 - ~~GitHub links~~ — RESOLVED 2026-07-17: nav button, footer link, and quickstart clone URL
   all point at the public repo https://github.com/Jaiparmar940/rlenv.
 - ~~`founders@secondnature.dev`~~ — RESOLVED 2026-07-19: that domain was never registered.
