@@ -194,8 +194,12 @@ Everything is in `index.html`:
 - `robots.txt` + `sitemap.xml` exist (single URL, lastmod hand-set — bump on meaningful
   content changes). JSON-LD `sameAs` lists only GitHub; add X/LinkedIn when those profiles
   exist (see pending placeholders).
-- Search Console / Bing verification: intended via DNS TXT at GoDaddy (no page changes,
-  keeps the no-analytics rule); not yet done as of 2026-08-04.
+- Search Console: verified 2026-08-04 via the Google Workspace domain verification (no
+  separate TXT needed — Workspace's `google-site-verification` record carries over).
+  Sitemap submitted same day. Bing: import from GSC.
+- `llms.txt` (added 2026-08-04): plain-markdown company/product summary for AI crawlers.
+  Duplicates facts from the page and rlenv README — keep the benchmark numbers in sync
+  with the table when it changes.
 
 ## Dev / deploy
 
