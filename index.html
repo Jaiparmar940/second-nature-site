@@ -1311,9 +1311,11 @@
   //  2. When input goes idle with a showcase partially entered, the target
   //     moves to the section top and the glide carries you in (forward-only),
   //     briskly after a fast gesture, gently after a slow one.
-  // Keyboard and scrollbar scrolls stay native. Touch stays native until a
-  // downward swipe enters a pinned animation, then the same forward-only
-  // completion used by wheel input takes over. Disabled under reduced motion.
+  // Keyboard and scrollbar scrolls stay native. Touch stays native; a fresh
+  // downward swipe that starts inside a pinned animation is taken over (while
+  // touchmove is still cancelable) with the same forward-only completion used
+  // by wheel input, and anything that ends up parked mid-scene after momentum
+  // settles is finished by the idle assist. Disabled under reduced motion.
   const statementSection = document.getElementById('training-gap');
   const termSection = document.getElementById('environments');
   const benchSection = document.getElementById('benchmark');
@@ -1348,7 +1350,7 @@
   };
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
-  let snapTimer = 0, gestureTimer = 0, lastWheelT = 0;
+  let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
   let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
@@ -1404,12 +1406,19 @@
   }
   function maybeSnap() {
     if (scrollDir < 0) return;
-    // parked at or just past a section boundary (e.g. a capped flick landed
-    // there)? that's a deliberate stop — never chain-snap into the next section
+    // never assist mid-playback, or while a finger is still on the screen —
+    // completing a scene under a resting finger reads as the page moving on
+    // its own, and the finger's next move would fight the autoplay
+    if (autoplay.active || touchActive) return;
+    // parked at a section boundary (a capped flick or a takeover landed
+    // there)? that's a deliberate stop — never chain-snap into the next
+    // section. Deliberate landings sit within a couple of px of the
+    // boundary; a wider window would also swallow touch momentum that
+    // happens to die just past one, which should get the assists below.
     const restY = smooth.active ? smooth.target : scrollY;
     for (const top of boundaryTops(scrollY)) {
       const d = restY - top;
-      if (d >= -2 && d < innerHeight * 0.2) return;
+      if (d >= -2 && d < 6) return;
     }
     // glide pace tracks how hard the user was scrolling
     const tau = clamp(260 - wheelVel, 120, 260);
@@ -1419,6 +1428,27 @@
     const heroStop = heroStopTop();
     if (restY > heroTop + (heroShellEl.offsetHeight - innerHeight) * 0.35 &&
         restY < heroStop - 2) { glideTo(heroStop, tau); return; }
+    // parked past the hero's stop — momentum died during the card's exit or
+    // inside the statement scene, leaving a half-scrolled card or half-faded
+    // copy. Play through to the statement's end, like the wheel bridge does.
+    // (A rest exactly ON heroStop or the statement top already returned in
+    // the boundary check above, so those deliberate stops still hold.)
+    const statementEndY = statementSection.getBoundingClientRect().top + scrollY +
+      statementSection.offsetHeight - innerHeight;
+    if (restY >= heroStop - 2 && restY < statementEndY - 4) {
+      playRemainingRange(statementEndY, performance.now(), 1650);
+      return;
+    }
+    // parked mid-way through a pinned data scene: finish it the way a
+    // downward wheel would (half-tilted panels are never a resting pose)
+    for (const el of [termSection, benchSection]) {
+      const top = el.getBoundingClientRect().top + scrollY;
+      const end = top + el.offsetHeight - innerHeight;
+      if (restY > top && restY < end - 4) {
+        playRemainingRange(end, performance.now());
+        return;
+      }
+    }
     for (const { el, threshold } of snapTargets) {
       const top = el.getBoundingClientRect().top;
       const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
@@ -1524,11 +1554,19 @@
     });
     // Mobile touch has no wheel event, so detect the downward swipe directly.
     // Keep ordinary touch scrolling native; only take over once the gesture has
-    // entered the hero copy or one of the pinned animation ranges. A new touch
-    // (including an upward one) still cancels playback and returns control.
+    // entered the hero copy or one of the pinned animation ranges — and only
+    // while the event is still cancelable. Once native scrolling has started,
+    // browsers dispatch touchmove with cancelable:false and preventDefault is
+    // ignored, so a mid-gesture takeover just fights the native scroll (the
+    // scroll listener cancels the playback on deviation, the next touchmove
+    // restarts it — visible jitter). In that case stay native and let the
+    // idle assist in maybeSnap finish the scene after momentum ends. A new
+    // touch (including an upward one) still cancels playback and returns
+    // control.
     let touchY = 0;
     addEventListener('touchstart', (e) => {
       cancelAutoplay();
+      touchActive = true;
       touchY = e.touches[0] ? e.touches[0].clientY : 0;
     }, { passive: true });
     addEventListener('touchmove', (e) => {
@@ -1542,7 +1580,7 @@
       }
       scrollDir = 1;
       if (autoplay.active) {
-        e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         return;
       }
 
@@ -1571,12 +1609,19 @@
           }
         }
       }
-      if (touchTarget) {
+      if (touchTarget && e.cancelable) {
         e.preventDefault();
         playRemainingRange(touchTarget, e.timeStamp, touchPace);
       }
     }, { passive: false });
-    addEventListener('touchend', () => queueSnap(180), { passive: true });
+    addEventListener('touchend', (e) => {
+      touchActive = e.touches.length > 0;
+      if (!touchActive) queueSnap(180);
+    }, { passive: true });
+    addEventListener('touchcancel', (e) => {
+      touchActive = e.touches.length > 0;
+      if (!touchActive) queueSnap(180);
+    }, { passive: true });
     addEventListener('keydown', cancelAutoplay, { passive: true });
   }
 

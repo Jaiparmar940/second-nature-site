@@ -139,6 +139,27 @@ Everything is in `index.html`:
   Touch/keyboard/scrollbar stay native: a scroll event deviating >1.5px from
   `smooth.current` re-syncs and deactivates (so the cap cannot apply to touch; idle snap
   still can). All skipped under reduced motion.
+- **Touch takeover + idle scene completion** (reworked 2026-08-04 — the first touch pass
+  jittered): a downward swipe entering the hero copy / bridge / a pinned range is taken
+  over (preventDefault + `playRemainingRange`) **only while `e.cancelable` is true**.
+  Once native scrolling has started, browsers dispatch touchmove with cancelable:false
+  and preventDefault is silently ignored — the old code took over anyway, its `scrollTo`
+  writes fought the live native scroll, the deviation check cancelled the playback, the
+  next touchmove restarted it: visible jitter. Now a mid-gesture entry stays native and
+  `maybeSnap` (fired via the scroll listener ~160ms after momentum dies, also on
+  touchend) finishes the scene: rest past heroStop → play the bridge to statementEnd
+  (pace 1650); rest inside the term/bench sticky range → play to its end. Guards at the
+  top of `maybeSnap`: never while `autoplay.active` or while a finger is down
+  (`touchActive`, set in touchstart / cleared in touchend+touchcancel). The
+  "parked at a boundary = deliberate stop" window was tightened from 20% viewport to
+  **6px** to allow this — wheel caps/takeovers land within ~2px of a boundary, whereas
+  touch momentum dying 90px past the statement top used to be swallowed by the wide
+  window and rest half-faded. Verified by CDP headless-Chrome tests (touch gestures +
+  wheel): mobile swipes/flicks land on heroStop/scene ends with zero scroll reversals,
+  and desktop wheel behavior is identical to main across cap/settle/bridge/boundary
+  scenarios. Test harness quirks: rAF is fully suspended in the Claude Code browser pane
+  AND in background real-Chrome windows — scroll behavior is only testable via headless
+  CDP (`Input.synthesizeScrollGesture`) or a foregrounded browser.
 - **Nav-link autoplay** (added 2026-07-20): clicking a nav link whose href is in
   `autoplayHrefs` (`#environments`, `#benchmark`) does not just park at the section top —
   that is the stage's *first* frame, deepest tilt, nothing filled in. The click glides to
