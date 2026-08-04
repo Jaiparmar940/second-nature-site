@@ -181,6 +181,22 @@ Everything is in `index.html`:
   scrolled positions (returns blank frames; reproduces on scale.com too). Verify sections by
   temporarily hiding preceding DOM so the target sits at scrollTop 0, or use a real browser.
 
+## SEO surface (added 2026-08-04, branch seo-foundation)
+
+- `<head>` carries canonical (`https://snlabs.dev/`), Open Graph + Twitter card tags, and
+  JSON-LD (`Organization` + `SoftwareApplication` for no-start-env). The OG/Twitter
+  description is the meta description minus the leading brand name. If copy, brand, email,
+  or repo URLs change, update these too — they duplicate facts stated elsewhere on the page.
+- `og-image.png` (1200×630) is the share card; `og-card.html` is its source. Regenerate with
+  headless Chrome: `chrome --headless=new --window-size=1200,630 --screenshot=og-image.png
+  og-card.html`. Referencing it via absolute URL doesn't break self-containment — only
+  social scrapers fetch it, never the page.
+- `robots.txt` + `sitemap.xml` exist (single URL, lastmod hand-set — bump on meaningful
+  content changes). JSON-LD `sameAs` lists only GitHub; add X/LinkedIn when those profiles
+  exist (see pending placeholders).
+- Search Console / Bing verification: intended via DNS TXT at GoDaddy (no page changes,
+  keeps the no-analytics rule); not yet done as of 2026-08-04.
+
 ## Dev / deploy
 
 - Local: open `index.html` directly, or `python3 -m http.server 8712` and browse.
