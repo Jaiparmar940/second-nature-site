@@ -1552,17 +1552,16 @@
         if (play) pendingAutoplay = top + (el.offsetHeight - innerHeight);
       });
     });
-    // Mobile touch has no wheel event, so detect the downward swipe directly.
-    // Keep ordinary touch scrolling native; only take over once the gesture has
-    // entered the hero copy or one of the pinned animation ranges — and only
-    // while the event is still cancelable. Once native scrolling has started,
-    // browsers dispatch touchmove with cancelable:false and preventDefault is
-    // ignored, so a mid-gesture takeover just fights the native scroll (the
-    // scroll listener cancels the playback on deviation, the next touchmove
-    // restarts it — visible jitter). In that case stay native and let the
-    // idle assist in maybeSnap finish the scene after momentum ends. A new
-    // touch (including an upward one) still cancels playback and returns
-    // control.
+    // Mobile touch: scrolling stays fully native — never take over a live
+    // gesture. A takeover (preventDefault + fixed-pace playback) breaks the
+    // 1:1 finger→motion mapping, and because every touchstart cancels the
+    // playback while the next swipe restarts it at the ramp's zero point,
+    // choppy swiping advanced only a few px per swipe — the page felt like
+    // it was eating scroll input. Touches only steer the assists now: a
+    // touchstart cancels any running playback and marks the finger down
+    // (maybeSnap waits), and once the finger lifts and momentum dies, the
+    // idle assist settles the hero or finishes whatever scene the page
+    // rested in.
     let touchY = 0;
     addEventListener('touchstart', (e) => {
       cancelAutoplay();
@@ -1574,46 +1573,11 @@
       if (!touch) return;
       const dy = touchY - touch.clientY;
       touchY = touch.clientY;
-      if (dy <= 0) {
-        if (dy < -2) scrollDir = -1;
-        return;
-      }
-      scrollDir = 1;
-      if (autoplay.active) {
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-
-      const projectedY = scrollY + dy;
-      const heroTop = heroShellEl.getBoundingClientRect().top + scrollY;
-      const heroRange = heroShellEl.offsetHeight - innerHeight;
-      const heroStop = heroStopTop();
-      const statementEnd = statementSection.getBoundingClientRect().top + scrollY +
-        statementSection.offsetHeight - innerHeight;
-
-      let touchTarget = 0;
-      let touchPace;
-      if (projectedY >= heroTop + heroRange * 0.35 && scrollY < heroStop - 4) {
-        touchTarget = heroStop;
-        touchPace = 1650;
-      } else if (projectedY >= heroStop - 2 && scrollY < statementEnd - 4) {
-        touchTarget = statementEnd;
-        touchPace = 1650;
-      } else {
-        for (const el of stickyEnds) {
-          const top = el.getBoundingClientRect().top + scrollY;
-          const end = top + el.offsetHeight - innerHeight;
-          if (projectedY >= top - 2 && scrollY < end - 4) {
-            touchTarget = end;
-            break;
-          }
-        }
-      }
-      if (touchTarget && e.cancelable) {
-        e.preventDefault();
-        playRemainingRange(touchTarget, e.timeStamp, touchPace);
-      }
-    }, { passive: false });
+      // record intent even before the scroll position moves (e.g. an upward
+      // drag while parked at a scene end must block the forward-only assist)
+      if (dy > 2) scrollDir = 1;
+      else if (dy < -2) scrollDir = -1;
+    }, { passive: true });
     addEventListener('touchend', (e) => {
       touchActive = e.touches.length > 0;
       if (!touchActive) queueSnap(180);
