@@ -139,6 +139,32 @@ Everything is in `index.html`:
   Touch/keyboard/scrollbar stay native: a scroll event deviating >1.5px from
   `smooth.current` re-syncs and deactivates (so the cap cannot apply to touch; idle snap
   still can). All skipped under reduced motion.
+- **Touch: fully native gestures + idle scene completion** (reworked 2026-08-04/05 after
+  two failed takeover designs — do NOT reintroduce a touch takeover): touch scrolling is
+  never intercepted; touchmove is passive and only records `scrollDir`. Two prior
+  approaches both shipped briefly and failed: (1) unconditional mid-gesture takeover —
+  once native scrolling starts, touchmove arrives cancelable:false, preventDefault is
+  silently ignored, and the playback's scrollTo writes fought the live scroll (jitter);
+  (2) takeover only while `e.cancelable` — no jitter, but a fresh swipe starting inside
+  a scene was hijacked into a fixed-pace playback whose ramp restarts on every
+  touchstart-cancel, so choppy swiping through the benchmark advanced a few px per
+  swipe ("page eats my scrolling", Jaivir's 2026-08-04 phone report). Assists now run
+  only between gestures, from `maybeSnap` (fired ~160ms after momentum dies via the
+  scroll listener's adoption path, and on touchend/touchcancel): rest past heroStop →
+  play the bridge to statementEnd (pace 1650); rest inside the term/bench sticky range
+  → play to its end; plus the pre-existing hero settle and section entry snaps. Guards
+  at the top of `maybeSnap`: never while `autoplay.active` or while a finger is down
+  (`touchActive`, set in touchstart / cleared in touchend+touchcancel when no touches
+  remain). A touchstart cancels any running playback, so the user can always stop an
+  assist. The "parked at a boundary = deliberate stop" window was tightened from 20%
+  viewport to **6px** — wheel caps/glides land within ~2px of a boundary, while touch
+  momentum dying 90px past a section top must get the assist instead of resting
+  half-faded. Verified by CDP headless-Chrome tests (touch gestures + wheel), incl. the
+  choppy-swipe repro (three 120px swipes mid-benchmark must each advance ≥~100px) and a
+  main-vs-branch desktop wheel comparison (identical across cap/settle/bridge/boundary
+  scenarios). Test harness quirks: rAF is fully suspended in the Claude Code browser
+  pane AND in background real-Chrome windows — scroll behavior is only testable via
+  headless CDP (`Input.synthesizeScrollGesture`) or a foregrounded browser.
 - **Nav-link autoplay** (added 2026-07-20): clicking a nav link whose href is in
   `autoplayHrefs` (`#environments`, `#benchmark`) does not just park at the section top —
   that is the stage's *first* frame, deepest tilt, nothing filled in. The click glides to
