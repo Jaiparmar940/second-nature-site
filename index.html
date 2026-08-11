@@ -1240,15 +1240,20 @@
   });
   if (!reduced) termLines[0].appendChild(caret);
   let typeRun = 0;
-  function typeTerminal() {
-    if (reduced) { termLines.forEach((l) => l.classList.add('on')); return; }
-    const run = ++typeRun;
+  function resetTerminalTranscript() {
+    if (reduced) return;
+    typeRun += 1;
     caret.remove();
     typeSeq.forEach(({ line, nodes }) => {
       line.classList.remove('on');
       nodes.forEach((t) => { t.node.nodeValue = ''; });
     });
     termLines[0].appendChild(caret);
+  }
+  function typeTerminal() {
+    if (reduced) { termLines.forEach((l) => l.classList.add('on')); return; }
+    resetTerminalTranscript();
+    const run = typeRun;
     const later = (fn, delay) => setTimeout(() => {
       if (run === typeRun) fn();
     }, delay);
@@ -1288,7 +1293,7 @@
   // Typing is triggered from frame() once the terminal stage has settled at its
   // final position — see the SETTLE gate there. Reduced motion has no stage
   // animation to wait on, so the transcript is simply there.
-  let termTyped = false, termTypeTimer = 0;
+  let termTyped = false, termTypeTimer = 0, termWasInView = false;
   replayTerminal.addEventListener('click', () => {
     clearTimeout(termTypeTimer);
     termTypeTimer = 0;
@@ -1358,6 +1363,7 @@
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
   let statementSnapLock = false, statementSnapLastWheelT = 0;
+  let statementSnapStartedAt = 0, statementSnapLastAbsDy = 0;
   let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
@@ -1499,12 +1505,19 @@
       const dy = e.deltaY * unit;
       // Once the statement snap starts, absorb the tail of the same downward
       // trackpad gesture so momentum cannot drag the page past its centered
-      // landing. A gap or any upward input immediately returns control.
+      // landing. A gap, upward input, or a renewed high-amplitude swipe
+      // immediately returns control without requiring pointer movement.
       if (statementSnapLock) {
-        if (dy < 0 || e.timeStamp - statementSnapLastWheelT > 300) {
+        const absDy = Math.abs(dy);
+        const renewedSwipe = dy > 0 && e.timeStamp - statementSnapStartedAt > 220 &&
+          absDy > Math.max(10, statementSnapLastAbsDy * 1.5);
+        const renewedWheel = e.deltaMode !== 0 && !smooth.active;
+        if (dy < 0 || e.timeStamp - statementSnapLastWheelT > 300 ||
+            renewedSwipe || renewedWheel) {
           statementSnapLock = false;
         } else {
           statementSnapLastWheelT = e.timeStamp;
+          statementSnapLastAbsDy = absDy;
           scrollDir = 1;
           return;
         }
@@ -1523,7 +1536,9 @@
           inGesture = false;
           scrollDir = 1;
           statementSnapLock = true;
+          statementSnapStartedAt = e.timeStamp;
           statementSnapLastWheelT = e.timeStamp;
+          statementSnapLastAbsDy = Math.abs(dy);
           glideTo(statementTop, 110);
           return;
         }
@@ -1753,7 +1768,17 @@
       benchCap.style.opacity = clamp((p - 0.55) / 0.25, 0, 1);
       benchCap.style.transform = `translateY(${lerp(24, 0, clamp((p - 0.55) / 0.25, 0, 1))}px)`;
 
-      // Terminal stage: opposite tilt.
+      // Terminal stage: opposite tilt. Each downward entry re-arms the
+      // transcript once; upward passes keep the current transcript untouched.
+      const termRect = termSection.getBoundingClientRect();
+      const termInView = termRect.top < innerHeight && termRect.bottom > 0;
+      if (termInView && !termWasInView && scrollDir > 0) {
+        clearTimeout(termTypeTimer);
+        termTypeTimer = 0;
+        termTyped = false;
+        resetTerminalTranscript();
+      }
+      termWasInView = termInView;
       p = stickyProgress(termSection);
       e = 1 - Math.pow(1 - p, 2);
       termPanel.style.transform =
