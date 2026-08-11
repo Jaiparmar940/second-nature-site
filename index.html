@@ -1290,6 +1290,7 @@
   const termSection = document.getElementById('environments');
   const benchSection = document.getElementById('benchmark');
   const snapTargets = [
+    { el: statementSection, threshold: 0.25, desktopOnly: true },
     { el: termSection, threshold: 0.35 },
     { el: benchSection, threshold: 0.25 }
   ];
@@ -1392,7 +1393,8 @@
         return;
       }
     }
-    for (const { el, threshold } of snapTargets) {
+    for (const { el, threshold, desktopOnly } of snapTargets) {
+      if (desktopOnly && !matchMedia('(hover: hover) and (pointer: fine)').matches) continue;
       const top = el.getBoundingClientRect().top;
       const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
       const entered = (innerHeight - finalTop) / innerHeight;
