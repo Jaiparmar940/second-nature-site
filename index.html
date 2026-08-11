@@ -139,8 +139,8 @@
   .btn-ghost-dark { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
   .btn-ghost-dark:hover { border-color: rgba(255, 255, 255, 0.6); }
 
-  /* ================= hero: pinned card with two text slides ================= */
-  .hero-shell { height: 220vh; position: relative; background: #060606; }
+  /* ================= hero: pinned headline ================= */
+  .hero-shell { height: 150vh; position: relative; background: #060606; }
   .hero-pin {
     position: sticky;
     top: 0;
@@ -172,8 +172,7 @@
     text-align: center;
     /* The card starts below the nav, so centering in the card puts the headline
        half a nav-height low on screen. Paying the nav back as bottom padding
-       centers it in the visible dark band instead. copy2 needs no such offset —
-       it appears mid-pin, by which point the card is flush with the viewport. */
+       centers it in the visible dark band instead. */
     padding: 0 24px var(--nav-h);
   }
   .hero-copy h1 {
@@ -213,25 +212,6 @@
   .hero-card { will-change: transform; }
   .hero-copy h1 { will-change: transform, opacity; }
 
-  .hero-copy2 {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 24px;
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-  .hero-copy2 p {
-    max-width: 56ch;
-    font-size: clamp(17px, 1.7vw, 22px);
-    line-height: 1.75;
-    color: #ded9cf;
-    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
-  }
-
   /* ================= dark region ================= */
   .dark {
     background: var(--bg);
@@ -265,7 +245,7 @@
     letter-spacing: -0.01em;
   }
   .statement {
-    height: 150vh;
+    height: 120vh;
     position: relative;
   }
   .statement-pin {
@@ -700,7 +680,6 @@
     .terminal-replay { display: none; }
     .hero-shell { height: auto; }
     .hero-pin { position: static; height: 100vh; }
-    .hero-copy2 { opacity: 1; align-items: flex-end; padding-bottom: 9vh; }
     .statement { height: auto; }
     .statement-pin { position: static; height: auto; padding: 20vh 0 16vh; }
     .statement-copy { opacity: 1; transform: none; }
@@ -735,14 +714,6 @@
       <div class="hero-veil"></div>
       <div class="hero-copy">
         <h1>The physical world doesn't grade on a curve.</h1>
-      </div>
-      <div class="hero-copy2">
-        <p>
-          AI is leaving the chat window and entering machines. Second Nature Labs builds training
-          environments and evals where agents pursue goals in simulated physical systems:
-          observing through sensors and instruments, choosing actions, and adapting to their
-          consequences under time, cost, and safety constraints.
-        </p>
       </div>
       <div class="scroll-cue">Scroll to explore <span class="box">↓</span></div>
     </div>
@@ -1075,7 +1046,6 @@
   const heroCardEl = document.querySelector('.hero-card');
   const heroShell = document.querySelector('.hero-shell');
   const heroH1 = document.querySelector('.hero-copy h1');
-  const heroCopy2 = document.querySelector('.hero-copy2');
   const heroCue = document.querySelector('.scroll-cue');
   let W = 0, H = 0, DPR = 1, dust = [];
 
@@ -1313,11 +1283,9 @@
   //  2. When input goes idle with a showcase partially entered, the target
   //     moves to the section top and the glide carries you in (forward-only),
   //     briskly after a fast gesture, gently after a slow one.
-  // Keyboard and scrollbar scrolls stay native. Touch stays native; a fresh
-  // downward swipe that starts inside a pinned animation is taken over (while
-  // touchmove is still cancelable) with the same forward-only completion used
-  // by wheel input, and anything that ends up parked mid-scene after momentum
-  // settles is finished by the idle assist. Disabled under reduced motion.
+  // Keyboard, scrollbar, and touch scrolling stay native. Anything that ends
+  // up parked mid-way through a data scene after momentum settles is finished
+  // by the idle assist. Disabled under reduced motion.
   const statementSection = document.getElementById('training-gap');
   const termSection = document.getElementById('environments');
   const benchSection = document.getElementById('benchmark');
@@ -1328,23 +1296,13 @@
   const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
     '#customers', '#quickstart', '#contact', '#founder']
     .map((s) => document.querySelector(s)).filter(Boolean);
-  // The hero's second text slide lives INSIDE the pinned hero shell, so it has
-  // no element boundary of its own — without a virtual stop a single flick
-  // carries straight through it. Stop late in the hero's scroll distance,
-  // after the slide is fully faded in but before its exit drift begins.
-  const heroShellEl = document.querySelector('.hero-shell');
-  const heroStopProgress = 0.82;
-  const heroStopTop = () =>
-    heroShellEl.getBoundingClientRect().top + scrollY +
-    (heroShellEl.offsetHeight - innerHeight) * heroStopProgress;
   // The pinned scenes play their animation across the section's extra
   // height; a boundary at top + (height − viewport) is the exact point where
   // the animation has fully played — stop there too, so leaving the finished
   // demo/results takes its own gesture.
-  const stickyEnds = [statementSection, termSection, benchSection].filter(Boolean);
+  const stickyEnds = [termSection, benchSection].filter(Boolean);
   const boundaryTops = (y0) => {
     const tops = gestureBounds.map((el) => el.getBoundingClientRect().top + y0);
-    tops.push(heroStopTop());
     for (const el of stickyEnds) {
       tops.push(el.getBoundingClientRect().top + y0 + el.offsetHeight - innerHeight);
     }
@@ -1422,25 +1380,8 @@
       const d = restY - top;
       if (d >= -2 && d < 6) return;
     }
-    // glide pace tracks how hard the user was scrolling
+    // Glide pace tracks how hard the user was scrolling.
     const tau = clamp(260 - wheelVel, 120, 260);
-    // idle partway into the hero's second slide → settle on it, so the copy
-    // is read at full opacity instead of half-faded
-    const heroTop = heroShellEl.getBoundingClientRect().top + scrollY;
-    const heroStop = heroStopTop();
-    if (restY > heroTop + (heroShellEl.offsetHeight - innerHeight) * 0.35 &&
-        restY < heroStop - 2) { glideTo(heroStop, tau); return; }
-    // parked past the hero's stop — momentum died during the card's exit or
-    // inside the statement scene, leaving a half-scrolled card or half-faded
-    // copy. Play through to the statement's end, like the wheel bridge does.
-    // (A rest exactly ON heroStop or the statement top already returned in
-    // the boundary check above, so those deliberate stops still hold.)
-    const statementEndY = statementSection.getBoundingClientRect().top + scrollY +
-      statementSection.offsetHeight - innerHeight;
-    if (restY >= heroStop - 2 && restY < statementEndY - 4) {
-      playRemainingRange(statementEndY, performance.now(), 1650);
-      return;
-    }
     // parked mid-way through a pinned data scene: finish it the way a
     // downward wheel would (half-tilted panels are never a resting pose)
     for (const el of [termSection, benchSection]) {
@@ -1466,18 +1407,6 @@
       e.preventDefault();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
       const dy = e.deltaY * unit;
-      // Bridge the hero's centered copy directly into the training-gap scene.
-      // This bypasses the statement's transparent first frame and uses a faster
-      // pace than the data showcases below it.
-      const statementEnd = statementSection.getBoundingClientRect().top + scrollY +
-        statementSection.offsetHeight - innerHeight;
-      const wheelTarget = (smooth.active ? smooth.target : scrollY) + dy;
-      const inHeroStatementBridge = Math.max(scrollY, wheelTarget) >= heroStopTop() - 2 &&
-        scrollY < statementEnd - 4;
-      if (dy > 0 && inHeroStatementBridge) {
-        playRemainingRange(statementEnd, e.timeStamp, 1650);
-        return;
-      }
       // Once a pinned scene has begun moving, any downward wheel input
       // plays its remaining range exactly like the matching nav link does.
       // Downward input during playback leaves it running; upward input falls
@@ -1656,38 +1585,33 @@
     }
     lastFrameT = now;
     if (!reduced) {
-      // Hero: pinned two-slide choreography — headline floats out, sub copy floats
-      // into center, card stays as one continuous background into the dark region.
+      // Hero: the headline floats out as the Polanyi statement approaches.
       const hr = heroShell.getBoundingClientRect();
       if (hr.bottom > -100) drawHero(now);
       const sp = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
-      const aOut = clamp(sp / 0.42, 0, 1);
+      const aOut = clamp(sp / 0.90, 0, 1);
       heroH1.style.transform = `translateY(${-aOut * 150}px) scale(${1 - aOut * 0.06})`;
       heroH1.style.opacity = 1 - aOut;
-      const aIn = clamp((sp - 0.30) / 0.28, 0, 1);
-      const eIn = 1 - Math.pow(1 - aIn, 3);
-      const drift = clamp((sp - 0.90) / 0.10, 0, 1);
-      heroCopy2.style.opacity = Math.min(1, aIn * 1.5) * (1 - drift * 0.25);
-      heroCopy2.style.transform = `translateY(${lerp(260, 0, eIn) - drift * 56}px)`;
       heroCue.style.opacity = 1 - clamp(sp / 0.1, 0, 1);
 
-      // Training-gap statement: the same rise-and-fade entrance as the hero's
-      // second copy slide, resolving to a fully visible centered resting pose.
-      let p = stickyProgress(statementSection);
+      // The statement rises into place while its section enters the viewport,
+      // so the hero hands directly to readable copy without another long
+      // pinned-scroll animation.
       const statementRect = statementSection.getBoundingClientRect();
+      const statementIn = clamp(
+        (innerHeight - statementRect.top) / (innerHeight * 0.8), 0, 1);
       if (statementRect.bottom > -100 && statementRect.top < innerHeight + 100) {
-        drawTrainingField(now, p);
+        drawTrainingField(now, statementIn);
       }
-      const statementIn = clamp(p / 0.68, 0, 1);
       const statementEase = 1 - Math.pow(1 - statementIn, 3);
       statementCopy.style.opacity = Math.min(1, statementIn * 1.5);
-      statementCopy.style.transform = `translateY(${lerp(260, 0, statementEase)}px)`;
+      statementCopy.style.transform = `translateY(${lerp(180, 0, statementEase)}px)`;
 
       // Benchmark stage: settle from a deep tilt to nearly flat.
       // On phones, damp the 3D amplitude — full-size tilts overshoot the small
       // stages and ride panels over the captions below them.
       const mob = innerWidth < 640 ? 0.35 : 1;
-      p = stickyProgress(benchSection);
+      let p = stickyProgress(benchSection);
       let e = 1 - Math.pow(1 - p, 2);
       // The stage itself is centered by .showcase-sticky; finish the main
       // results window at translateY(0) so the completed pose shares that
