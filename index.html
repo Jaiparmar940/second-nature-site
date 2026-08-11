@@ -1467,15 +1467,22 @@
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
       const dy = e.deltaY * unit;
       // Bridge the hero's centered copy directly into the training-gap scene.
-      // This bypasses the statement's transparent first frame and uses a faster
-      // pace than the data showcases below it.
+      // Use the same short exponential glide that brings the hero copy into
+      // place instead of the longer paced autoplay used by the data showcases.
+      // This wheel-only branch intentionally leaves the mobile touch path below
+      // unchanged.
       const statementEnd = statementSection.getBoundingClientRect().top + scrollY +
         statementSection.offsetHeight - innerHeight;
       const wheelTarget = (smooth.active ? smooth.target : scrollY) + dy;
       const inHeroStatementBridge = Math.max(scrollY, wheelTarget) >= heroStopTop() - 2 &&
         scrollY < statementEnd - 4;
       if (dy > 0 && inHeroStatementBridge) {
-        playRemainingRange(statementEnd, e.timeStamp, 1650);
+        cancelAutoplay();
+        clearTimeout(snapTimer);
+        clearTimeout(gestureTimer);
+        inGesture = false;
+        glideTo(statementEnd, 110);
+        scrollDir = 1;
         return;
       }
       // Once a pinned scene has begun moving, any downward wheel input
