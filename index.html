@@ -97,9 +97,7 @@
     top: 0;
     z-index: 100;
     background: var(--paper-hi);
-    transition: transform 0.35s ease;
   }
-  nav.hidden { transform: translateY(-110%); }
   .nav-inner {
     display: flex;
     align-items: center;
@@ -231,8 +229,12 @@
   .section-nav-down {
     animation: cue-bob 2.4s ease-in-out infinite;
   }
+  .section-nav-up {
+    animation: cue-bob-up 2.4s ease-in-out infinite;
+  }
   .section-nav-button:hover { animation-play-state: paused; }
   @keyframes cue-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+  @keyframes cue-bob-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
   .hero-card { will-change: transform; }
   .hero-copy h1 { will-change: transform, opacity; }
@@ -734,7 +736,7 @@
 </nav>
 
 <div class="section-nav" aria-label="Section navigation">
-  <span class="section-nav-label">Scroll to explore</span>
+  <span class="section-nav-label">Scroll or press arrows to explore.</span>
   <button class="section-nav-button section-nav-up" type="button" aria-label="Go to previous section" hidden>↑</button>
   <button class="section-nav-button section-nav-down" type="button" aria-label="Go to next section">↓</button>
 </div>
@@ -1295,12 +1297,10 @@
   });
   if (reduced) { termTyped = true; typeTerminal(); }
 
-  /* ---------- nav hide on scroll down ---------- */
-  const nav = document.getElementById('nav');
+  /* ---------- scroll direction ---------- */
   let lastY = scrollY, scrollDir = 1;
   addEventListener('scroll', () => {
     const y = scrollY;
-    nav.classList.toggle('hidden', y > 400 && y > lastY);
     if (y !== lastY) scrollDir = y > lastY ? 1 : -1;
     lastY = y;
   }, { passive: true });
@@ -1322,8 +1322,9 @@
   const statementSection = document.getElementById('training-gap');
   const termSection = document.getElementById('environments');
   const benchSection = document.getElementById('benchmark');
+  const statementSnapThreshold = 0.25;
   const snapTargets = [
-    { el: statementSection, threshold: 0.25, desktopOnly: true },
+    { el: statementSection, threshold: statementSnapThreshold, desktopOnly: true },
     { el: termSection, threshold: 0.35 },
     { el: benchSection, threshold: 0.25 }
   ];
@@ -1356,6 +1357,7 @@
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
+  let statementSnapLock = false, statementSnapLastWheelT = 0;
   let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
@@ -1425,6 +1427,7 @@
     const target = direction < 0 && isAutoplaySection(el) ? rangeEnd : top;
 
     cancelAutoplay();
+    statementSnapLock = false;
     clearTimeout(snapTimer);
     clearTimeout(gestureTimer);
     inGesture = false;
@@ -1494,6 +1497,37 @@
       e.preventDefault();
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
       const dy = e.deltaY * unit;
+      // Once the statement snap starts, absorb the tail of the same downward
+      // trackpad gesture so momentum cannot drag the page past its centered
+      // landing. A gap or any upward input immediately returns control.
+      if (statementSnapLock) {
+        if (dy < 0 || e.timeStamp - statementSnapLastWheelT > 300) {
+          statementSnapLock = false;
+        } else {
+          statementSnapLastWheelT = e.timeStamp;
+          scrollDir = 1;
+          return;
+        }
+      }
+      // Do not wait for trackpad momentum to decay before completing the
+      // hero-to-statement handoff. As soon as the same entry threshold used by
+      // the idle snap is crossed, take over with the short exponential glide.
+      if (dy > 0 && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const statementTop = sectionTop(statementSection);
+        const projectedY = (smooth.active ? smooth.target : scrollY) + dy;
+        const entered = (innerHeight - (statementTop - projectedY)) / innerHeight;
+        if (scrollY < statementTop - 2 && entered >= statementSnapThreshold) {
+          cancelAutoplay();
+          clearTimeout(snapTimer);
+          clearTimeout(gestureTimer);
+          inGesture = false;
+          scrollDir = 1;
+          statementSnapLock = true;
+          statementSnapLastWheelT = e.timeStamp;
+          glideTo(statementTop, 110);
+          return;
+        }
+      }
       // Once a pinned scene has begun moving, any downward wheel input
       // plays its remaining range exactly like the matching nav link does.
       // Downward input during playback leaves it running; upward input falls
@@ -1561,6 +1595,7 @@
         if (!el) return;
         e.preventDefault();
         cancelAutoplay();
+        statementSnapLock = false;
         const top = scrollY + el.getBoundingClientRect().top;
         const play = autoplayHrefs.includes(href);
         // sections that go on to autoplay get a brisker approach: the arrival is
@@ -1583,6 +1618,7 @@
     let touchY = 0;
     addEventListener('touchstart', (e) => {
       cancelAutoplay();
+      statementSnapLock = false;
       touchActive = true;
       touchY = e.touches[0] ? e.touches[0].clientY : 0;
     }, { passive: true });
