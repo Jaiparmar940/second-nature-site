@@ -185,28 +185,53 @@
     text-wrap: balance;
     text-shadow: 0 2px 40px rgba(0, 0, 0, 0.45);
   }
-  .scroll-cue {
-    position: absolute;
+  .section-nav {
+    position: fixed;
     right: 34px;
-    /* +--nav-h so the cue clears the fold at scrollTop 0 (the card's own bottom
-       edge is that far below it). It drifts down to a normal 28px inset as the
-       nav scrolls away, by which point the cue is already fading out. */
-    bottom: calc(28px + var(--nav-h));
+    bottom: 28px;
+    z-index: 90;
     display: flex;
     align-items: center;
     gap: 14px;
     color: #e9e6df;
     font-size: 14px;
   }
-  .scroll-cue .box {
+  .section-nav-label { white-space: nowrap; }
+  .section-nav [hidden] { display: none; }
+  .section-nav-button {
     width: 40px;
     height: 40px;
     border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: 8px;
+    background: rgba(6, 6, 6, 0.72);
+    color: inherit;
+    font: inherit;
+    font-size: 21px;
+    line-height: 1;
     display: grid;
     place-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  }
+  .section-nav-button:hover {
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(18, 18, 18, 0.86);
+    transform: translateY(-1px);
+  }
+  .section-nav-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .section-nav-button.is-invisible {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .section-nav-down {
     animation: cue-bob 2.4s ease-in-out infinite;
   }
+  .section-nav-button:hover { animation-play-state: paused; }
   @keyframes cue-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
   .hero-card { will-change: transform; }
@@ -644,6 +669,7 @@
     .nav-inner { gap: 16px; }
     .nav-cta { gap: 8px; }
     .btn { white-space: nowrap; padding: 9px 14px; font-size: 13px; }
+    .section-nav { right: 20px; bottom: 20px; gap: 10px; }
     /* statement: size the Polanyi quote to exactly fill one line — 14.3 is
        the quote's measured em-width (13.63 in SF) plus slack for Roboto */
     .statement-copy h2 { font-size: clamp(16px, calc((100vw - 44px) / 14.3), 30px); }
@@ -673,7 +699,7 @@
     .split-panel { padding: 24px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cue .box { animation: none; }
+    .section-nav-button { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
     .t-line { transition: none; opacity: 1; transform: none; }
     .t-caret { display: none; }
@@ -707,6 +733,12 @@
   </div>
 </nav>
 
+<div class="section-nav" aria-label="Section navigation">
+  <span class="section-nav-label">Scroll to explore</span>
+  <button class="section-nav-button section-nav-up" type="button" aria-label="Go to previous section" hidden>↑</button>
+  <button class="section-nav-button section-nav-down" type="button" aria-label="Go to next section">↓</button>
+</div>
+
 <div class="hero-shell" id="top">
   <div class="hero-pin">
     <div class="hero-card">
@@ -715,7 +747,6 @@
       <div class="hero-copy">
         <h1>The physical world doesn't grade on a curve.</h1>
       </div>
-      <div class="scroll-cue">Scroll to explore <span class="box">↓</span></div>
     </div>
   </div>
 </div>
@@ -1046,7 +1077,9 @@
   const heroCardEl = document.querySelector('.hero-card');
   const heroShell = document.querySelector('.hero-shell');
   const heroH1 = document.querySelector('.hero-copy h1');
-  const heroCue = document.querySelector('.scroll-cue');
+  const sectionNavLabel = document.querySelector('.section-nav-label');
+  const sectionNavUp = document.querySelector('.section-nav-up');
+  const sectionNavDown = document.querySelector('.section-nav-down');
   let W = 0, H = 0, DPR = 1, dust = [];
 
   /* deep-field drift: sparse dust with depth parallax, slow drift, twinkle */
@@ -1294,6 +1327,17 @@
     { el: termSection, threshold: 0.35 },
     { el: benchSection, threshold: 0.25 }
   ];
+  const sectionNavTargets = [
+    heroShell,
+    statementSection,
+    termSection,
+    benchSection,
+    document.getElementById('platform'),
+    document.getElementById('customers'),
+    document.getElementById('quickstart'),
+    document.getElementById('contact'),
+    document.getElementById('founder')
+  ].filter(Boolean);
   const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
     '#customers', '#quickstart', '#contact', '#founder']
     .map((s) => document.querySelector(s)).filter(Boolean);
@@ -1353,6 +1397,47 @@
       startAutoplay(scrollY, to, now, msPerViewport);
     }
   }
+  let sectionNavIndex = 0;
+  const sectionTop = (el) => el.getBoundingClientRect().top + scrollY;
+  const isAutoplaySection = (el) => el === termSection || el === benchSection;
+  function updateSectionNav() {
+    const probe = scrollY + innerHeight * 0.5;
+    let index = 0;
+    for (let i = 1; i < sectionNavTargets.length; i++) {
+      if (sectionTop(sectionNavTargets[i]) <= probe) index = i;
+      else break;
+    }
+    sectionNavIndex = index;
+    sectionNavLabel.hidden = index !== 0;
+    sectionNavUp.hidden = index === 0;
+    const atLastSection = index === sectionNavTargets.length - 1;
+    sectionNavDown.classList.toggle('is-invisible', atLastSection);
+    sectionNavDown.disabled = atLastSection;
+    sectionNavDown.setAttribute('aria-hidden', String(atLastSection));
+  }
+  function goToAdjacentSection(direction) {
+    const index = clamp(sectionNavIndex + direction, 0, sectionNavTargets.length - 1);
+    if (index === sectionNavIndex) return;
+    const el = sectionNavTargets[index];
+    const top = sectionTop(el);
+    const rangeEnd = top + Math.max(0, el.offsetHeight - innerHeight);
+    const autoplayForward = direction > 0 && isAutoplaySection(el);
+    const target = direction < 0 && isAutoplaySection(el) ? rangeEnd : top;
+
+    cancelAutoplay();
+    clearTimeout(snapTimer);
+    clearTimeout(gestureTimer);
+    inGesture = false;
+    scrollDir = direction;
+    if (reduced) {
+      scrollTo(0, target);
+    } else {
+      glideTo(target, autoplayForward ? 90 : 110);
+      if (autoplayForward) pendingAutoplay = rangeEnd;
+    }
+  }
+  sectionNavUp.addEventListener('click', () => goToAdjacentSection(-1));
+  sectionNavDown.addEventListener('click', () => goToAdjacentSection(1));
   function startGesture() {
     inGesture = true;
     capHitT = 0;
@@ -1594,7 +1679,6 @@
       const aOut = clamp(sp / 0.90, 0, 1);
       heroH1.style.transform = `translateY(${-aOut * 150}px) scale(${1 - aOut * 0.06})`;
       heroH1.style.opacity = 1 - aOut;
-      heroCue.style.opacity = 1 - clamp(sp / 0.1, 0, 1);
 
       // The statement rises into place while its section enters the viewport,
       // so the hero hands directly to readable copy without another long
@@ -1663,6 +1747,7 @@
       });
       benchCap.style.opacity = 1;
     }
+    updateSectionNav();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
