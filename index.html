@@ -758,15 +758,6 @@
   .final-cta h2 { font-size: clamp(34px, 5vw, 60px); }
   .final-cta p { margin: 22px auto 0; max-width: 52ch; font-size: 16.5px; line-height: 1.6; color: var(--text-dim); }
   .final-cta .cta-row { margin-top: 42px; display: flex; gap: 12px; justify-content: center; }
-  /* ================= founder ================= */
-  .founder { border-top: 1px solid var(--line); padding: 88px 0; }
-  .founder-grid { display: flex; align-items: center; gap: 48px; }
-  .founder-photo { width: 148px; height: 148px; border-radius: 12px; object-fit: cover; border: 1px solid var(--line); flex-shrink: 0; }
-  .founder-text { max-width: 56ch; font-size: 16.5px; line-height: 1.7; color: var(--text-dim); }
-  .founder-links { margin-top: 18px; display: flex; gap: 22px; font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; }
-  .founder-links a { color: var(--text-dim); border-bottom: 1px solid var(--line); padding-bottom: 2px; }
-  .founder-links a:hover { color: var(--text); }
-
   footer { border-top: 1px solid var(--line); padding: 56px 0 40px; }
   .foot-grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
   .foot-brand p { margin-top: 14px; font-size: 13.5px; color: var(--text-faint); max-width: 34ch; line-height: 1.6; }
@@ -791,7 +782,6 @@
     .wrap { padding: 0 20px; }
     section { padding: 60px 0; }
     .final-cta { padding: 88px 0; }
-    .founder-grid { flex-direction: column; align-items: flex-start; gap: 28px; }
     /* nav: keep buttons on one line */
     :root { --nav-h: 60px; }
     .nav-inner { gap: 16px; }
@@ -1149,27 +1139,6 @@
     </div>
   </section>
 
-  <!-- ============ founder ============ -->
-  <section class="founder" id="founder">
-    <div class="wrap founder-grid">
-      <img class="founder-photo" src="assets/founder.jpg" alt="Jaivir Parmar" onerror="this.style.display='none'">
-      <div>
-        <div class="kicker reveal">Who's behind this</div>
-        <p class="founder-text reveal">
-          Built by Jaivir Parmar, a mechanical engineer and computer scientist whose work spans robotics,
-          embedded systems, fabrication, and physical-system modeling. He built no-start-env in a domain
-          he can personally verify, establishing the causal modeling, grading, and invariant framework
-          Second Nature Labs will carry across environment families.
-        </p>
-        <div class="founder-links reveal">
-          <a href="https://github.com/Jaiparmar940" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://x.com/ja1v1r" target="_blank" rel="noopener">X</a>
-          <a href="https://www.linkedin.com/in/jaivir-parmar/" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <footer>
     <div class="wrap">
       <div class="foot-grid">
@@ -1211,6 +1180,7 @@
 <script>
 (() => {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobileScroll = matchMedia('(hover: none) and (pointer: coarse)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -1550,11 +1520,10 @@
     document.getElementById('platform'),
     document.getElementById('customers'),
     document.getElementById('quickstart'),
-    document.getElementById('contact'),
-    document.getElementById('founder')
+    document.getElementById('contact')
   ].filter(Boolean);
   const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
-    '#customers', '#quickstart', '#contact', '#founder']
+    '#customers', '#quickstart', '#contact']
     .map((s) => document.querySelector(s)).filter(Boolean);
   // The pinned scenes play their animation across the section's extra
   // height; a boundary at top + (height − viewport) is the exact point where
@@ -1571,6 +1540,7 @@
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
+  let mobileSettleTimer = 0, mobileProgrammatic = false, mobileTarget = scrollY;
   let statementSnapLock = false, statementSnapLastWheelT = 0;
   let statementSnapStartedAt = 0, statementSnapLastAbsDy = 0;
   let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
@@ -1578,6 +1548,13 @@
     smooth.target = clamp(y, 0, maxScroll());
     smooth.current = scrollY;
     smooth.tau = tau || 110;
+    if (mobileScroll) {
+      smooth.active = false;
+      mobileProgrammatic = true;
+      mobileTarget = smooth.target;
+      scrollTo({ top: mobileTarget, behavior: 'smooth' });
+      return;
+    }
     smooth.active = true;
   }
   // Nav links into a sticky section land on its first frame, where the stage is
@@ -1589,7 +1566,14 @@
   const autoplayHrefs = ['#environments', '#benchmark'];
   const autoplay = { active: false, from: 0, to: 0, t0: 0, dur: 0 };
   let pendingAutoplay = 0;
-  function cancelAutoplay() { autoplay.active = false; pendingAutoplay = 0; }
+  function cancelAutoplay() {
+    autoplay.active = false;
+    pendingAutoplay = 0;
+    if (mobileScroll) {
+      mobileProgrammatic = false;
+      clearTimeout(mobileSettleTimer);
+    }
+  }
   function startAutoplay(from, to, now, msPerViewport = 2560) {
     const dist = clamp(to, 0, maxScroll()) - from;
     if (dist <= 4) return;
@@ -1606,7 +1590,15 @@
     scrollDir = 1;
     clearTimeout(snapTimer);
     clearTimeout(gestureTimer);
+    clearTimeout(mobileSettleTimer);
     inGesture = false;
+    if (mobileScroll) {
+      cancelAutoplay();
+      smooth.target = smooth.current = scrollY;
+      smooth.active = false;
+      glideTo(to, 0);
+      return;
+    }
     if (!autoplay.active) {
       cancelAutoplay();
       smooth.target = smooth.current = scrollY;
@@ -1673,7 +1665,7 @@
     // never assist mid-playback, or while a finger is still on the screen —
     // completing a scene under a resting finger reads as the page moving on
     // its own, and the finger's next move would fight the autoplay
-    if (autoplay.active || touchActive) return;
+    if (autoplay.active || touchActive || mobileProgrammatic) return;
     // parked at a section boundary (a capped flick or a takeover landed
     // there)? that's a deliberate stop — never chain-snap into the next
     // section. Deliberate landings sit within a couple of px of the
@@ -1705,8 +1697,35 @@
     }
   }
   function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
+  function finishMobileScroll() {
+    clearTimeout(mobileSettleTimer);
+    if (!mobileScroll || touchActive) return;
+    smooth.target = smooth.current = scrollY;
+    smooth.active = false;
+    if (mobileProgrammatic) {
+      mobileProgrammatic = false;
+      // Native smooth scrolling can finish on a fractional CSS pixel. Pin the
+      // final frame to the requested integer so sticky progress reaches the
+      // exact 0/1 boundary instead of stopping just short.
+      const exactTarget = clamp(Math.round(mobileTarget), 0, maxScroll());
+      if (Math.abs(scrollY - exactTarget) > 0.5) scrollTo(0, exactTarget);
+      smooth.target = smooth.current = exactTarget;
+    }
+    if (pendingAutoplay) {
+      const rangeEnd = pendingAutoplay;
+      pendingAutoplay = 0;
+      requestAnimationFrame(() => playRemainingRange(rangeEnd, performance.now()));
+      return;
+    }
+    queueSnap(0);
+  }
+  function queueMobileSettle(delay = 280) {
+    clearTimeout(mobileSettleTimer);
+    mobileSettleTimer = setTimeout(finishMobileScroll, delay);
+  }
   if (!reduced) {
     addEventListener('wheel', (e) => {
+      if (mobileScroll) return;
       if (e.ctrlKey) return;                                    // pinch-zoom
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;      // horizontal panes
       e.preventDefault();
@@ -1802,6 +1821,12 @@
       queueSnap(200);
     }, { passive: false });
     addEventListener('scroll', () => {
+      if (mobileScroll) {
+        smooth.target = smooth.current = scrollY;
+        smooth.active = false;
+        if (!touchActive) queueMobileSettle();
+        return;
+      }
       // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it,
       // and drop any nav-link playback it interrupted
       if (Math.abs(scrollY - smooth.current) > 1.5) {
@@ -1829,19 +1854,16 @@
         if (play) pendingAutoplay = top + (el.offsetHeight - innerHeight);
       });
     });
-    // Mobile touch: scrolling stays fully native — never take over a live
-    // gesture. A takeover (preventDefault + fixed-pace playback) breaks the
-    // 1:1 finger→motion mapping, and because every touchstart cancels the
-    // playback while the next swipe restarts it at the ramp's zero point,
-    // choppy swiping advanced only a few px per swipe — the page felt like
-    // it was eating scroll input. Touches only steer the assists now: a
-    // touchstart cancels any running playback and marks the finger down
-    // (maybeSnap waits), and once the finger lifts and momentum dies, the
-    // idle assist settles the hero or finishes whatever scene the page
-    // rested in.
+    // Mobile touch remains native while the finger and inertial scrolling are
+    // active. Once the browser reports that motion has settled, the assist uses
+    // the browser's composited smooth scroll instead of the desktop rAF lerp.
+    // This avoids two scroll engines fighting during iOS/Android momentum.
     let touchY = 0;
     addEventListener('touchstart', (e) => {
       cancelAutoplay();
+      mobileProgrammatic = false;
+      mobileTarget = scrollY;
+      clearTimeout(mobileSettleTimer);
       statementSnapLock = false;
       touchActive = true;
       touchY = e.touches[0] ? e.touches[0].clientY : 0;
@@ -1858,12 +1880,21 @@
     }, { passive: true });
     addEventListener('touchend', (e) => {
       touchActive = e.touches.length > 0;
-      if (!touchActive) queueSnap(180);
+      if (!touchActive) {
+        if (mobileScroll) queueMobileSettle();
+        else queueSnap(180);
+      }
     }, { passive: true });
     addEventListener('touchcancel', (e) => {
       touchActive = e.touches.length > 0;
-      if (!touchActive) queueSnap(180);
+      if (!touchActive) {
+        if (mobileScroll) queueMobileSettle();
+        else queueSnap(180);
+      }
     }, { passive: true });
+    if ('onscrollend' in window) {
+      addEventListener('scrollend', finishMobileScroll, { passive: true });
+    }
     addEventListener('keydown', cancelAutoplay, { passive: true });
   }
 
