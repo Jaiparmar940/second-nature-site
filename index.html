@@ -99,14 +99,12 @@
     z-index: 100;
     isolation: isolate;
     color: var(--text);
-    background: linear-gradient(180deg, #0d0e0e 0%, #080808 56%, #060606 100%);
+    background: rgba(8, 8, 8, 0.1);
     border-bottom: 1px solid transparent;
-    box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.08),
-      inset 0 -1px rgba(0, 0, 0, 0.72);
-    backdrop-filter: blur(16px) saturate(115%);
-    -webkit-backdrop-filter: blur(16px) saturate(115%);
-    transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    box-shadow: none;
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease;
   }
   nav::after {
     content: "";
@@ -114,9 +112,11 @@
     z-index: 0;
     inset: 0;
     pointer-events: none;
+    opacity: 0.35;
     background:
       linear-gradient(110deg, rgba(255, 255, 255, 0.045), transparent 25%, transparent 72%, rgba(255, 255, 255, 0.018)),
       radial-gradient(ellipse 42% 120% at 16% -45%, rgba(255, 255, 255, 0.055), transparent 72%);
+    transition: opacity 0.28s ease;
   }
   nav.is-scrolled {
     background: linear-gradient(180deg, rgba(15, 16, 16, 0.7) 0%, rgba(7, 7, 7, 0.58) 56%, rgba(5, 5, 5, 0.54) 100%);
@@ -128,6 +128,7 @@
     backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
     -webkit-backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
   }
+  nav.is-scrolled::after { opacity: 1; }
   .nav-inner {
     position: relative;
     z-index: 1;
@@ -208,7 +209,12 @@
   nav .btn-ink:hover::after { transform: translate(2px, -2px); }
   nav .btn-ink:focus-visible { outline: 2px solid #72dbc2; outline-offset: 3px; }
   /* ================= hero: pinned headline ================= */
-  .hero-shell { height: 150vh; position: relative; background: #060606; }
+  .hero-shell {
+    height: 150vh;
+    position: relative;
+    background: #060606;
+    margin-top: calc(-1 * var(--nav-h));
+  }
   .hero-pin {
     position: sticky;
     top: 0;
@@ -223,16 +229,72 @@
     min-height: 0;
     background: #060606;
   }
-  .hero-card canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-card canvas {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-aurora,
+  .statement-aurora {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #050506;
+  }
+  .hero-aurora::before,
+  .statement-aurora::before,
+  .hero-aurora::after,
+  .statement-aurora::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+  .hero-aurora::before,
+  .statement-aurora::before {
+    inset: -55%;
+    background: conic-gradient(
+      from 180deg at 50% 45%,
+      rgba(58, 161, 137, 0) 0deg,
+      rgba(58, 161, 137, 0.4) 80deg,
+      rgba(62, 92, 148, 0.28) 160deg,
+      rgba(245, 179, 1, 0.12) 230deg,
+      rgba(58, 161, 137, 0) 300deg
+    );
+    filter: blur(52px);
+    animation: aurora-spin 16s linear infinite;
+  }
+  .hero-aurora::after,
+  .statement-aurora::after {
+    width: 58%;
+    height: 70%;
+    left: 8%;
+    top: 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(58, 161, 137, 0.32), transparent 68%);
+    filter: blur(36px);
+    animation: aurora-slide 8s linear infinite alternate;
+  }
+  .statement-aurora { opacity: 0.7; background: transparent; }
+  @keyframes aurora-spin { to { transform: rotate(1turn); } }
+  @keyframes aurora-slide {
+    from { transform: translate(-18%, -8%); }
+    to { transform: translate(42%, 16%); }
+  }
   .hero-veil {
     position: absolute;
+    z-index: 2;
     inset: 0;
     background:
-      radial-gradient(ellipse 75% 60% at 50% 52%, rgba(0, 0, 0, 0.42), transparent 70%),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.25), transparent 30%, transparent 66%, rgba(10, 10, 10, 0.6));
+      radial-gradient(ellipse 75% 60% at 50% 52%, rgba(0, 0, 0, 0.28), transparent 70%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.22), transparent 30%, transparent 66%, rgba(10, 10, 10, 0.62));
   }
   .hero-copy {
     position: absolute;
+    z-index: 3;
     inset: 0;
     display: flex;
     align-items: center;
@@ -367,6 +429,7 @@
     overflow: clip;
     display: grid;
     place-items: center;
+    background: #070808;
   }
   .statement-pin::after {
     content: "";
@@ -1025,6 +1088,10 @@
     .env-window { transition: none; }
     .section-nav-button { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
+    .hero-aurora::before,
+    .hero-aurora::after,
+    .statement-aurora::before,
+    .statement-aurora::after { animation: none; }
     .hero-shell { height: auto; }
     .term-section { height: auto; }
     .term-sticky { position: static; height: auto; padding: 8vh 0 10vh; }
@@ -1047,7 +1114,7 @@
       Second Nature Labs
     </a>
     <div class="nav-links">
-      <a href="#environments">First environment</a>
+      <a href="#environments">Product</a>
       <a href="#benchmark">Benchmark</a>
       <a href="#customers">Who it's for</a>
       <a href="#quickstart">Open proof</a>
@@ -1068,6 +1135,7 @@
 <div class="hero-shell" id="top">
   <div class="hero-pin">
     <div class="hero-card">
+      <div class="hero-aurora" aria-hidden="true"></div>
       <canvas id="hero-art"></canvas>
       <div class="hero-veil"></div>
       <div class="hero-copy">
@@ -1081,6 +1149,7 @@
 
   <div class="statement" id="training-gap">
     <div class="statement-pin">
+      <div class="statement-aurora" aria-hidden="true"></div>
       <canvas class="statement-art" id="statement-art" aria-hidden="true"></canvas>
       <div class="wrap statement-copy" id="statement-copy">
         <div class="kicker">What we build</div>
@@ -1403,10 +1472,7 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   const navEl = document.getElementById('nav');
   function syncNavSurface() {
-    // Until one full nav-height has passed, the sticky element is still over
-    // its original layout slot rather than over the hero. Keep the glass
-    // opaque through that handoff so its surface stays visually consistent.
-    navEl.classList.toggle('is-scrolled', scrollY > navEl.offsetHeight);
+    navEl.classList.toggle('is-scrolled', scrollY > 4);
   }
   syncNavSurface();
   addEventListener('scroll', syncNavSurface, { passive: true });
@@ -1517,8 +1583,7 @@
   function drawHero(t) {
     hctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     hctx.globalAlpha = 1;
-    hctx.fillStyle = '#050504';
-    hctx.fillRect(0, 0, W, H);
+    hctx.clearRect(0, 0, W, H);
     drawHeroField(t);
   }
 
