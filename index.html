@@ -253,8 +253,7 @@
     position: absolute;
     pointer-events: none;
   }
-  .hero-aurora::before,
-  .statement-aurora::before {
+  .hero-aurora::before {
     inset: -55%;
     background: conic-gradient(
       from 180deg at 50% 45%,
@@ -267,8 +266,20 @@
     filter: blur(52px);
     animation: aurora-spin 16s linear infinite;
   }
-  .hero-aurora::after,
-  .statement-aurora::after {
+  .statement-aurora::before {
+    inset: -55%;
+    background: conic-gradient(
+      from 180deg at 50% 45%,
+      rgba(74, 127, 212, 0) 0deg,
+      rgba(74, 127, 212, 0.42) 80deg,
+      rgba(124, 92, 220, 0.36) 160deg,
+      rgba(168, 110, 210, 0.18) 230deg,
+      rgba(74, 127, 212, 0) 300deg
+    );
+    filter: blur(52px);
+    animation: aurora-spin 16s linear infinite reverse;
+  }
+  .hero-aurora::after {
     width: 58%;
     height: 70%;
     left: 8%;
@@ -277,6 +288,16 @@
     background: radial-gradient(circle, rgba(58, 161, 137, 0.32), transparent 68%);
     filter: blur(36px);
     animation: aurora-slide 8s linear infinite alternate;
+  }
+  .statement-aurora::after {
+    width: 58%;
+    height: 70%;
+    left: 8%;
+    top: 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 92, 220, 0.34), transparent 68%);
+    filter: blur(36px);
+    animation: aurora-slide 8s linear infinite alternate-reverse;
   }
   .statement-aurora { opacity: 0.7; background: transparent; }
   @keyframes aurora-spin { to { transform: rotate(1turn); } }
@@ -1620,12 +1641,15 @@
   function buildStatementDust() {
     let seed = 113;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    statementDust = Array.from({ length: 300 }, () => ({
-      x: rnd(), y: rnd(),
-      z: 0.25 + rnd() * 0.75,
-      phase: rnd() * 6.28,
-      amber: rnd() < 0.055
-    }));
+    statementDust = Array.from({ length: 300 }, () => {
+      const roll = rnd();
+      return {
+        x: rnd(), y: rnd(),
+        z: 0.25 + rnd() * 0.75,
+        phase: rnd() * 6.28,
+        tint: roll < 0.08 ? 'violet' : roll < 0.16 ? 'blue' : 'paper'
+      };
+    });
   }
 
   function drawTrainingField(t, progress) {
@@ -1639,11 +1663,13 @@
       const y = ((point.y + (t / 260000) * point.z) % 1) * (SH + 40) - 20;
       const twinkle = 0.55 + Math.sin(t / 1600 + point.phase) * 0.45;
       const alpha = (0.09 + point.z * 0.46) * twinkle * scene;
-      sctx.fillStyle = point.amber
-        ? `rgba(245,179,1,${alpha})`
-        : `rgba(226,222,210,${alpha})`;
+      sctx.fillStyle = point.tint === 'violet'
+        ? `rgba(168,110,210,${alpha})`
+        : point.tint === 'blue'
+          ? `rgba(74,127,212,${alpha})`
+          : `rgba(226,222,210,${alpha})`;
       sctx.beginPath();
-      sctx.arc(x, y, point.z * (point.amber ? 2.1 : 1.65), 0, Math.PI * 2);
+      sctx.arc(x, y, point.z * (point.tint === 'paper' ? 1.65 : 2.1), 0, Math.PI * 2);
       sctx.fill();
     }
   }
