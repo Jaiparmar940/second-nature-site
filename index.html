@@ -1694,8 +1694,11 @@
       const phone = innerWidth < 640;
       const w0 = phone ? innerWidth - 48 : Math.min(640, innerWidth * 0.62);
       const h0 = phone ? Math.min(320, innerHeight * 0.38) : Math.min(380, innerHeight * 0.42);
-      const w1 = innerWidth - (phone ? 20 : 36);
-      const h1 = innerHeight - (phone ? 16 : 28);
+      // The preview opens enough to make the two live reasoning streams easy
+      // to follow, but remains a framed object in the page rather than taking
+      // over the viewport. Its cap matches the intended desktop composition.
+      const w1 = phone ? innerWidth - 20 : Math.min(1400, innerWidth * 0.74);
+      const h1 = phone ? Math.min(440, innerHeight * 0.62) : Math.min(680, innerHeight * 0.64);
       termStage.style.width = lerp(w0, w1, e) + 'px';
       termStage.style.height = lerp(h0, h1, e) + 'px';
       termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e)}%`;

@@ -17,6 +17,11 @@
     <style>
       html.snl-embed .sidebar { display: none !important; }
       html.snl-embed .app-body { margin-left: 0 !important; }
+      html.snl-embed .brand,
+      html.snl-embed .header-title,
+      html.snl-embed .main > .panel:first-child,
+      html.snl-embed .lower,
+      html.snl-embed .footer { display: none !important; }
       html.snl-embed,
       html.snl-embed body,
       html.snl-embed #root,
@@ -27,8 +32,12 @@
         min-height: 100%;
         overflow: hidden;
       }
-      html.snl-embed .panel { max-height: none; }
-      html.snl-embed .main { min-height: 0; }
+      html.snl-embed .header-meta { margin-right: auto; }
+      html.snl-embed .panel { min-height: 0; max-height: none; }
+      html.snl-embed .main {
+        min-height: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     </style>
     <script>
       // The live view follows its newest planner/executor lines with
