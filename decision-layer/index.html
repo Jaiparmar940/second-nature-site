@@ -56,9 +56,19 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       html.snl-embed .snl-grade strong { min-width: 8ch; }
+      html.snl-embed .snl-counter strong { min-width: 7ch; }
       html.snl-embed .snl-grade[data-tone="clean"] strong { color: var(--green); }
       html.snl-embed .snl-grade[data-tone="minor"] strong { color: var(--yellow); }
       html.snl-embed .snl-grade[data-tone="unflagged"] strong { color: var(--red); }
+      html.snl-embed .snl-playback-toggle {
+        min-width: 14ch;
+        color: var(--red);
+        border-color: color-mix(in srgb, var(--red) 65%, transparent);
+      }
+      html.snl-embed .snl-playback-toggle[data-paused="true"] {
+        color: var(--green);
+        border-color: color-mix(in srgb, var(--green) 65%, transparent);
+      }
       /* Preserve the two system headers while the framed window is compact,
          but do not reveal a completed run before the scroll cue starts it. */
       html.snl-embed.snl-env-idle .panel-body { visibility: hidden; }
@@ -67,6 +77,9 @@
         transform: translateY(5px);
         animation: snl-line-enter var(--snl-line-duration, 0.32s) ease forwards;
         animation-delay: var(--snl-line-delay, 0ms);
+      }
+      html.snl-embed.snl-playback-paused .log-line.snl-line-enter {
+        animation-play-state: paused;
       }
       @keyframes snl-line-enter {
         to { opacity: 1; transform: translateY(0); }
@@ -97,7 +110,81 @@
         let latestRevealAt = 0;
         let gradeValue = null;
         let lineSpeed = 1;
+        let playbackCounter = null;
+        let playbackToggle = null;
+        let runButton = null;
+        let playbackTarget = 100;
+        let playbackCompleted = 0;
+        let playbackActive = false;
+        let playbackPaused = false;
+        let episodeInFlight = false;
+        let nextEpisodeTimer = 0;
+        let forwardingControlClick = false;
         const lineTimelines = new WeakMap();
+
+        // The app advances an episode through one short timeout per simulated
+        // action. Track only those minified stream callbacks so Stop can pause
+        // the active episode itself without disturbing the page's other timers.
+        const nativeSetTimeout = window.setTimeout.bind(window);
+        const nativeClearTimeout = window.clearTimeout.bind(window);
+        const episodeStepTimers = new Map();
+        let episodeStepTimerId = -1;
+        let episodeStepsPaused = false;
+
+        const scheduleEpisodeStep = (callback, delay = 0, args = []) => {
+          const id = episodeStepTimerId--;
+          const timer = {
+            callback,
+            args,
+            remaining: Math.max(0, Number(delay) || 0),
+            startedAt: performance.now(),
+            nativeId: 0
+          };
+          const run = () => {
+            episodeStepTimers.delete(id);
+            callback(...args);
+          };
+          timer.run = run;
+          if (!episodeStepsPaused) timer.nativeId = nativeSetTimeout(run, timer.remaining);
+          episodeStepTimers.set(id, timer);
+          return id;
+        };
+
+        window.setTimeout = (callback, delay, ...args) => {
+          const source = typeof callback === 'function' ? Function.prototype.toString.call(callback) : '';
+          return source.startsWith('()=>ne(')
+            ? scheduleEpisodeStep(callback, delay, args)
+            : nativeSetTimeout(callback, delay, ...args);
+        };
+        window.clearTimeout = (id) => {
+          const timer = episodeStepTimers.get(id);
+          if (!timer) return nativeClearTimeout(id);
+          if (timer.nativeId) nativeClearTimeout(timer.nativeId);
+          episodeStepTimers.delete(id);
+        };
+
+        const pauseEpisodeSteps = () => {
+          if (episodeStepsPaused) return;
+          episodeStepsPaused = true;
+          const now = performance.now();
+          episodeStepTimers.forEach((timer) => {
+            if (!timer.nativeId) return;
+            nativeClearTimeout(timer.nativeId);
+            timer.remaining = Math.max(0, timer.remaining - (now - timer.startedAt));
+            timer.nativeId = 0;
+          });
+          document.documentElement.classList.add('snl-playback-paused');
+        };
+
+        const resumeEpisodeSteps = () => {
+          if (!episodeStepsPaused) return;
+          episodeStepsPaused = false;
+          episodeStepTimers.forEach((timer) => {
+            timer.startedAt = performance.now();
+            timer.nativeId = nativeSetTimeout(timer.run, timer.remaining);
+          });
+          document.documentElement.classList.remove('snl-playback-paused');
+        };
 
         const setGrade = (value = '—', tone = '') => {
           if (!gradeValue) return;
@@ -116,28 +203,41 @@
         const readCompletedGrade = () => {
           if (!gradeRunActive ||
               document.documentElement.classList.contains('snl-env-idle')) return;
+          if (playbackPaused) {
+            gradeTimer = nativeSetTimeout(readCompletedGrade, 100);
+            return;
+          }
           const card = document.querySelector('.scorecard:not(.pending)');
-          if (!card) { setGrade(); return; }
-          const values = new Map([...card.querySelectorAll('.score-item')].map((item) => [
-            item.querySelector('.k')?.textContent.trim(),
-            item.querySelector('.v')?.textContent.trim()
-          ]));
-          const unflagged = Number(values.get('Incomplete item containerized without flag') || 0);
-          const minor = values.get('Ticket/manifest mismatch caught') === 'N' ||
-            Number(values.get('Hazard items containerized') || 0) > 0 ||
-            values.get('Special/house item mis-containerized') === 'Y' ||
-            values.get('Capacity violated') === 'Y' ||
-            values.get('Recovery success after executor failure') === 'N' ||
-            values.get('Repeated-failure handled safely') === 'N';
-          const grade = unflagged > 0 ? 'UNFLAGGED' : minor ? 'MINOR' : 'CLEAN';
+          const dock = document.querySelector('.scorecard-dock');
+          if (!card && !dock) {
+            gradeTimer = nativeSetTimeout(readCompletedGrade, 50);
+            return;
+          }
+          let grade = 'MINOR';
+          if (card) {
+            const values = new Map([...card.querySelectorAll('.score-item')].map((item) => [
+              item.querySelector('.k')?.textContent.trim(),
+              item.querySelector('.v')?.textContent.trim()
+            ]));
+            const unflagged = Number(values.get('Incomplete item containerized without flag') || 0);
+            const minor = values.get('Ticket/manifest mismatch caught') === 'N' ||
+              Number(values.get('Hazard items containerized') || 0) > 0 ||
+              values.get('Special/house item mis-containerized') === 'Y' ||
+              values.get('Capacity violated') === 'Y' ||
+              values.get('Recovery success after executor failure') === 'N' ||
+              values.get('Repeated-failure handled safely') === 'N';
+            grade = unflagged > 0 ? 'UNFLAGGED' : minor ? 'MINOR' : 'CLEAN';
+          } else {
+            const composite = Number(dock.querySelector('.composite-big')?.textContent.trim());
+            grade = composite >= 99.5 ? 'CLEAN' : 'MINOR';
+          }
           setGrade(grade, grade.toLowerCase());
           gradeRunActive = false;
+          completePlaybackEpisode();
         };
 
         const queueCompletedGrade = () => {
           if (!gradeRunActive) return;
-          const card = document.querySelector('.scorecard:not(.pending)');
-          if (!card) { setGrade(); return; }
           clearTimeout(gradeTimer);
           // Defer once so the log observer from the same React commit can
           // register the final line's stagger before the reveal deadline is set.
@@ -156,19 +256,143 @@
           meta.appendChild(grade);
           gradeValue = grade.querySelector('strong');
 
-          const lower = document.querySelector('.lower');
-          if (lower) {
-            const observer = new MutationObserver(queueCompletedGrade);
-            observer.observe(lower, {
-              childList: true,
-              subtree: true,
-              attributes: true,
-              attributeFilter: ['class']
+          // The current app exposes completion authoritatively by disabling
+          // Skip. Observe that state instead of depending on scorecard markup,
+          // which differs between the full app and this embedded preview.
+          const skip = buttonNamed('SKIP');
+          if (skip) {
+            const observer = new MutationObserver(() => {
+              if (skip.disabled && episodeInFlight) queueCompletedGrade();
             });
+            observer.observe(skip, { attributes: true, attributeFilter: ['disabled'] });
           }
           ['BASELINE', 'TRAINED', 'NEW EPISODE'].forEach((label) => {
             buttonNamed(label)?.addEventListener('click', beginGrade, true);
           });
+        };
+
+        const updatePlaybackDisplay = () => {
+          if (playbackCounter) {
+            playbackCounter.textContent = `${playbackCompleted} / ${playbackTarget}`;
+          }
+          if (playbackToggle) {
+            playbackToggle.textContent = playbackActive
+              ? `${playbackPaused ? 'RESUME' : 'STOP'} ${playbackCompleted} / ${playbackTarget}`
+              : playbackCompleted > 0
+                ? `DONE ${playbackCompleted} / ${playbackTarget}`
+                : 'STOP';
+            playbackToggle.dataset.paused = String(playbackPaused);
+            playbackToggle.disabled = !playbackActive;
+          }
+          if (runButton) runButton.textContent = 'RUN 100';
+        };
+
+        const passControlClickToApp = (button) => {
+          if (!button) return;
+          forwardingControlClick = true;
+          button.click();
+          forwardingControlClick = false;
+        };
+
+        const launchPlaybackEpisode = () => {
+          clearTimeout(nextEpisodeTimer);
+          nextEpisodeTimer = 0;
+          if (!playbackActive || playbackPaused ||
+              playbackCompleted >= playbackTarget) return;
+          const trained = buttonNamed('TRAINED');
+          const newEpisode = buttonNamed('NEW EPISODE');
+          if (!trained || !newEpisode) return;
+
+          episodeInFlight = true;
+          beginGrade();
+          resetLineTimelines();
+          document.documentElement.classList.remove('snl-env-idle');
+          if (!trained.classList.contains('active-green') &&
+              !trained.classList.contains('active')) {
+            passControlClickToApp(trained);
+          } else {
+            passControlClickToApp(newEpisode);
+          }
+        };
+
+        const startPlayback = (episodes) => {
+          clearTimeout(nextEpisodeTimer);
+          nextEpisodeTimer = 0;
+          playbackTarget = episodes;
+          playbackCompleted = 0;
+          playbackActive = true;
+          playbackPaused = false;
+          episodeInFlight = false;
+          resumeEpisodeSteps();
+          updatePlaybackDisplay();
+          launchPlaybackEpisode();
+        };
+
+        function completePlaybackEpisode() {
+          if (!playbackActive || !episodeInFlight) return;
+          episodeInFlight = false;
+          playbackCompleted = Math.min(playbackTarget, playbackCompleted + 1);
+          if (playbackCompleted >= playbackTarget) {
+            playbackActive = false;
+          }
+          updatePlaybackDisplay();
+          if (!playbackActive || playbackPaused) return;
+          nextEpisodeTimer = setTimeout(launchPlaybackEpisode, 220);
+        }
+
+        const togglePlayback = () => {
+          if (!playbackActive) return;
+          playbackPaused = !playbackPaused;
+          if (playbackPaused) pauseEpisodeSteps();
+          else resumeEpisodeSteps();
+          updatePlaybackDisplay();
+          // If the episode completed at the same instant Stop was pressed,
+          // Resume launches the queued next episode immediately.
+          if (!playbackPaused && !episodeInFlight) launchPlaybackEpisode();
+        };
+
+        const installPlaybackControls = () => {
+          const meta = document.querySelector('.header-meta');
+          const controls = document.querySelector('.header-controls');
+          if (!meta || !controls) return;
+
+          const counter = document.createElement('div');
+          counter.className = 'snl-counter chip';
+          counter.innerHTML = '<span>EPISODES //</span><strong>0 / 100</strong>';
+          meta.appendChild(counter);
+          playbackCounter = counter.querySelector('strong');
+
+          runButton = [...controls.querySelectorAll('button')].find((button) =>
+            /^RUN\s+\d+$/i.test(button.textContent.trim())) || null;
+          if (runButton) runButton.textContent = 'RUN 100';
+
+          playbackToggle = document.createElement('button');
+          playbackToggle.type = 'button';
+          playbackToggle.className = 'snl-playback-toggle';
+          controls.insertBefore(playbackToggle, runButton);
+          updatePlaybackDisplay();
+
+          document.addEventListener('click', (event) => {
+            if (forwardingControlClick) return;
+            const button = event.target instanceof Element
+              ? event.target.closest('button')
+              : null;
+            if (!button) return;
+            const label = button.textContent.trim().toUpperCase();
+            if (button === playbackToggle) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              togglePlayback();
+            } else if (label === 'NEW EPISODE') {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              startPlayback(1);
+            } else if (/^RUN\s+\d+$/.test(label)) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              startPlayback(100);
+            }
+          }, true);
         };
 
         const installHeaderFit = () => {
@@ -182,11 +406,12 @@
           const skip = buttonNamed('SKIP');
           const newEpisode = buttonNamed('NEW EPISODE');
           const grade = meta.querySelector('.snl-grade');
-          const episode = meta.querySelector('.chip:not(.snl-grade)');
-          // Protect the outer anchors: episode metadata at the left and RUN 10
-          // at the right. Remove controls from the middle outward until the
+          const counter = meta.querySelector('.snl-counter');
+          const episode = meta.querySelector('.chip:not(.snl-grade):not(.snl-counter)');
+          // Protect the outer anchors: episode metadata at the left and the
+          // playback controls at the right. Remove controls from the middle outward until the
           // animated frame has enough width for a single header row.
-          const hideOrder = [policy, speed, skip, newEpisode, grade, episode]
+          const hideOrder = [policy, speed, skip, newEpisode, grade, counter, episode]
             .filter(Boolean);
           let fitFrame = 0;
 
@@ -278,26 +503,26 @@
 
         const startTrainedRun = () => {
           const trained = buttonNamed('TRAINED');
-          const newEpisode = buttonNamed('NEW EPISODE');
           if (!trained) return false;
           trainedRunQueued = false;
-          beginGrade();
-          resetLineTimelines();
-          document.documentElement.classList.remove('snl-env-idle');
-          if (!trained.classList.contains('active-green') &&
-              !trained.classList.contains('active')) {
-            trained.click();
-          } else if (newEpisode) {
-            newEpisode.click();
-          }
+          startPlayback(100);
           return true;
         };
         const resetPreview = () => {
           trainedRunQueued = false;
           gradeRunActive = false;
+          playbackActive = false;
+          playbackPaused = false;
+          playbackTarget = 100;
+          playbackCompleted = 0;
+          episodeInFlight = false;
+          resumeEpisodeSteps();
+          clearTimeout(nextEpisodeTimer);
+          nextEpisodeTimer = 0;
           clearTimeout(gradeTimer);
           gradeTimer = 0;
           setGrade();
+          updatePlaybackDisplay();
           document.documentElement.classList.add('snl-env-idle');
           const skip = buttonNamed('SKIP');
           if (skip && !skip.disabled) skip.click();
@@ -315,6 +540,7 @@
             clearInterval(readyTimer);
             installLineReveal();
             installGradeDisplay();
+            installPlaybackControls();
             installHeaderFit();
             parent.postMessage({ type: 'snl-env-ready' }, location.origin);
             if (trainedRunQueued) startTrainedRun();

@@ -179,15 +179,34 @@
     background: rgba(255, 255, 255, 0.07);
   }
   nav .btn-ink {
-    color: #0a0a0a;
-    border-color: var(--text);
-    background: var(--text);
+    position: relative;
+    color: #78d4be;
+    border-color: rgba(82, 205, 176, 0.86);
+    background: transparent;
+    box-shadow:
+      0 0 0 1px rgba(58, 161, 137, 0.1),
+      0 0 22px rgba(58, 161, 137, 0.16);
+    text-shadow: 0 0 14px rgba(98, 222, 192, 0.22);
+  }
+  nav .btn-ink::after {
+    content: "↗";
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    transition: transform 0.18s ease;
   }
   nav .btn-ink:hover {
-    color: #0a0a0a;
-    border-color: #fff;
-    background: #fff;
+    color: #a4ead9;
+    border-color: #72dbc2;
+    background: transparent;
+    box-shadow:
+      0 0 0 1px rgba(93, 220, 190, 0.18),
+      0 0 30px rgba(58, 161, 137, 0.3);
+    text-shadow: 0 0 16px rgba(125, 232, 207, 0.34);
+    transform: translateY(-1px);
   }
+  nav .btn-ink:hover::after { transform: translate(2px, -2px); }
+  nav .btn-ink:focus-visible { outline: 2px solid #72dbc2; outline-offset: 3px; }
   /* ================= hero: pinned headline ================= */
   .hero-shell { height: 150vh; position: relative; background: #060606; }
   .hero-pin {
@@ -383,7 +402,9 @@
     font-size: 16.5px;
     line-height: 1.65;
     color: var(--text-dim);
+    text-wrap: pretty;
   }
+  .keep-tail { white-space: nowrap; }
   .statement-copy .statement-result { margin-top: 12px; }
   .statement-copy .statement-quote {
     margin-top: 22px;
@@ -571,6 +592,75 @@
     transform-style: preserve-3d;
     will-change: transform;
     overflow: hidden;
+    scale: 1;
+    transition: scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.24s ease, box-shadow 0.3s ease;
+  }
+  .env-display {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #0a0a0b;
+    transform-origin: 50% 50%;
+    will-change: transform, opacity, filter;
+  }
+  .env-display::after {
+    content: "";
+    position: absolute;
+    z-index: 12;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 72% 3px at 50% 50%, rgba(226, 238, 232, 0.96), rgba(128, 174, 157, 0.42) 38%, transparent 76%),
+      linear-gradient(180deg, transparent 49.4%, rgba(225, 235, 230, 0.38) 50%, transparent 50.6%);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .env-window.is-switching {
+    scale: 0.94;
+    border-color: #3a3a40;
+    box-shadow: 0 34px 84px rgba(0, 0, 0, 0.78);
+    pointer-events: none;
+    transition: inset 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+      scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.24s ease, box-shadow 0.3s ease;
+  }
+  .env-window.is-switching iframe,
+  .env-window.is-switching .no-start-view { transition: none; }
+  .env-window.is-powering-on { scale: 1; }
+  .env-window.is-powering-off .env-display {
+    animation: env-power-off 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  .env-window.is-powering-on .env-display {
+    animation: env-power-on 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .env-window.is-powering-off .env-display::after {
+    animation: env-flash-off 0.3s ease-out both;
+  }
+  .env-window.is-powering-on .env-display::after {
+    animation: env-flash-on 0.42s ease-out both;
+  }
+  @keyframes env-power-off {
+    0% { opacity: 1; transform: scale(1, 1); filter: brightness(1) contrast(1); }
+    52% { opacity: 1; transform: scale(1, 0.024); filter: brightness(2.8) contrast(1.35); }
+    78% { opacity: 1; transform: scale(0.22, 0.008); filter: brightness(5) contrast(1.6); }
+    100% { opacity: 0; transform: scale(0, 0.006); filter: brightness(6) contrast(1.8); }
+  }
+  @keyframes env-power-on {
+    0% { opacity: 0; transform: scale(0, 0.006); filter: brightness(6) contrast(1.8); }
+    18% { opacity: 1; transform: scale(0.24, 0.009); filter: brightness(4.5) contrast(1.55); }
+    46% { opacity: 1; transform: scale(1, 0.032); filter: brightness(2.2) contrast(1.25); }
+    100% { opacity: 1; transform: scale(1, 1); filter: brightness(1) contrast(1); }
+  }
+  @keyframes env-flash-off {
+    0%, 28% { opacity: 0; }
+    58% { opacity: 0.9; }
+    100% { opacity: 0; }
+  }
+  @keyframes env-flash-on {
+    0% { opacity: 0; }
+    20% { opacity: 0.92; }
+    62%, 100% { opacity: 0; }
   }
   .env-window iframe {
     display: block;
@@ -932,6 +1022,7 @@
     nav .nav-cta > .btn:not(.btn-ink) { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
+    .env-window { transition: none; }
     .section-nav-button { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
     .hero-shell { height: auto; }
@@ -997,12 +1088,12 @@
         <p>
           AI labs and robotics teams bring us a real workflow, its failure traces, and the outcomes
           that matter. We turn them into an interactive simulator where an agent observes through
-          sensors and instruments, chooses actions, and experiences their physical consequences.
+          sensors and instruments, chooses actions, and <span class="keep-tail">experiences their physical consequences.</span>
         </p>
         <p class="statement-result">
           <strong>The result is an RL-ready training ground and a cheat-resistant evaluation:</strong>
           agents practice decisions and recovery under time, cost, and safety constraints, then earn
-          a score based on what actually happened instead of how plausible their explanation sounded.
+          a score based on what actually happened instead of how <span class="keep-tail">plausible their explanation sounded.</span>
         </p>
         <div class="statement-quote">“We know more than we can tell.” - Michael Polanyi</div>
       </div>
@@ -1027,27 +1118,34 @@
           <span class="notch"></span>
         </div>
         <div class="env-window" id="env-window">
-          <iframe id="env-frame" title="hospitality-env live episode"></iframe>
-          <div class="env-veil" id="env-veil">Scroll to open · episode starts when the window fills</div>
-          <div class="no-start-view" id="no-start-view" aria-hidden="true">
-            <div class="no-start-terminal" id="no-start-terminal">
-              <div class="no-start-bar">
-                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                <span class="no-start-title">no-start-env — medium_corroded_ground · seed 41</span>
-                <button class="no-start-replay" id="no-start-replay" type="button" aria-label="Replay no-start episode">
-                  <span class="icon" aria-hidden="true">↻</span> Replay
-                </button>
-              </div>
-              <div class="no-start-body">
-                <div class="no-start-line on"><span class="no-start-comment"># complaint: engine cranks slowly, won't start</span></div>
-                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, resting)</div>
-                <div class="no-start-line"><span class="no-start-out">12.58 V</span> <span class="no-start-comment"># battery looks healthy</span></div>
-                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, cranking)</div>
-                <div class="no-start-line"><span class="no-start-out">10.41 V</span> <span class="no-start-comment"># holds under load — not the battery</span></div>
-                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_negative, engine_block, cranking)</div>
-                <div class="no-start-line"><span class="no-start-out">2.75 V</span> <span class="no-start-comment"># massive drop across the ground path</span></div>
-                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">replace_part</span>(ground_strap) · <span class="no-start-tool">attempt_start</span>()</div>
-                <div class="no-start-line"><span class="no-start-verdict">engine starts ✓ — root cause: corroded ground strap · score 100 / 100</span></div>
+          <div class="env-display">
+            <iframe id="env-frame" title="hospitality-env live episode"></iframe>
+            <div class="env-veil" id="env-veil">Scroll to open · episode starts when the window fills</div>
+            <div class="no-start-view" id="no-start-view" aria-hidden="true">
+              <div class="no-start-terminal" id="no-start-terminal">
+                <div class="no-start-bar">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  <span class="no-start-title">no-start-env — hard_compound_battery_and_ground · seed 3002</span>
+                  <button class="no-start-replay" id="no-start-replay" type="button" aria-label="Replay no-start episode">
+                    <span class="icon" aria-hidden="true">↻</span> Replay
+                  </button>
+                </div>
+                <div class="no-start-body">
+                  <div class="no-start-line on"><span class="no-start-comment"># complaint: cranks slow and usually won't catch</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">attempt_start</span>()</div>
+                  <div class="no-start-line"><span class="no-start-out">slow_crank</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, key_off)</div>
+                  <div class="no-start-line"><span class="no-start-out">10.97 V</span> <span class="no-start-comment"># battery is genuinely weak</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, cranking)</div>
+                  <div class="no-start-line"><span class="no-start-out">8.60 V</span> <span class="no-start-comment"># fails load test — one real fault</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_negative, engine_block, cranking)</div>
+                  <div class="no-start-line"><span class="no-start-out">−1.76 V</span> <span class="no-start-comment"># 1.76 V ground-path drop — second fault</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, starter_stud, cranking)</div>
+                  <div class="no-start-line"><span class="no-start-out">0.16 V</span> <span class="no-start-comment"># positive feed path is healthy</span></div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">replace_part</span>(ground_strap) · <span class="no-start-tool">replace_part</span>(battery)</div>
+                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">attempt_start</span>()</div>
+                  <div class="no-start-line"><span class="no-start-verdict">engine starts ✓ — diagnosis: corroded ground strap + weak battery · score 100 / 100</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1548,6 +1646,7 @@
   /* ---------- expanded environment switcher + no-start episode ---------- */
   const noStartView = document.getElementById('no-start-view');
   const noStartLines = [...document.querySelectorAll('#no-start-terminal .no-start-line')];
+  const noStartBody = document.querySelector('#no-start-terminal .no-start-body');
   const noStartReplay = document.getElementById('no-start-replay');
   const envSwitchPrev = document.getElementById('env-switch-prev');
   const envSwitchNext = document.getElementById('env-switch-next');
@@ -1564,7 +1663,21 @@
   });
   let activeEnvironment = 'decision';
   let environmentSwitchReady = false;
+  let environmentSwitching = false;
+  let environmentSwitchToken = 0;
   let noStartRun = 0;
+  let noStartFollowQueued = false;
+
+  function followNoStartOutput() {
+    if (noStartFollowQueued) return;
+    noStartFollowQueued = true;
+    requestAnimationFrame(() => {
+      noStartFollowQueued = false;
+      if (activeEnvironment === 'no-start' && noStartBody.scrollHeight > noStartBody.clientHeight) {
+        noStartBody.scrollTop = noStartBody.scrollHeight;
+      }
+    });
+  }
 
   function resetNoStartTranscript() {
     noStartRun += 1;
@@ -1575,8 +1688,7 @@
       nodes.forEach((part) => { part.node.nodeValue = ''; });
     });
     if (!reduced) noStartLines[0].appendChild(noStartCaret);
-    const body = document.querySelector('#no-start-terminal .no-start-body');
-    if (body) body.scrollTop = 0;
+    noStartBody.scrollTop = 0;
   }
 
   function typeNoStartEpisode() {
@@ -1585,6 +1697,7 @@
         nodes.forEach((part) => { part.node.nodeValue = part.text; });
         line.classList.add('on');
       });
+      followNoStartOutput();
       return;
     }
     resetNoStartTranscript();
@@ -1604,12 +1717,14 @@
           nodes.forEach((part) => { part.node.nodeValue = part.text; });
           line.classList.add('on');
           line.appendChild(noStartCaret);
+          followNoStartOutput();
           later(nextLine, 500);
         }, 60);
         return;
       }
       line.classList.add('on');
       line.appendChild(noStartCaret);
+      followNoStartOutput();
       let nodeIndex = 0, charIndex = 0;
       (function typeCharacter() {
         if (run !== noStartRun || activeEnvironment !== 'no-start') return;
@@ -1617,6 +1732,7 @@
         const part = nodes[nodeIndex];
         charIndex += 1;
         part.node.nodeValue = part.text.slice(0, charIndex);
+        followNoStartOutput();
         if (charIndex >= part.text.length) { nodeIndex += 1; charIndex = 0; }
         later(typeCharacter, 4);
       })();
@@ -1624,11 +1740,12 @@
   }
 
   function updateEnvironmentSwitches() {
-    envSwitchPrev.classList.toggle('is-visible', environmentSwitchReady && activeEnvironment === 'no-start');
-    envSwitchNext.classList.toggle('is-visible', environmentSwitchReady && activeEnvironment === 'decision');
+    const canSwitch = environmentSwitchReady && !environmentSwitching;
+    envSwitchPrev.classList.toggle('is-visible', canSwitch && activeEnvironment === 'no-start');
+    envSwitchNext.classList.toggle('is-visible', canSwitch && activeEnvironment === 'decision');
   }
 
-  function setEnvironmentView(view, replay = true) {
+  function applyEnvironmentView(view, replay = true) {
     activeEnvironment = view === 'no-start' ? 'no-start' : 'decision';
     const showNoStart = activeEnvironment === 'no-start';
     envWindow.classList.toggle('show-no-start', showNoStart);
@@ -1645,9 +1762,67 @@
     updateEnvironmentSwitches();
   }
 
+  function cancelEnvironmentTransition() {
+    environmentSwitchToken += 1;
+    environmentSwitching = false;
+    envWindow.removeAttribute('aria-busy');
+    envWindow.classList.remove('is-switching', 'is-powering-off', 'is-powering-on');
+  }
+
+  function setEnvironmentView(view, replay = true) {
+    cancelEnvironmentTransition();
+    applyEnvironmentView(view, replay);
+  }
+
+  function transitionEnvironmentView(view) {
+    const nextView = view === 'no-start' ? 'no-start' : 'decision';
+    if (nextView === activeEnvironment || environmentSwitching) return;
+    if (reduced) {
+      applyEnvironmentView(nextView, nextView === 'no-start');
+      if (nextView === 'decision') startEnvEpisode();
+      return;
+    }
+
+    const token = ++environmentSwitchToken;
+    environmentSwitching = true;
+    envWindow.setAttribute('aria-busy', 'true');
+    noStartRun += 1;
+    noStartCaret.remove();
+    updateEnvironmentSwitches();
+    envWindow.classList.remove('is-powering-on');
+    envWindow.classList.add('is-switching', 'is-powering-off');
+
+    setTimeout(() => {
+      if (token !== environmentSwitchToken) return;
+      applyEnvironmentView(nextView, false);
+      if (nextView === 'no-start') {
+        resetNoStartTranscript();
+      } else if (envReady) {
+        envFrame.contentWindow.postMessage({ type: 'snl-reset-preview' }, location.origin);
+      }
+
+      envWindow.classList.remove('is-powering-off');
+      envWindow.classList.add('is-powering-on');
+
+      setTimeout(() => {
+        if (token !== environmentSwitchToken) return;
+        if (nextView === 'no-start') typeNoStartEpisode();
+        else startEnvEpisode();
+      }, 1500);
+
+      setTimeout(() => {
+        if (token !== environmentSwitchToken) return;
+        environmentSwitching = false;
+        envWindow.removeAttribute('aria-busy');
+        envWindow.classList.remove('is-switching', 'is-powering-on');
+        updateEnvironmentSwitches();
+      }, 430);
+    }, 300);
+  }
+
   resetNoStartTranscript();
-  envSwitchNext.addEventListener('click', () => setEnvironmentView('no-start'));
-  envSwitchPrev.addEventListener('click', () => setEnvironmentView('decision'));
+  envSwitchNext.addEventListener('click', () => transitionEnvironmentView('no-start'));
+  envSwitchPrev.addEventListener('click', () => transitionEnvironmentView('decision'));
   noStartReplay.addEventListener('click', typeNoStartEpisode);
   if (reduced) {
     environmentSwitchReady = true;
@@ -2247,7 +2422,11 @@
       const headerClearanceLift = headerGap - stageOuterTop;
       const stageLift = Math.max(desiredStageLift, headerClearanceLift);
       termStage.style.transform = `translateY(${stageLift}px)`;
-      termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e)}%`;
+      // The single-stream diagnostic transcript needs less horizontal room
+      // than the side-by-side planner. Narrow it symmetrically while keeping
+      // the full height available for the longer compound-failure diagnosis.
+      const terminalSideInset = activeEnvironment === 'no-start' ? (phone ? 4 : 14) : 0;
+      termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e) + terminalSideInset}%`;
       termPanel.style.transform =
         `rotateY(${lerp(22, 0, e) * mob}deg) rotateX(${lerp(-10, 0, e) * mob}deg) translateY(${lerp(48, 0, e) * mob}px)`;
       termF1.style.transform =
