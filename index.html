@@ -483,7 +483,7 @@
   .term-stage {
     width: min(640px, 72vw);
     height: min(380px, 42vh);
-    will-change: width, height;
+    will-change: width, height, transform;
   }
   .env-window {
     position: absolute;
@@ -507,6 +507,12 @@
     transition: opacity 0.35s ease;
   }
   .env-window.is-live iframe { opacity: 1; }
+  .env-window.is-expanded iframe { pointer-events: auto; }
+  .env-window.show-no-start iframe {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
   .env-veil {
     position: absolute;
     inset: 0;
@@ -524,18 +530,158 @@
     transition: opacity 0.3s ease;
   }
   .env-window.is-live .env-veil { opacity: 0; }
+  .env-window.show-no-start .env-veil { opacity: 0; }
+  .no-start-view {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    overflow: hidden;
+    background: #0e0e0d;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.38s ease, visibility 0s linear 0.38s;
+  }
+  .env-window.show-no-start .no-start-view {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .no-start-terminal {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+  .no-start-bar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 18px;
+    border-bottom: 1px solid #232320;
+  }
+  .no-start-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #2c2c29; }
+  .no-start-title {
+    min-width: 0;
+    margin-left: 8px;
+    overflow: hidden;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .no-start-replay {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    padding: 4px 8px;
+    border: 1px solid #353531;
+    border-radius: 999px;
+    background: #171715;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .no-start-replay:hover { border-color: #595950; background: #1d1d1a; color: var(--text); }
+  .no-start-replay:focus-visible,
+  .env-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .no-start-replay .icon { color: var(--accent); font-size: 13px; }
+  .no-start-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 22px 26px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.95;
+  }
+  .no-start-line { opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; }
+  .no-start-line.on { opacity: 1; transform: none; }
+  .no-start-caret {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    margin-left: 2px;
+    vertical-align: -2px;
+    background: #e2ded2;
+    animation: caret-blink 0.9s steps(1) infinite;
+  }
+  @keyframes caret-blink { 50% { opacity: 0; } }
+  .no-start-agent { color: var(--accent); }
+  .no-start-tool { color: #7fb4e8; }
+  .no-start-out { color: var(--text-dim); }
+  .no-start-verdict { color: #7ddb8a; }
+  .no-start-comment { color: var(--text-faint); }
+  .env-switch {
+    position: absolute;
+    z-index: 8;
+    top: 47%;
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border: 1px solid #5d5d5a;
+    border-radius: 12px;
+    background: rgba(12, 12, 12, 0.88);
+    color: var(--text);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.2s ease,
+      background 0.2s ease, visibility 0s linear 0.3s;
+  }
+  .env-switch:hover { border-color: var(--text-dim); background: #181817; }
+  .env-switch.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+    transition-delay: 0s;
+  }
+  .env-switch-next { right: clamp(18px, 2.8vw, 52px); }
+  .env-switch-prev { left: clamp(18px, 2.8vw, 52px); }
   .term-caption {
     position: absolute;
     left: 50%;
-    bottom: 4.5vh;
+    bottom: clamp(52px, 8.5vh, 96px);
     width: min(54ch, 88vw);
-    transform: translateX(-50%);
+    opacity: 0;
+    transform: translateX(-50%) translateY(18px);
     text-align: center;
     pointer-events: none;
+    transition: opacity 0.7s ease 0.12s,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+    will-change: opacity, transform;
+    display: grid;
+  }
+  .term-caption.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
   .term-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
   .term-caption p { margin: 10px auto 0; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
   .term-caption a { text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
+  .term-caption-content {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateX(16px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .term-caption-content.is-active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
 
   /* ================= split (applications-style) ================= */
   .split { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 60px; align-items: center; }
@@ -673,6 +819,12 @@
     .term-caption { bottom: 3vh; width: 92vw; }
     .term-caption h3 { font-size: 22px; }
     .term-caption p { font-size: 14px; padding: 0 12px; }
+    .env-switch { top: 43%; width: 44px; height: 44px; border-radius: 10px; font-size: 22px; }
+    .env-switch-next { right: 8px; }
+    .env-switch-prev { left: 8px; }
+    .no-start-bar { padding: 10px 12px; }
+    .no-start-title { margin-left: 2px; font-size: 10px; }
+    .no-start-body { padding: 14px 16px; font-size: 10.5px; line-height: 1.75; }
     /* split panel */
     .split-stage { height: 420px; }
     .split-panel { padding: 24px; }
@@ -769,15 +921,49 @@
         <div class="env-window" id="env-window">
           <iframe id="env-frame" title="hospitality-env live episode"></iframe>
           <div class="env-veil" id="env-veil">Scroll to open · episode starts when the window fills</div>
+          <div class="no-start-view" id="no-start-view" aria-hidden="true">
+            <div class="no-start-terminal" id="no-start-terminal">
+              <div class="no-start-bar">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="no-start-title">no-start-env — medium_corroded_ground · seed 41</span>
+                <button class="no-start-replay" id="no-start-replay" type="button" aria-label="Replay no-start episode">
+                  <span class="icon" aria-hidden="true">↻</span> Replay
+                </button>
+              </div>
+              <div class="no-start-body">
+                <div class="no-start-line on"><span class="no-start-comment"># complaint: engine cranks slowly, won't start</span></div>
+                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, resting)</div>
+                <div class="no-start-line"><span class="no-start-out">12.58 V</span> <span class="no-start-comment"># battery looks healthy</span></div>
+                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, cranking)</div>
+                <div class="no-start-line"><span class="no-start-out">10.41 V</span> <span class="no-start-comment"># holds under load — not the battery</span></div>
+                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_negative, engine_block, cranking)</div>
+                <div class="no-start-line"><span class="no-start-out">2.75 V</span> <span class="no-start-comment"># massive drop across the ground path</span></div>
+                <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">replace_part</span>(ground_strap) · <span class="no-start-tool">attempt_start</span>()</div>
+                <div class="no-start-line"><span class="no-start-verdict">engine starts ✓ — root cause: corroded ground strap · score 100 / 100</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <button class="env-switch env-switch-prev" id="env-switch-prev" type="button" aria-label="Show planning and execution episode">←</button>
+      <button class="env-switch env-switch-next" id="env-switch-next" type="button" aria-label="Show no-start diagnostic episode">→</button>
       <div class="term-caption" id="term-caption">
-        <h3>One environment. A general method.</h3>
-        <p>
-          A live hospitality packing cell: verify the ticket, fold, bag, set aside exceptions.
-          The window opens as you scroll; once it fills the stage, a trained episode runs.
-          <a href="decision-layer/" target="_blank" rel="noopener">Open the full demo</a>.
-        </p>
+        <div class="term-caption-content is-active" id="decision-caption">
+          <h3>Watch planning and execution unfold.</h3>
+          <p>
+            A trained planner decomposes a physical task while a stochastic executor carries it out,
+            surfaces failures, and triggers recovery.
+            <a href="decision-layer/" target="_blank" rel="noopener">Open the full demo</a>.
+          </p>
+        </div>
+        <div class="term-caption-content" id="no-start-caption" aria-hidden="true">
+          <h3>One environment. A general method.</h3>
+          <p>
+            no-start-env gives an agent a goal, an instrumented physical system, and actions with
+            consequences. It must isolate the fault, repair it, verify the resulting state, and earn
+            its score from the outcome. <a href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">Open no-start-env</a>.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -1201,12 +1387,129 @@
   }
   function resetEnvEpisode() {
     envEpisodeQueued = false;
+    envWindow.classList.remove('is-expanded');
+    if (envReady) {
+      envFrame.contentWindow.postMessage({ type: 'snl-reset-preview' }, location.origin);
+    }
   }
   let envStarted = false, envStartTimer = 0, envWasInView = false;
-  // Load and settle the compact preview before the visitor reaches it. This
-  // keeps the initial angled state populated without starting the trained run.
+  // Prepare the compact preview before the visitor reaches it. The embedded
+  // view stays visually idle until the scroll expansion starts the trained run.
   envFrame.src = envSrc;
-  if (reduced) { envStarted = true; envEpisodeQueued = true; }
+  if (reduced) {
+    envStarted = true;
+    envEpisodeQueued = true;
+    envWindow.classList.add('is-expanded');
+  }
+
+  /* ---------- expanded environment switcher + no-start episode ---------- */
+  const noStartView = document.getElementById('no-start-view');
+  const noStartLines = [...document.querySelectorAll('#no-start-terminal .no-start-line')];
+  const noStartReplay = document.getElementById('no-start-replay');
+  const envSwitchPrev = document.getElementById('env-switch-prev');
+  const envSwitchNext = document.getElementById('env-switch-next');
+  const decisionCaption = document.getElementById('decision-caption');
+  const noStartCaption = document.getElementById('no-start-caption');
+  const noStartCaret = document.createElement('span');
+  noStartCaret.className = 'no-start-caret';
+  const noStartTypeSeq = noStartLines.slice(1).map((line) => {
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) nodes.push({ node, text: node.nodeValue });
+    return { line, nodes, isAgent: !!line.querySelector('.no-start-agent') };
+  });
+  let activeEnvironment = 'decision';
+  let environmentSwitchReady = false;
+  let noStartRun = 0;
+
+  function resetNoStartTranscript() {
+    noStartRun += 1;
+    noStartCaret.remove();
+    noStartLines[0].classList.add('on');
+    noStartTypeSeq.forEach(({ line, nodes }) => {
+      line.classList.remove('on');
+      nodes.forEach((part) => { part.node.nodeValue = ''; });
+    });
+    if (!reduced) noStartLines[0].appendChild(noStartCaret);
+    const body = document.querySelector('#no-start-terminal .no-start-body');
+    if (body) body.scrollTop = 0;
+  }
+
+  function typeNoStartEpisode() {
+    if (reduced) {
+      noStartTypeSeq.forEach(({ line, nodes }) => {
+        nodes.forEach((part) => { part.node.nodeValue = part.text; });
+        line.classList.add('on');
+      });
+      return;
+    }
+    resetNoStartTranscript();
+    const run = noStartRun;
+    const later = (fn, delay) => setTimeout(() => {
+      if (run === noStartRun && activeEnvironment === 'no-start') fn();
+    }, delay);
+    let lineIndex = 0;
+    (function nextLine() {
+      if (lineIndex >= noStartTypeSeq.length) {
+        noStartTypeSeq[noStartTypeSeq.length - 1].line.appendChild(noStartCaret);
+        return;
+      }
+      const { line, nodes, isAgent } = noStartTypeSeq[lineIndex++];
+      if (!isAgent) {
+        later(() => {
+          nodes.forEach((part) => { part.node.nodeValue = part.text; });
+          line.classList.add('on');
+          line.appendChild(noStartCaret);
+          later(nextLine, 500);
+        }, 60);
+        return;
+      }
+      line.classList.add('on');
+      line.appendChild(noStartCaret);
+      let nodeIndex = 0, charIndex = 0;
+      (function typeCharacter() {
+        if (run !== noStartRun || activeEnvironment !== 'no-start') return;
+        if (nodeIndex >= nodes.length) { later(nextLine, 45); return; }
+        const part = nodes[nodeIndex];
+        charIndex += 1;
+        part.node.nodeValue = part.text.slice(0, charIndex);
+        if (charIndex >= part.text.length) { nodeIndex += 1; charIndex = 0; }
+        later(typeCharacter, 4);
+      })();
+    })();
+  }
+
+  function updateEnvironmentSwitches() {
+    envSwitchPrev.classList.toggle('is-visible', environmentSwitchReady && activeEnvironment === 'no-start');
+    envSwitchNext.classList.toggle('is-visible', environmentSwitchReady && activeEnvironment === 'decision');
+  }
+
+  function setEnvironmentView(view, replay = true) {
+    activeEnvironment = view === 'no-start' ? 'no-start' : 'decision';
+    const showNoStart = activeEnvironment === 'no-start';
+    envWindow.classList.toggle('show-no-start', showNoStart);
+    noStartView.setAttribute('aria-hidden', String(!showNoStart));
+    decisionCaption.classList.toggle('is-active', !showNoStart);
+    decisionCaption.setAttribute('aria-hidden', String(showNoStart));
+    noStartCaption.classList.toggle('is-active', showNoStart);
+    noStartCaption.setAttribute('aria-hidden', String(!showNoStart));
+    if (showNoStart && replay) typeNoStartEpisode();
+    if (!showNoStart) {
+      noStartRun += 1;
+      noStartCaret.remove();
+    }
+    updateEnvironmentSwitches();
+  }
+
+  resetNoStartTranscript();
+  envSwitchNext.addEventListener('click', () => setEnvironmentView('no-start'));
+  envSwitchPrev.addEventListener('click', () => setEnvironmentView('decision'));
+  noStartReplay.addEventListener('click', typeNoStartEpisode);
+  if (reduced) {
+    environmentSwitchReady = true;
+    updateEnvironmentSwitches();
+  }
 
   /* ---------- scroll direction ---------- */
   let lastY = scrollY, scrollDir = 1;
@@ -1686,6 +1989,8 @@
         clearTimeout(envStartTimer);
         envStartTimer = 0;
         envStarted = false;
+        environmentSwitchReady = false;
+        setEnvironmentView('decision', false);
         resetEnvEpisode();
       }
       envWasInView = termInView;
@@ -1701,6 +2006,9 @@
       const h1 = phone ? Math.min(440, innerHeight * 0.62) : Math.min(680, innerHeight * 0.64);
       termStage.style.width = lerp(w0, w1, e) + 'px';
       termStage.style.height = lerp(h0, h1, e) + 'px';
+      const stageSettle = clamp((p - 0.62) / 0.32, 0, 1);
+      termStage.style.transform =
+        `translateY(${-stageSettle * innerHeight * (phone ? 0.055 : 0.065)}px)`;
       termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e)}%`;
       termPanel.style.transform =
         `rotateY(${lerp(22, 0, e) * mob}deg) rotateX(${lerp(-10, 0, e) * mob}deg) translateY(${lerp(48, 0, e) * mob}px)`;
@@ -1708,18 +2016,29 @@
         `rotateY(${lerp(26, 2, e) * mob}deg) rotateX(${lerp(-12, 0, e) * mob}deg) translateY(${lerp(72, 6, e) * mob}px) translateZ(${lerp(-80, -16, e) * mob}px)`;
       termF2.style.transform =
         `rotateY(${lerp(30, 4, e) * mob}deg) rotateX(${lerp(-14, 0, e) * mob}deg) translateY(${lerp(100, 14, e) * mob}px) translateZ(${lerp(-150, -40, e) * mob}px)`;
-      const capT = clamp((p - 0.18) / 0.42, 0, 1);
-      termCap.style.opacity = String(1 - capT);
-      termCap.style.transform = `translateX(-50%) translateY(${capT * 18}px)`;
-      termCap.style.pointerEvents = capT > 0.55 ? 'none' : '';
+      termCap.classList.toggle('is-visible', p >= 0.96);
+      termCap.style.pointerEvents = p >= 0.96 ? 'auto' : 'none';
+      const switchReady = p >= 0.96;
+      if (environmentSwitchReady !== switchReady) {
+        environmentSwitchReady = switchReady;
+        if (!switchReady && activeEnvironment === 'no-start') setEnvironmentView('decision', false);
+        else updateEnvironmentSwitches();
+      }
       const deco = 1 - clamp((p - 0.45) / 0.4, 0, 1);
       termContours.style.opacity = String(deco);
       termBins.forEach((el) => { if (el) el.style.opacity = String(deco); });
-      // Load the live app only after the window has reached size, so the
-      // three-column layout never has to paint inside the small tilted frame.
+      // Hysteresis keeps the compact and expanded states deterministic: the
+      // streams begin only once fully opened, then return to a blank initial
+      // state once the visitor collapses the window again.
       if (!envStarted && p >= 0.88) {
         envStarted = true;
+        envWindow.classList.add('is-expanded');
         envStartTimer = setTimeout(startEnvEpisode, 80);
+      } else if (envStarted && p <= 0.12) {
+        clearTimeout(envStartTimer);
+        envStartTimer = 0;
+        envStarted = false;
+        resetEnvEpisode();
       }
 
       // Split stage: gentle parallax tilt as it crosses the viewport.

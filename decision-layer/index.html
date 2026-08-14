@@ -38,29 +38,195 @@
         min-height: 0;
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      html.snl-embed .snl-grade strong { min-width: 8ch; }
+      html.snl-embed .snl-grade[data-tone="clean"] strong { color: var(--green); }
+      html.snl-embed .snl-grade[data-tone="minor"] strong { color: var(--yellow); }
+      html.snl-embed .snl-grade[data-tone="unflagged"] strong { color: var(--red); }
+      /* Preserve the two system headers while the framed window is compact,
+         but do not reveal a completed run before the scroll cue starts it. */
+      html.snl-embed.snl-env-idle .panel-body { visibility: hidden; }
+      html.snl-embed .log-line.snl-line-enter {
+        opacity: 0;
+        transform: translateY(5px);
+        animation: snl-line-enter var(--snl-line-duration, 0.32s) ease forwards;
+        animation-delay: var(--snl-line-delay, 0ms);
+      }
+      @keyframes snl-line-enter {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html.snl-embed .log-line.snl-line-enter {
+          opacity: 1;
+          transform: none;
+          animation: none;
+        }
+      }
     </style>
     <script>
-      // The live view follows its newest planner/executor lines with
-      // scrollIntoView(). In an iframe that can also scroll the parent page,
-      // which rewinds the homepage's scroll-driven expansion. Keep the same
-      // log-following behavior inside the embedded panel without crossing the
-      // iframe boundary. The standalone demo keeps the native method.
+      // The standalone app follows new lines with scrollIntoView(). In the
+      // embedded preview, the staged lines already exist in layout before they
+      // fade in, so that native follow jumps ahead of what is actually visible.
+      // Suppress it here; animateLine() advances a pane only when the next
+      // revealed line crosses its visible bottom edge.
       if (new URLSearchParams(location.search).has('embed')) {
-        document.documentElement.classList.add('snl-embed');
-        Element.prototype.scrollIntoView = function () {
-          const pane = this.closest && this.closest('.panel-body');
-          if (pane) pane.scrollTop = pane.scrollHeight;
-        };
+        document.documentElement.classList.add('snl-embed', 'snl-env-idle');
+        Element.prototype.scrollIntoView = function () {};
 
         const buttonNamed = (label) => [...document.querySelectorAll('button')]
           .find((button) => button.textContent.trim().toUpperCase() === label.toUpperCase()) || null;
         let trainedRunQueued = false;
+        let gradeRunActive = false;
+        let gradeTimer = 0;
+        let latestRevealAt = 0;
+        let gradeValue = null;
+        let lineSpeed = 1;
+        const lineTimelines = new WeakMap();
+
+        const setGrade = (value = '—', tone = '') => {
+          if (!gradeValue) return;
+          gradeValue.textContent = value;
+          gradeValue.closest('.snl-grade').dataset.tone = tone;
+        };
+
+        const beginGrade = () => {
+          clearTimeout(gradeTimer);
+          gradeTimer = 0;
+          gradeRunActive = true;
+          latestRevealAt = performance.now();
+          setGrade();
+        };
+
+        const readCompletedGrade = () => {
+          if (!gradeRunActive ||
+              document.documentElement.classList.contains('snl-env-idle')) return;
+          const card = document.querySelector('.scorecard:not(.pending)');
+          if (!card) { setGrade(); return; }
+          const values = new Map([...card.querySelectorAll('.score-item')].map((item) => [
+            item.querySelector('.k')?.textContent.trim(),
+            item.querySelector('.v')?.textContent.trim()
+          ]));
+          const unflagged = Number(values.get('Incomplete item containerized without flag') || 0);
+          const minor = values.get('Ticket/manifest mismatch caught') === 'N' ||
+            Number(values.get('Hazard items containerized') || 0) > 0 ||
+            values.get('Special/house item mis-containerized') === 'Y' ||
+            values.get('Capacity violated') === 'Y' ||
+            values.get('Recovery success after executor failure') === 'N' ||
+            values.get('Repeated-failure handled safely') === 'N';
+          const grade = unflagged > 0 ? 'UNFLAGGED' : minor ? 'MINOR' : 'CLEAN';
+          setGrade(grade, grade.toLowerCase());
+          gradeRunActive = false;
+        };
+
+        const queueCompletedGrade = () => {
+          if (!gradeRunActive) return;
+          const card = document.querySelector('.scorecard:not(.pending)');
+          if (!card) { setGrade(); return; }
+          clearTimeout(gradeTimer);
+          // Defer once so the log observer from the same React commit can
+          // register the final line's stagger before the reveal deadline is set.
+          gradeTimer = setTimeout(() => {
+            const delay = Math.max(0, latestRevealAt - performance.now() + 24);
+            gradeTimer = setTimeout(readCompletedGrade, delay);
+          }, 0);
+        };
+
+        const installGradeDisplay = () => {
+          const meta = document.querySelector('.header-meta');
+          if (!meta) return;
+          const grade = document.createElement('div');
+          grade.className = 'snl-grade chip';
+          grade.innerHTML = '<span>GRADE //</span><strong>—</strong>';
+          meta.appendChild(grade);
+          gradeValue = grade.querySelector('strong');
+
+          const lower = document.querySelector('.lower');
+          if (lower) {
+            const observer = new MutationObserver(queueCompletedGrade);
+            observer.observe(lower, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['class']
+            });
+          }
+          ['BASELINE', 'TRAINED', 'NEW EPISODE'].forEach((label) => {
+            buttonNamed(label)?.addEventListener('click', beginGrade, true);
+          });
+        };
+
+        const resetLineTimelines = () => {
+          const now = performance.now();
+          document.querySelectorAll('.log').forEach((log) => {
+            lineTimelines.set(log, now);
+            const pane = log.closest('.panel-body');
+            if (pane) pane.scrollTop = 0;
+          });
+        };
+
+        const setLineSpeed = (speed) => {
+          lineSpeed = speed === 4 ? 4 : 1;
+          const now = performance.now();
+          document.querySelectorAll('.log').forEach((log) => {
+            lineTimelines.set(log, now);
+          });
+        };
+
+        const followRevealedLine = (line) => {
+          if (!line.isConnected ||
+              document.documentElement.classList.contains('snl-env-idle')) return;
+          const pane = line.closest('.panel-body');
+          if (!pane) return;
+          const paneRect = pane.getBoundingClientRect();
+          const lineRect = line.getBoundingClientRect();
+          const overflow = lineRect.bottom - (paneRect.bottom - 8);
+          if (overflow > 0) pane.scrollTop += overflow;
+        };
+
+        const animateLine = (line) => {
+          if (document.documentElement.classList.contains('snl-env-idle')) return;
+          const log = line.closest('.log');
+          if (!log) return;
+          const now = performance.now();
+          const revealAt = Math.max(now, lineTimelines.get(log) || now);
+          const revealDelay = revealAt - now;
+          const revealDuration = 320 / lineSpeed;
+          const revealGap = 90 / lineSpeed;
+          line.style.setProperty('--snl-line-delay', `${revealDelay}ms`);
+          line.style.setProperty('--snl-line-duration', `${revealDuration}ms`);
+          line.classList.add('snl-line-enter');
+          setTimeout(() => followRevealedLine(line), revealDelay + 16);
+          latestRevealAt = Math.max(latestRevealAt, revealAt + revealDuration);
+          lineTimelines.set(log, revealAt + revealGap);
+        };
+
+        const installLineReveal = () => {
+          resetLineTimelines();
+          const observer = new MutationObserver((records) => {
+            for (const record of records) {
+              for (const node of record.addedNodes) {
+                if (!(node instanceof Element)) continue;
+                if (node.matches('.log-line')) animateLine(node);
+                node.querySelectorAll('.log-line').forEach(animateLine);
+              }
+            }
+          });
+          document.querySelectorAll('.log').forEach((log) => {
+            observer.observe(log, { childList: true, subtree: true });
+          });
+          const newEpisode = buttonNamed('NEW EPISODE');
+          if (newEpisode) newEpisode.addEventListener('click', resetLineTimelines, true);
+          buttonNamed('1X')?.addEventListener('click', () => setLineSpeed(1), true);
+          buttonNamed('4X')?.addEventListener('click', () => setLineSpeed(4), true);
+        };
 
         const startTrainedRun = () => {
           const trained = buttonNamed('TRAINED');
           const newEpisode = buttonNamed('NEW EPISODE');
           if (!trained) return false;
           trainedRunQueued = false;
+          beginGrade();
+          resetLineTimelines();
+          document.documentElement.classList.remove('snl-env-idle');
           if (!trained.classList.contains('active-green') &&
               !trained.classList.contains('active')) {
             trained.click();
@@ -68,6 +234,16 @@
             newEpisode.click();
           }
           return true;
+        };
+        const resetPreview = () => {
+          trainedRunQueued = false;
+          gradeRunActive = false;
+          clearTimeout(gradeTimer);
+          gradeTimer = 0;
+          setGrade();
+          document.documentElement.classList.add('snl-env-idle');
+          const skip = buttonNamed('SKIP');
+          if (skip && !skip.disabled) skip.click();
         };
         addEventListener('DOMContentLoaded', () => {
           const readyTimer = setInterval(() => {
@@ -80,16 +256,21 @@
             // populated and stable before its scroll animation begins.
             if (!skip.disabled) skip.click();
             clearInterval(readyTimer);
+            installLineReveal();
+            installGradeDisplay();
             parent.postMessage({ type: 'snl-env-ready' }, location.origin);
             if (trainedRunQueued) startTrainedRun();
           }, 50);
         });
 
         addEventListener('message', (event) => {
-          if (event.source !== parent || event.origin !== location.origin ||
-              event.data?.type !== 'snl-start-trained') return;
-          trainedRunQueued = true;
-          startTrainedRun();
+          if (event.source !== parent || event.origin !== location.origin) return;
+          if (event.data?.type === 'snl-start-trained') {
+            trainedRunQueued = true;
+            startTrainedRun();
+          } else if (event.data?.type === 'snl-reset-preview') {
+            resetPreview();
+          }
         });
       }
     </script>
