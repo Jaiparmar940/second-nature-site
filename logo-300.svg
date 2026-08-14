@@ -2,7 +2,8 @@
   <title>Second Nature Labs</title>
   <rect width="300" height="300" fill="#000000"/>
   <circle cx="192.77" cy="192.77" r="25.20" fill="#3aa189"/>
-  <circle cx="150.00" cy="150.00" r="80.64" fill="none" stroke="#ffffff" stroke-width="15.96"/>
-  <circle cx="168.41" cy="168.41" r="54.60" fill="none" stroke="#ffffff" stroke-width="15.96"/>
-  <circle cx="183.26" cy="183.26" r="33.60" fill="none" stroke="#ffffff" stroke-width="15.96"/>
+  <circle cx="150.00" cy="150.00" r="80.64" fill="none" stroke="#ffffff" stroke-width="18"/>
+  <circle cx="168.41" cy="168.41" r="54.60" fill="none" stroke="#ffffff" stroke-width="18"/>
+  <circle cx="183.26" cy="183.26" r="33.60" fill="none" stroke="#ffffff" stroke-width="18"/>
+  <rect x="6" y="6" width="288" height="288" rx="52" fill="none" stroke="#ffffff" stroke-width="12"/>
 </svg>

@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo-300.svg" />
     <meta
       name="description"
       content="Task-level RL environment for robot decision-layer planner training and eval"
@@ -32,7 +33,23 @@
         min-height: 100%;
         overflow: hidden;
       }
-      html.snl-embed .header-meta { margin-right: auto; }
+      html.snl-embed .header {
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+      html.snl-embed .header-meta {
+        flex: 0 0 auto;
+        flex-basis: auto;
+        flex-wrap: nowrap;
+        margin-right: 0;
+      }
+      html.snl-embed .header-controls {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        margin-left: auto;
+      }
+      html.snl-embed .header-controls button { white-space: nowrap; }
+      html.snl-embed .snl-fit-hidden { display: none !important; }
       html.snl-embed .panel { min-height: 0; max-height: none; }
       html.snl-embed .main {
         min-height: 0;
@@ -154,6 +171,46 @@
           });
         };
 
+        const installHeaderFit = () => {
+          const header = document.querySelector('.header');
+          const meta = header?.querySelector('.header-meta');
+          const controls = header?.querySelector('.header-controls');
+          if (!header || !meta || !controls) return;
+
+          const policy = controls.querySelector('.seg[aria-label="Policy mode"]');
+          const speed = controls.querySelector('.seg[aria-label="Stream speed"]');
+          const skip = buttonNamed('SKIP');
+          const newEpisode = buttonNamed('NEW EPISODE');
+          const grade = meta.querySelector('.snl-grade');
+          const episode = meta.querySelector('.chip:not(.snl-grade)');
+          // Protect the outer anchors: episode metadata at the left and RUN 10
+          // at the right. Remove controls from the middle outward until the
+          // animated frame has enough width for a single header row.
+          const hideOrder = [policy, speed, skip, newEpisode, grade, episode]
+            .filter(Boolean);
+          let fitFrame = 0;
+
+          const fit = () => {
+            cancelAnimationFrame(fitFrame);
+            fitFrame = requestAnimationFrame(() => {
+              hideOrder.forEach((item) => item.classList.remove('snl-fit-hidden'));
+              for (const item of hideOrder) {
+                if (header.scrollWidth <= header.clientWidth + 1) break;
+                item.classList.add('snl-fit-hidden');
+              }
+            });
+          };
+
+          new ResizeObserver(fit).observe(header);
+          new MutationObserver(fit).observe(header, {
+            childList: true,
+            characterData: true,
+            subtree: true
+          });
+          document.fonts?.ready.then(fit);
+          fit();
+        };
+
         const resetLineTimelines = () => {
           const now = performance.now();
           document.querySelectorAll('.log').forEach((log) => {
@@ -258,6 +315,7 @@
             clearInterval(readyTimer);
             installLineReveal();
             installGradeDisplay();
+            installHeaderFit();
             parent.postMessage({ type: 'snl-env-ready' }, location.origin);
             if (trainedRunQueued) startTrainedRun();
           }, 50);
