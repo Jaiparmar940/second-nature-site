@@ -19,13 +19,6 @@
 <meta name="twitter:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
 <meta name="twitter:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
 <meta name="twitter:image" content="https://snlabs.dev/og-image.png">
-<script>
-  try {
-    document.documentElement.dataset.theme = localStorage.getItem('sn-theme') === 'light' ? 'light' : 'dark';
-  } catch (_) {
-    document.documentElement.dataset.theme = 'dark';
-  }
-</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,20 +80,6 @@
     --nav-h: 68px;
   }
   html { color-scheme: dark; }
-  html[data-theme="light"] {
-    color-scheme: light;
-    --paper: #e9e8e4;
-    --paper-hi: #f5f4f0;
-    --ink: #11110f;
-    --bg: #efeee9;
-    --bg-raised: #e6e5df;
-    --line: #ceccc4;
-    --wire: rgba(20, 20, 18, 0.36);
-    --wire-dim: rgba(20, 20, 18, 0.16);
-    --text: #171715;
-    --text-dim: #5f5d57;
-    --text-faint: #85827a;
-  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { overflow-x: clip; }
   body {
@@ -209,77 +188,6 @@
     border-color: #fff;
     background: #fff;
   }
-  .theme-toggle {
-    display: grid;
-    flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
-    place-items: center;
-    border: 1px solid rgba(242, 240, 235, 0.42);
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.02);
-    color: var(--text);
-    cursor: pointer;
-    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-  }
-  .theme-toggle:hover {
-    border-color: rgba(242, 240, 235, 0.86);
-    background: rgba(255, 255, 255, 0.07);
-    transform: translateY(-1px);
-  }
-  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; }
-  .theme-icon-moon { display: none; }
-  html[data-theme="light"] .theme-icon-sun { display: none; }
-  html[data-theme="light"] .theme-icon-moon { display: block; }
-
-  html[data-theme="light"] nav {
-    color: var(--ink);
-    background: linear-gradient(180deg, #ffffff 0%, #f6f5f1 56%, var(--bg) 100%);
-    border-bottom-color: transparent;
-    box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.95),
-      inset 0 -1px rgba(80, 77, 68, 0.08);
-  }
-  html[data-theme="light"] nav::after {
-    background:
-      linear-gradient(110deg, rgba(255, 255, 255, 0.5), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.2)),
-      radial-gradient(ellipse 42% 120% at 16% -45%, rgba(255, 255, 255, 0.72), transparent 72%);
-  }
-  html[data-theme="light"] nav.is-scrolled {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(247, 246, 242, 0.6) 56%, rgba(239, 238, 233, 0.54) 100%);
-    border-bottom-color: rgba(20, 20, 18, 0.18);
-    box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.82),
-      inset 0 -1px rgba(80, 77, 68, 0.12),
-      0 12px 34px rgba(40, 38, 32, 0.09);
-    backdrop-filter: blur(11px) saturate(125%) brightness(1.04);
-    -webkit-backdrop-filter: blur(11px) saturate(125%) brightness(1.04);
-  }
-  html[data-theme="light"] .nav-links a { color: var(--text-dim); }
-  html[data-theme="light"] .nav-links a:hover { color: var(--text); }
-  html[data-theme="light"] nav .btn,
-  html[data-theme="light"] .theme-toggle {
-    color: var(--ink);
-    border-color: rgba(17, 17, 15, 0.32);
-    background: rgba(17, 17, 15, 0.01);
-  }
-  html[data-theme="light"] nav .btn:hover,
-  html[data-theme="light"] .theme-toggle:hover {
-    border-color: rgba(17, 17, 15, 0.72);
-    background: rgba(17, 17, 15, 0.05);
-  }
-  html[data-theme="light"] nav .btn-ink {
-    color: #fff;
-    border-color: var(--ink);
-    background: var(--ink);
-  }
-  html[data-theme="light"] nav .btn-ink:hover {
-    color: #fff;
-    border-color: #292925;
-    background: #292925;
-  }
-
   /* ================= hero: pinned headline ================= */
   .hero-shell { height: 150vh; position: relative; background: #060606; }
   .hero-pin {
@@ -382,24 +290,6 @@
   .hero-card { will-change: transform; }
   .hero-copy h1 { will-change: transform, opacity; }
 
-  html[data-theme="light"] .hero-shell,
-  html[data-theme="light"] .hero-card { background: var(--bg); }
-  html[data-theme="light"] .hero-copy h1 { color: var(--ink); text-shadow: none; }
-  html[data-theme="light"] .hero-veil {
-    background:
-      radial-gradient(ellipse 75% 60% at 50% 52%, rgba(239, 238, 233, 0.52), transparent 70%),
-      linear-gradient(180deg, rgba(239, 238, 233, 0.16), transparent 32%, transparent 67%, rgba(239, 238, 233, 0.64));
-  }
-  html[data-theme="light"] .section-nav { color: var(--ink); }
-  html[data-theme="light"] .section-nav-button {
-    border-color: rgba(20, 20, 18, 0.48);
-    background: rgba(239, 238, 233, 0.8);
-  }
-  html[data-theme="light"] .section-nav-button:hover {
-    border-color: rgba(20, 20, 18, 0.82);
-    background: rgba(255, 255, 255, 0.9);
-  }
-
   /* ================= dark region ================= */
   .dark {
     position: relative;
@@ -425,16 +315,6 @@
       var(--bg) 50%,
       rgba(10, 10, 10, 0.72) 66%,
       rgba(10, 10, 10, 0) 100%
-    );
-  }
-  html[data-theme="light"] .dark::before {
-    background: linear-gradient(
-      to bottom,
-      rgba(239, 238, 233, 0) 0%,
-      rgba(239, 238, 233, 0.76) 34%,
-      var(--bg) 50%,
-      rgba(239, 238, 233, 0.72) 66%,
-      rgba(239, 238, 233, 0) 100%
     );
   }
   section { padding: 96px 0; }
@@ -476,9 +356,6 @@
     inset: 0;
     background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(10, 10, 10, 0.64), rgba(10, 10, 10, 0.24) 54%, transparent 76%);
     pointer-events: none;
-  }
-  html[data-theme="light"] .statement-pin::after {
-    background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(239, 238, 233, 0.7), rgba(239, 238, 233, 0.3) 54%, transparent 76%);
   }
   .statement-art {
     position: absolute;
@@ -578,13 +455,6 @@
   }
   .contours .dash { stroke-dasharray: 3 6; stroke: rgba(255, 255, 255, 0.28); }
   .contours .tri { fill: rgba(255, 255, 255, 0.4); stroke: none; }
-  html[data-theme="light"] .bin { color: rgba(20, 20, 18, 0.42); }
-  html[data-theme="light"] .contours path,
-  html[data-theme="light"] .contours circle,
-  html[data-theme="light"] .contours line { stroke: rgba(20, 20, 18, 0.3); }
-  html[data-theme="light"] .contours .dash { stroke: rgba(20, 20, 18, 0.24); }
-  html[data-theme="light"] .contours .tri { fill: rgba(20, 20, 18, 0.38); }
-
   /* ================= benchmark showcase ================= */
   .showcase { height: 165vh; position: relative; }
   .showcase-sticky {
@@ -1002,22 +872,6 @@
   .foot-col a:hover { color: var(--text); }
   .foot-legal { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-faint); }
 
-  html[data-theme="light"] .btn-ghost-dark {
-    color: var(--ink);
-    border-color: rgba(17, 17, 15, 0.3);
-  }
-  html[data-theme="light"] .btn-ghost-dark:hover { border-color: rgba(17, 17, 15, 0.68); }
-  html[data-theme="light"] .env-window,
-  html[data-theme="light"] .split-panel {
-    --text: #f2f0eb;
-    --text-dim: #9b9890;
-    --text-faint: #5c5a54;
-    color: #f2f0eb;
-  }
-  html[data-theme="light"] .env-switch { color: #f2f0eb; }
-  html[data-theme="light"] .pillar:hover { border-color: #aaa79e; }
-  html[data-theme="light"] .codeblock { background: #f8f7f3; }
-
   @media (max-width: 940px) {
     .nav-links { display: none; }
     .split, .qs-grid { grid-template-columns: 1fr; }
@@ -1040,7 +894,6 @@
     .nav-inner { gap: 16px; }
     .nav-cta { gap: 8px; }
     .btn { white-space: nowrap; padding: 9px 14px; font-size: 13px; }
-    .theme-toggle { width: 36px; height: 36px; }
     .section-nav { right: 20px; bottom: 20px; gap: 10px; }
     .statement-copy h2 { font-size: clamp(27px, 8vw, 38px); }
     .statement-copy p { font-size: 14.5px; line-height: 1.55; }
@@ -1109,15 +962,6 @@
       <a href="#quickstart">Open proof</a>
     </div>
     <div class="nav-cta">
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" title="Switch color theme">
-        <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4"></circle>
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
-        </svg>
-        <svg class="theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20.5 14.2A8.2 8.2 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"></path>
-        </svg>
-      </button>
       <a class="btn" href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
       <a class="btn btn-ink" href="#contact">Get in touch</a>
     </div>
@@ -1459,30 +1303,14 @@
   const mobileScroll = matchMedia('(hover: none) and (pointer: coarse)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
-  const rootEl = document.documentElement;
-  const themeToggle = document.getElementById('theme-toggle');
-  const themeNav = document.getElementById('nav');
-  const isLightTheme = () => rootEl.dataset.theme === 'light';
-  function syncThemeUI() {
-    const light = isLightTheme();
-    themeToggle.setAttribute('aria-pressed', String(light));
-    themeToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
-  }
+  const navEl = document.getElementById('nav');
   function syncNavSurface() {
     // Until one full nav-height has passed, the sticky element is still over
-    // its original light layout slot rather than over the hero. Keep the glass
-    // opaque through that handoff so the white slot cannot wash it gray.
-    themeNav.classList.toggle('is-scrolled', scrollY > themeNav.offsetHeight);
+    // its original layout slot rather than over the hero. Keep the glass
+    // opaque through that handoff so its surface stays visually consistent.
+    navEl.classList.toggle('is-scrolled', scrollY > navEl.offsetHeight);
   }
-  syncThemeUI();
   syncNavSurface();
-  themeToggle.addEventListener('click', () => {
-    rootEl.dataset.theme = isLightTheme() ? 'dark' : 'light';
-    try { localStorage.setItem('sn-theme', rootEl.dataset.theme); } catch (_) {}
-    syncThemeUI();
-    drawHero(performance.now());
-    drawTrainingField(performance.now(), 1);
-  });
   addEventListener('scroll', syncNavSurface, { passive: true });
 
   /* ---------- hero art: interactive causal vector field ---------- */
@@ -1509,7 +1337,6 @@
   }
 
   function drawHeroField(t) {
-    const light = isLightTheme();
     const seconds = t / 1000;
     const centerX = W * 0.5;
     const centerY = H * 0.48;
@@ -1575,21 +1402,15 @@
     for (let level = 1; level < levels; level += 1) {
       const strength = level / levels;
       if (neutral[level]) {
-        hctx.strokeStyle = light
-          ? `rgba(35,38,42,${strength * 0.58})`
-          : `rgba(198,203,214,${strength * 0.72})`;
+        hctx.strokeStyle = `rgba(198,203,214,${strength * 0.72})`;
         hctx.stroke(neutral[level]);
       }
       if (amber[level]) {
-        hctx.strokeStyle = light
-          ? `rgba(174,116,0,${strength * 0.78})`
-          : `rgba(245,179,1,${strength * 0.86})`;
+        hctx.strokeStyle = `rgba(245,179,1,${strength * 0.86})`;
         hctx.stroke(amber[level]);
       }
       if (teal[level]) {
-        hctx.strokeStyle = light
-          ? `rgba(30,118,99,${strength * 0.78})`
-          : `rgba(58,161,137,${strength * 0.9})`;
+        hctx.strokeStyle = `rgba(58,161,137,${strength * 0.9})`;
         hctx.stroke(teal[level]);
       }
     }
@@ -1598,7 +1419,7 @@
   function drawHero(t) {
     hctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     hctx.globalAlpha = 1;
-    hctx.fillStyle = isLightTheme() ? '#efeee9' : '#050504';
+    hctx.fillStyle = '#050504';
     hctx.fillRect(0, 0, W, H);
     drawHeroField(t);
   }
@@ -1657,8 +1478,8 @@
       const twinkle = 0.55 + Math.sin(t / 1600 + point.phase) * 0.45;
       const alpha = (0.09 + point.z * 0.46) * twinkle * scene;
       sctx.fillStyle = point.amber
-        ? (isLightTheme() ? `rgba(162,105,0,${alpha * 0.85})` : `rgba(245,179,1,${alpha})`)
-        : (isLightTheme() ? `rgba(42,41,38,${alpha * 0.78})` : `rgba(226,222,210,${alpha})`);
+        ? `rgba(245,179,1,${alpha})`
+        : `rgba(226,222,210,${alpha})`;
       sctx.beginPath();
       sctx.arc(x, y, point.z * (point.amber ? 2.1 : 1.65), 0, Math.PI * 2);
       sctx.fill();
