@@ -300,10 +300,9 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    /* The card starts below the nav, so centering in the card puts the headline
-       half a nav-height low on screen. Paying the nav back as bottom padding
-       centers it in the visible dark band instead. */
-    padding: 0 24px var(--nav-h);
+    /* Hero fills the viewport under the nav, so center on the page with no
+       nav-height offset — the old bottom padding sat the headline too high. */
+    padding: 0 24px;
   }
   .hero-copy h1 {
     color: #f5f3ee;
