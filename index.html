@@ -19,6 +19,13 @@
 <meta name="twitter:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
 <meta name="twitter:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
 <meta name="twitter:image" content="https://snlabs.dev/og-image.png">
+<script>
+  try {
+    document.documentElement.dataset.theme = localStorage.getItem('sn-theme') === 'light' ? 'light' : 'dark';
+  } catch (_) {
+    document.documentElement.dataset.theme = 'dark';
+  }
+</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -28,7 +35,7 @@
       "@id": "https://snlabs.dev/#org",
       "name": "Second Nature Labs",
       "url": "https://snlabs.dev/",
-      "logo": "https://snlabs.dev/logo-300.png",
+      "logo": "https://snlabs.dev/logo-300.svg",
       "description": "Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.",
       "email": "founders@snlabs.dev",
       "founder": {
@@ -52,7 +59,7 @@
   ]
 }
 </script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Ccircle cx='20.51' cy='20.51' r='2.66' fill='%233aa189'/%3E%3Ccircle cx='16' cy='16' r='8.5' fill='none' stroke='%23f2f0eb' stroke-width='1.9'/%3E%3Ccircle cx='17.94' cy='17.94' r='5.76' fill='none' stroke='%23f2f0eb' stroke-width='1.9'/%3E%3Ccircle cx='19.51' cy='19.51' r='3.54' fill='none' stroke='%23f2f0eb' stroke-width='1.9'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="logo-300.svg">
 <style>
   :root {
     --paper: #e9e8e4;
@@ -79,6 +86,21 @@
        has to pay it back or it lands off screen. */
     --nav-h: 68px;
   }
+  html { color-scheme: dark; }
+  html[data-theme="light"] {
+    color-scheme: light;
+    --paper: #e9e8e4;
+    --paper-hi: #f5f4f0;
+    --ink: #11110f;
+    --bg: #efeee9;
+    --bg-raised: #e6e5df;
+    --line: #ceccc4;
+    --wire: rgba(20, 20, 18, 0.36);
+    --wire-dim: rgba(20, 20, 18, 0.16);
+    --text: #171715;
+    --text-dim: #5f5d57;
+    --text-faint: #85827a;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { overflow-x: clip; }
   body {
@@ -91,14 +113,45 @@
   a { color: inherit; text-decoration: none; }
   .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
 
-  /* ================= light chrome ================= */
+  /* ================= opaque glass chrome ================= */
   nav {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--paper-hi);
+    isolation: isolate;
+    color: var(--text);
+    background: linear-gradient(180deg, #0d0e0e 0%, #080808 56%, #060606 100%);
+    border-bottom: 1px solid transparent;
+    box-shadow:
+      inset 0 1px rgba(255, 255, 255, 0.08),
+      inset 0 -1px rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(16px) saturate(115%);
+    -webkit-backdrop-filter: blur(16px) saturate(115%);
+    transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+  }
+  nav::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(110deg, rgba(255, 255, 255, 0.045), transparent 25%, transparent 72%, rgba(255, 255, 255, 0.018)),
+      radial-gradient(ellipse 42% 120% at 16% -45%, rgba(255, 255, 255, 0.055), transparent 72%);
+  }
+  nav.is-scrolled {
+    background: linear-gradient(180deg, rgba(15, 16, 16, 0.7) 0%, rgba(7, 7, 7, 0.58) 56%, rgba(5, 5, 5, 0.54) 100%);
+    border-bottom-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      inset 0 1px rgba(255, 255, 255, 0.12),
+      inset 0 -1px rgba(0, 0, 0, 0.46),
+      0 12px 34px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
+    -webkit-backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
   }
   .nav-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     height: var(--nav-h);
@@ -112,9 +165,10 @@
     font-size: 17px;
     letter-spacing: -0.02em;
   }
+  .nav-logo-mark { display: block; width: 28px; height: 28px; object-fit: contain; }
   .nav-links { display: flex; gap: 34px; font-size: 14.5px; }
-  .nav-links a { opacity: 0.85; }
-  .nav-links a:hover { opacity: 1; }
+  .nav-links a { color: var(--text-dim); opacity: 1; }
+  .nav-links a:hover { color: var(--text); }
   .nav-cta { margin-left: auto; display: flex; gap: 12px; align-items: center; }
   .btn {
     display: inline-flex;
@@ -136,6 +190,95 @@
   .btn-green:hover { background: var(--green-hi); }
   .btn-ghost-dark { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
   .btn-ghost-dark:hover { border-color: rgba(255, 255, 255, 0.6); }
+  nav .btn {
+    color: var(--text);
+    border-color: rgba(242, 240, 235, 0.42);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  nav .btn:hover {
+    border-color: rgba(242, 240, 235, 0.86);
+    background: rgba(255, 255, 255, 0.07);
+  }
+  nav .btn-ink {
+    color: #0a0a0a;
+    border-color: var(--text);
+    background: var(--text);
+  }
+  nav .btn-ink:hover {
+    color: #0a0a0a;
+    border-color: #fff;
+    background: #fff;
+  }
+  .theme-toggle {
+    display: grid;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border: 1px solid rgba(242, 240, 235, 0.42);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  }
+  .theme-toggle:hover {
+    border-color: rgba(242, 240, 235, 0.86);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-1px);
+  }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  .theme-icon-moon { display: none; }
+  html[data-theme="light"] .theme-icon-sun { display: none; }
+  html[data-theme="light"] .theme-icon-moon { display: block; }
+
+  html[data-theme="light"] nav {
+    color: var(--ink);
+    background: linear-gradient(180deg, #ffffff 0%, #f6f5f1 56%, var(--bg) 100%);
+    border-bottom-color: transparent;
+    box-shadow:
+      inset 0 1px rgba(255, 255, 255, 0.95),
+      inset 0 -1px rgba(80, 77, 68, 0.08);
+  }
+  html[data-theme="light"] nav::after {
+    background:
+      linear-gradient(110deg, rgba(255, 255, 255, 0.5), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.2)),
+      radial-gradient(ellipse 42% 120% at 16% -45%, rgba(255, 255, 255, 0.72), transparent 72%);
+  }
+  html[data-theme="light"] nav.is-scrolled {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(247, 246, 242, 0.6) 56%, rgba(239, 238, 233, 0.54) 100%);
+    border-bottom-color: rgba(20, 20, 18, 0.18);
+    box-shadow:
+      inset 0 1px rgba(255, 255, 255, 0.82),
+      inset 0 -1px rgba(80, 77, 68, 0.12),
+      0 12px 34px rgba(40, 38, 32, 0.09);
+    backdrop-filter: blur(11px) saturate(125%) brightness(1.04);
+    -webkit-backdrop-filter: blur(11px) saturate(125%) brightness(1.04);
+  }
+  html[data-theme="light"] .nav-links a { color: var(--text-dim); }
+  html[data-theme="light"] .nav-links a:hover { color: var(--text); }
+  html[data-theme="light"] nav .btn,
+  html[data-theme="light"] .theme-toggle {
+    color: var(--ink);
+    border-color: rgba(17, 17, 15, 0.32);
+    background: rgba(17, 17, 15, 0.01);
+  }
+  html[data-theme="light"] nav .btn:hover,
+  html[data-theme="light"] .theme-toggle:hover {
+    border-color: rgba(17, 17, 15, 0.72);
+    background: rgba(17, 17, 15, 0.05);
+  }
+  html[data-theme="light"] nav .btn-ink {
+    color: #fff;
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  html[data-theme="light"] nav .btn-ink:hover {
+    color: #fff;
+    border-color: #292925;
+    background: #292925;
+  }
 
   /* ================= hero: pinned headline ================= */
   .hero-shell { height: 150vh; position: relative; background: #060606; }
@@ -239,10 +382,60 @@
   .hero-card { will-change: transform; }
   .hero-copy h1 { will-change: transform, opacity; }
 
+  html[data-theme="light"] .hero-shell,
+  html[data-theme="light"] .hero-card { background: var(--bg); }
+  html[data-theme="light"] .hero-copy h1 { color: var(--ink); text-shadow: none; }
+  html[data-theme="light"] .hero-veil {
+    background:
+      radial-gradient(ellipse 75% 60% at 50% 52%, rgba(239, 238, 233, 0.52), transparent 70%),
+      linear-gradient(180deg, rgba(239, 238, 233, 0.16), transparent 32%, transparent 67%, rgba(239, 238, 233, 0.64));
+  }
+  html[data-theme="light"] .section-nav { color: var(--ink); }
+  html[data-theme="light"] .section-nav-button {
+    border-color: rgba(20, 20, 18, 0.48);
+    background: rgba(239, 238, 233, 0.8);
+  }
+  html[data-theme="light"] .section-nav-button:hover {
+    border-color: rgba(20, 20, 18, 0.82);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
   /* ================= dark region ================= */
   .dark {
+    position: relative;
+    isolation: isolate;
     background: var(--bg);
     color: var(--text);
+  }
+  /* The hero and statement use separate canvases. Bridge their shared edge
+     with a dark crossfade so neither animation starts or stops on a hard line. */
+  .dark::before {
+    content: "";
+    position: absolute;
+    z-index: 4;
+    top: clamp(-170px, -18vh, -110px);
+    left: 0;
+    right: 0;
+    height: clamp(220px, 36vh, 340px);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0) 0%,
+      rgba(10, 10, 10, 0.76) 34%,
+      var(--bg) 50%,
+      rgba(10, 10, 10, 0.72) 66%,
+      rgba(10, 10, 10, 0) 100%
+    );
+  }
+  html[data-theme="light"] .dark::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(239, 238, 233, 0) 0%,
+      rgba(239, 238, 233, 0.76) 34%,
+      var(--bg) 50%,
+      rgba(239, 238, 233, 0.72) 66%,
+      rgba(239, 238, 233, 0) 100%
+    );
   }
   section { padding: 96px 0; }
   .kicker {
@@ -262,14 +455,6 @@
     line-height: 1.1;
     font-weight: 550;
     letter-spacing: -0.025em;
-  }
-  .statement-attribution {
-    display: inline-block;
-    margin-top: 0.25em;
-    font-size: 0.6em;
-    font-style: italic;
-    font-weight: 450;
-    letter-spacing: -0.01em;
   }
   .statement {
     height: 120vh;
@@ -292,6 +477,9 @@
     background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(10, 10, 10, 0.64), rgba(10, 10, 10, 0.24) 54%, transparent 76%);
     pointer-events: none;
   }
+  html[data-theme="light"] .statement-pin::after {
+    background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(239, 238, 233, 0.7), rgba(239, 238, 233, 0.3) 54%, transparent 76%);
+  }
   .statement-art {
     position: absolute;
     z-index: 0;
@@ -299,6 +487,8 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.22) 8%, #000 24%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.22) 8%, #000 24%);
   }
   .statement-copy {
     position: relative;
@@ -307,13 +497,23 @@
     opacity: 0;
     will-change: transform, opacity;
   }
-  .statement-copy h2 { max-width: 26ch; margin: 0 auto; }
+  .statement-copy .kicker { justify-content: center; }
+  .statement-copy h2 { max-width: none; margin: 0 auto; }
+  .statement-title-line { display: block; white-space: nowrap; }
   .statement-copy p {
     margin: 24px auto 0;
-    max-width: 52ch;
+    max-width: 62ch;
     font-size: 16.5px;
     line-height: 1.65;
     color: var(--text-dim);
+  }
+  .statement-copy .statement-result { margin-top: 12px; }
+  .statement-copy .statement-quote {
+    margin-top: 22px;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
   }
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .reveal.on { opacity: 1; transform: none; }
@@ -378,6 +578,12 @@
   }
   .contours .dash { stroke-dasharray: 3 6; stroke: rgba(255, 255, 255, 0.28); }
   .contours .tri { fill: rgba(255, 255, 255, 0.4); stroke: none; }
+  html[data-theme="light"] .bin { color: rgba(20, 20, 18, 0.42); }
+  html[data-theme="light"] .contours path,
+  html[data-theme="light"] .contours circle,
+  html[data-theme="light"] .contours line { stroke: rgba(20, 20, 18, 0.3); }
+  html[data-theme="light"] .contours .dash { stroke: rgba(20, 20, 18, 0.24); }
+  html[data-theme="light"] .contours .tri { fill: rgba(20, 20, 18, 0.38); }
 
   /* ================= benchmark showcase ================= */
   .showcase { height: 165vh; position: relative; }
@@ -652,7 +858,7 @@
   .term-caption {
     position: absolute;
     left: 50%;
-    bottom: clamp(52px, 8.5vh, 96px);
+    bottom: clamp(36px, 4.5vh, 52px);
     width: min(54ch, 88vw);
     opacity: 0;
     transform: translateX(-50%) translateY(18px);
@@ -670,6 +876,34 @@
   .term-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
   .term-caption p { margin: 10px auto 0; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
   .term-caption a { text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
+  .term-caption .term-demo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 18px;
+    padding: 11px 18px;
+    border: 1px solid var(--accent);
+    border-radius: 7px;
+    background: var(--accent);
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(245, 179, 1, 0.16);
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .term-caption .term-demo-button:hover {
+    background: #ffc526;
+    transform: translateY(-1px);
+    box-shadow: 0 13px 34px rgba(245, 179, 1, 0.24);
+  }
+  .term-caption .term-demo-button:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+  }
+  .term-demo-button span { font-size: 16px; font-weight: 500; }
   .term-caption-content {
     grid-area: 1 / 1;
     opacity: 0;
@@ -761,12 +995,28 @@
   footer { border-top: 1px solid var(--line); padding: 56px 0 40px; }
   .foot-grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
   .foot-brand p { margin-top: 14px; font-size: 13.5px; color: var(--text-faint); max-width: 34ch; line-height: 1.6; }
-  .foot-logo { display: block; width: 20px; height: 20px; object-fit: contain; }
+  .foot-logo { display: block; width: 24px; height: 24px; object-fit: contain; }
   .foot-cols { display: flex; gap: 72px; }
   .foot-col h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; }
   .foot-col a { display: block; font-size: 14px; color: var(--text-dim); padding: 5px 0; }
   .foot-col a:hover { color: var(--text); }
   .foot-legal { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-faint); }
+
+  html[data-theme="light"] .btn-ghost-dark {
+    color: var(--ink);
+    border-color: rgba(17, 17, 15, 0.3);
+  }
+  html[data-theme="light"] .btn-ghost-dark:hover { border-color: rgba(17, 17, 15, 0.68); }
+  html[data-theme="light"] .env-window,
+  html[data-theme="light"] .split-panel {
+    --text: #f2f0eb;
+    --text-dim: #9b9890;
+    --text-faint: #5c5a54;
+    color: #f2f0eb;
+  }
+  html[data-theme="light"] .env-switch { color: #f2f0eb; }
+  html[data-theme="light"] .pillar:hover { border-color: #aaa79e; }
+  html[data-theme="light"] .codeblock { background: #f8f7f3; }
 
   @media (max-width: 940px) {
     .nav-links { display: none; }
@@ -778,6 +1028,8 @@
     .bench-row, .bench-head { grid-template-columns: 34px 1fr 1.1fr; }
     .bench-row .eps, .bench-head .h-eps { display: none; }
     section { padding: 72px 0; }
+    .statement-copy h2 { max-width: 22ch; }
+    .statement-title-line { display: inline; white-space: normal; }
   }
   @media (max-width: 640px) {
     .wrap { padding: 0 20px; }
@@ -788,10 +1040,11 @@
     .nav-inner { gap: 16px; }
     .nav-cta { gap: 8px; }
     .btn { white-space: nowrap; padding: 9px 14px; font-size: 13px; }
+    .theme-toggle { width: 36px; height: 36px; }
     .section-nav { right: 20px; bottom: 20px; gap: 10px; }
-    /* statement: size the Polanyi quote to exactly fill one line — 14.3 is
-       the quote's measured em-width (13.63 in SF) plus slack for Roboto */
-    .statement-copy h2 { font-size: clamp(16px, calc((100vw - 44px) / 14.3), 30px); }
+    .statement-copy h2 { font-size: clamp(27px, 8vw, 38px); }
+    .statement-copy p { font-size: 14.5px; line-height: 1.55; }
+    .statement-copy .statement-quote { font-size: 10.5px; }
     /* benchmark: tighter rows so all 7 fit the panel; caption drops into flow
        below the stage so it can never overlap the panel */
     .bench-stage { width: calc(100vw - 36px); height: 440px; }
@@ -820,6 +1073,11 @@
     .split-stage { height: 420px; }
     .split-panel { padding: 24px; }
   }
+  @media (max-width: 520px) {
+    .nav-inner { gap: 8px; }
+    .logo { font-size: 15px; }
+    nav .nav-cta > .btn:not(.btn-ink) { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .section-nav-button { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
@@ -841,7 +1099,7 @@
 <nav id="nav">
   <div class="wrap nav-inner">
     <a class="logo" href="#top">
-      <svg width="22" height="22" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0d0d0c"/><circle cx="20.51" cy="20.51" r="2.66" fill="#3aa189"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#f2f0eb" stroke-width="1.9"/><circle cx="17.94" cy="17.94" r="5.76" fill="none" stroke="#f2f0eb" stroke-width="1.9"/><circle cx="19.51" cy="19.51" r="3.54" fill="none" stroke="#f2f0eb" stroke-width="1.9"/></svg>
+      <img class="nav-logo-mark" src="logo-300.svg" alt="" width="28" height="28">
       Second Nature Labs
     </a>
     <div class="nav-links">
@@ -851,6 +1109,15 @@
       <a href="#quickstart">Open proof</a>
     </div>
     <div class="nav-cta">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode" aria-pressed="false" title="Switch color theme">
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
+        </svg>
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.5 14.2A8.2 8.2 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2Z"></path>
+        </svg>
+      </button>
       <a class="btn" href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
       <a class="btn btn-ink" href="#contact">Get in touch</a>
     </div>
@@ -881,13 +1148,19 @@
     <div class="statement-pin">
       <canvas class="statement-art" id="statement-art" aria-hidden="true"></canvas>
       <div class="wrap statement-copy" id="statement-copy">
-        <h2>"We know more than we can tell."<br><span class="statement-attribution">- Michael Polanyi</span></h2>
+        <div class="kicker">What we build</div>
+        <h2><span class="statement-title-line">Training environments and evals</span> <span class="statement-title-line">for AI that acts in the physical world.</span></h2>
         <p>
-          Written sources describe components and procedures but capture expert judgment poorly:
-          what to inspect, what an observation means, which action to take next, and whether it worked.
-          <strong>We turn that tacit physical judgment into interactive, physics-grounded tasks whose outcomes
-          create training signal without requiring an expert to articulate every decision rule.</strong>
+          AI labs and robotics teams bring us a real workflow, its failure traces, and the outcomes
+          that matter. We turn them into an interactive simulator where an agent observes through
+          sensors and instruments, chooses actions, and experiences their physical consequences.
         </p>
+        <p class="statement-result">
+          <strong>The result is an RL-ready training ground and a cheat-resistant evaluation:</strong>
+          agents practice decisions and recovery under time, cost, and safety constraints, then earn
+          a score based on what actually happened instead of how plausible their explanation sounded.
+        </p>
+        <div class="statement-quote">“We know more than we can tell.” - Michael Polanyi</div>
       </div>
     </div>
   </div>
@@ -944,8 +1217,10 @@
           <p>
             A trained planner decomposes a physical task while a stochastic executor carries it out,
             surfaces failures, and triggers recovery.
-            <a href="decision-layer/" target="_blank" rel="noopener">Open the full demo</a>.
           </p>
+          <a class="term-demo-button" href="decision-layer/" target="_blank" rel="noopener">
+            Open the full demo <span aria-hidden="true">↗</span>
+          </a>
         </div>
         <div class="term-caption-content" id="no-start-caption" aria-hidden="true">
           <h3>One environment. A general method.</h3>
@@ -1145,7 +1420,7 @@
       <div class="foot-grid">
         <div class="foot-brand">
           <a class="logo" href="#top" style="color: var(--text);">
-            <img class="foot-logo" src="assets/footer-logo.png" alt="" width="20" height="20">
+            <img class="foot-logo" src="logo-300.svg" alt="" width="24" height="24">
             Second Nature Labs
           </a>
           <p>Physics-grounded environments and evals for AI that touches the real world.</p>
@@ -1184,8 +1459,33 @@
   const mobileScroll = matchMedia('(hover: none) and (pointer: coarse)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
+  const rootEl = document.documentElement;
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeNav = document.getElementById('nav');
+  const isLightTheme = () => rootEl.dataset.theme === 'light';
+  function syncThemeUI() {
+    const light = isLightTheme();
+    themeToggle.setAttribute('aria-pressed', String(light));
+    themeToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+  function syncNavSurface() {
+    // Until one full nav-height has passed, the sticky element is still over
+    // its original light layout slot rather than over the hero. Keep the glass
+    // opaque through that handoff so the white slot cannot wash it gray.
+    themeNav.classList.toggle('is-scrolled', scrollY > themeNav.offsetHeight);
+  }
+  syncThemeUI();
+  syncNavSurface();
+  themeToggle.addEventListener('click', () => {
+    rootEl.dataset.theme = isLightTheme() ? 'dark' : 'light';
+    try { localStorage.setItem('sn-theme', rootEl.dataset.theme); } catch (_) {}
+    syncThemeUI();
+    drawHero(performance.now());
+    drawTrainingField(performance.now(), 1);
+  });
+  addEventListener('scroll', syncNavSurface, { passive: true });
 
-  /* ---------- hero art: live circuit-trace network + animated physical-AI vignettes ---------- */
+  /* ---------- hero art: interactive causal vector field ---------- */
   const canvas = document.getElementById('hero-art');
   const hctx = canvas.getContext('2d');
   const heroCardEl = document.querySelector('.hero-card');
@@ -1194,130 +1494,181 @@
   const sectionNavLabel = document.querySelector('.section-nav-label');
   const sectionNavUp = document.querySelector('.section-nav-up');
   const sectionNavDown = document.querySelector('.section-nav-down');
-  let W = 0, H = 0, DPR = 1, dust = [];
+  let W = 0, H = 0, DPR = 1, heroVectors = [];
+  const heroPointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, energy: 0 };
 
-  /* deep-field drift: sparse dust with depth parallax, slow drift, twinkle */
-  function buildDust() {
-    let seed = 29;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    dust = Array.from({ length: 260 }, () => ({
-      x: rnd(), y: rnd(),
-      z: 0.25 + rnd() * 0.75,           // depth: drives speed, size, brightness
-      ph: rnd() * 6.28,
-      amber: rnd() < 0.06
-    }));
+  function buildHeroField() {
+    heroVectors = [];
+    const spacing = W < 720 ? 22 : 28;
+    for (let y = spacing * 0.5; y < H; y += spacing) {
+      for (let x = spacing * 0.5; x < W; x += spacing) {
+        const phase = Math.sin(x * 11.731 + y * 61.117) * 32741.193;
+        heroVectors.push({ x, y, phase: phase - Math.floor(phase) });
+      }
+    }
   }
 
-  function drawDust(t) {
-    const g = hctx.createRadialGradient(W * 0.5, H * 0.62, 0, W * 0.5, H * 0.62, Math.max(W, H) * 0.7);
-    g.addColorStop(0, 'rgba(40,44,58,0.35)');
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    hctx.fillStyle = g;
-    hctx.fillRect(0, 0, W, H);
-    for (const p of dust) {
-      const x = ((p.x + (t / 90000) * p.z) % 1) * (W + 40) - 20;
-      const y = ((p.y + (t / 260000) * p.z) % 1) * (H + 40) - 20;
-      const tw = 0.55 + Math.sin(t / 1600 + p.ph) * 0.45;
-      const a = (0.1 + p.z * 0.5) * tw;
-      hctx.fillStyle = p.amber ? `rgba(245,179,1,${a})` : `rgba(226,222,210,${a})`;
-      hctx.beginPath(); hctx.arc(x, y, p.z * (p.amber ? 2.2 : 1.7), 0, 6.29); hctx.fill();
+  function drawHeroField(t) {
+    const light = isLightTheme();
+    const seconds = t / 1000;
+    const centerX = W * 0.5;
+    const centerY = H * 0.48;
+    const clearX = Math.min(W * 0.38, 575);
+    const clearY = Math.min(H * 0.24, 210);
+    const levels = 18;
+    const neutral = Array(levels);
+    const amber = Array(levels);
+    const teal = Array(levels);
+
+    heroPointer.x += (heroPointer.tx - heroPointer.x) * 0.12;
+    heroPointer.y += (heroPointer.ty - heroPointer.y) * 0.12;
+    heroPointer.energy *= 0.955;
+
+    for (const point of heroVectors) {
+      const nx = (point.x - centerX) / clearX;
+      const ny = (point.y - centerY) / clearY;
+      const radius = Math.sqrt(nx * nx + ny * ny);
+      const copyClear = clamp((radius - 0.74) / 0.36, 0, 1);
+      if (copyClear <= 0.015) continue;
+
+      const wave = Math.sin(point.x * 0.0044 + seconds * 0.55) * 0.48
+        + Math.sin(point.y * 0.006 - seconds * 0.36 + point.x * 0.002) * 0.31
+        + Math.sin((point.x + point.y) * 0.0025 + seconds * 0.2) * 0.2;
+      let vx = Math.cos(wave);
+      let vy = Math.sin(wave);
+
+      const boundary = Math.exp(-Math.pow((radius - 1.02) / 0.32, 2)) * 0.86;
+      const tangent = Math.atan2(ny, nx) + Math.PI / 2;
+      vx += (Math.cos(tangent) - vx) * boundary;
+      vy += (Math.sin(tangent) - vy) * boundary;
+
+      const dx = point.x - heroPointer.x;
+      const dy = point.y - heroPointer.y;
+      const pointerInfluence = heroPointer.energy * Math.exp(-(dx * dx + dy * dy) / (180 * 180));
+      if (pointerInfluence > 0.003) {
+        const pointerTangent = Math.atan2(dy, dx) + Math.PI / 2;
+        vx += (Math.cos(pointerTangent) - vx) * pointerInfluence;
+        vy += (Math.sin(pointerTangent) - vy) * pointerInfluence;
+      }
+
+      const crest = 0.5 + 0.5 * Math.sin(
+        point.x * 0.0056 - seconds * 0.88 + Math.sin(point.y * 0.0042 + seconds * 0.25) * 1.4
+      );
+      const edgeFade = clamp(Math.min(point.x, W - point.x, point.y, H - point.y) / 64, 0, 1);
+      const alpha = copyClear * edgeFade * (0.06 + crest * 0.4 + pointerInfluence * 0.48);
+      const level = Math.min(levels - 1, Math.floor(alpha * levels));
+      if (level < 1) continue;
+
+      const norm = Math.hypot(vx, vy) || 1;
+      const length = (7 + crest * 9 + pointerInfluence * 6) / 2;
+      const ux = vx / norm * length;
+      const uy = vy / norm * length;
+      const colorWave = Math.sin(point.x * 0.007 - seconds * 0.52 + point.y * 0.003 + point.phase * 1.8);
+      const buckets = colorWave > 0.92 ? amber : colorWave < -0.94 ? teal : neutral;
+      const path = buckets[level] || (buckets[level] = new Path2D());
+      path.moveTo(point.x - ux, point.y - uy);
+      path.lineTo(point.x + ux, point.y + uy);
     }
-    hctx.globalAlpha = 1;
+
+    hctx.lineWidth = 1;
+    hctx.lineCap = 'round';
+    for (let level = 1; level < levels; level += 1) {
+      const strength = level / levels;
+      if (neutral[level]) {
+        hctx.strokeStyle = light
+          ? `rgba(35,38,42,${strength * 0.58})`
+          : `rgba(198,203,214,${strength * 0.72})`;
+        hctx.stroke(neutral[level]);
+      }
+      if (amber[level]) {
+        hctx.strokeStyle = light
+          ? `rgba(174,116,0,${strength * 0.78})`
+          : `rgba(245,179,1,${strength * 0.86})`;
+        hctx.stroke(amber[level]);
+      }
+      if (teal[level]) {
+        hctx.strokeStyle = light
+          ? `rgba(30,118,99,${strength * 0.78})`
+          : `rgba(58,161,137,${strength * 0.9})`;
+        hctx.stroke(teal[level]);
+      }
+    }
   }
 
   function drawHero(t) {
     hctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     hctx.globalAlpha = 1;
-    hctx.fillStyle = '#050504';
+    hctx.fillStyle = isLightTheme() ? '#efeee9' : '#050504';
     hctx.fillRect(0, 0, W, H);
-    drawDust(t);
+    drawHeroField(t);
   }
 
   function sizeHero() {
     DPR = Math.min(devicePixelRatio || 1, 2);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = W * DPR; canvas.height = H * DPR;
-    buildDust();
-    if (reduced) drawHero(4300); // single static dust frame
+    buildHeroField();
+    if (reduced) drawHero(4300);
   }
   sizeHero();
   addEventListener('resize', sizeHero);
+  if (!reduced) {
+    heroCardEl.addEventListener('pointermove', (event) => {
+      const rect = canvas.getBoundingClientRect();
+      heroPointer.tx = event.clientX - rect.left;
+      heroPointer.ty = event.clientY - rect.top;
+      if (heroPointer.x < -9000) {
+        heroPointer.x = heroPointer.tx;
+        heroPointer.y = heroPointer.ty;
+      }
+      heroPointer.energy = Math.min(1, heroPointer.energy + 0.12);
+    });
+    heroCardEl.addEventListener('pointerleave', () => {
+      heroPointer.tx = -9999;
+      heroPointer.ty = -9999;
+    });
+  }
 
-  /* ---------- training-gap art: a dataset field with a missing center ---------- */
+  /* ---------- training-gap art: calm deep-field drift ---------- */
   const statementCanvas = document.getElementById('statement-art');
   const sctx = statementCanvas.getContext('2d');
-  let SW = 0, SH = 0, SDPR = 1, trainingCells = [];
-  function buildTrainingCells() {
+  let SW = 0, SH = 0, SDPR = 1, statementDust = [];
+
+  function buildStatementDust() {
     let seed = 113;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    trainingCells = Array.from({ length: 360 }, () => ({
-      x: rnd(), y: rnd(), z: 0.25 + rnd() * 0.75,
-      len: 3 + rnd() * 14, speed: 0.35 + rnd() * 0.8,
-      phase: rnd() * 6.28, amber: rnd() < 0.07
+    statementDust = Array.from({ length: 300 }, () => ({
+      x: rnd(), y: rnd(),
+      z: 0.25 + rnd() * 0.75,
+      phase: rnd() * 6.28,
+      amber: rnd() < 0.055
     }));
   }
+
   function drawTrainingField(t, progress) {
     if (!SW || !SH) return;
     sctx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
     sctx.clearRect(0, 0, SW, SH);
-    const scene = 0.48 + clamp(progress / 0.45, 0, 1) * 0.52;
-    const drift = t / 52000;
-    for (const cell of trainingCells) {
-      const x = (cell.x + drift * cell.speed) % 1;
-      const y = (cell.y + drift * cell.speed * 0.28) % 1;
-      const ex = (x - 0.5) / 0.36;
-      const ey = (y - 0.5) / 0.29;
-      // Samples dissolve around the copy, making the missing region literal.
-      const outsideVoid = clamp((ex * ex + ey * ey - 0.48) / 0.72, 0, 1);
-      const edge = clamp(Math.min(x, 1 - x, y, 1 - y) * 12, 0, 1);
-      const pulse = 0.74 + Math.sin(t / 1150 + cell.phase) * 0.26;
-      const alpha = (0.065 + cell.z * 0.28) * outsideVoid * edge * pulse * scene;
-      sctx.fillStyle = cell.amber
-        ? `rgba(245,179,1,${alpha * 1.9})`
-        : `rgba(173,181,197,${alpha})`;
-      sctx.fillRect(x * SW, y * SH, cell.len * cell.z, Math.max(0.7, cell.z * 1.5));
-    }
+    const scene = 0.32 + clamp(progress / 0.55, 0, 1) * 0.68;
 
-    // Slowly moving contour rings label the boundary of what the data omits.
-    sctx.save();
-    sctx.translate(SW * 0.5, SH * 0.5);
-    sctx.rotate(Math.sin(t / 4000) * 0.026);
-    const breathe = 1 + Math.sin(t / 2100) * 0.018;
-    const voidRX = SW * 0.36 * breathe;
-    const voidRY = SH * 0.29 * breathe;
-    sctx.setLineDash([2, 9]);
-    sctx.lineDashOffset = -t / 32;
-    sctx.lineWidth = 1;
-    sctx.strokeStyle = `rgba(173,181,197,${0.2 * scene})`;
-    sctx.beginPath();
-    sctx.ellipse(0, 0, voidRX, voidRY, 0, 0, Math.PI * 2);
-    sctx.stroke();
-    sctx.setLineDash([1, 13]);
-    sctx.lineDashOffset = t / 48;
-    sctx.strokeStyle = `rgba(245,179,1,${0.14 * scene})`;
-    sctx.beginPath();
-    sctx.ellipse(0, 0, SW * 0.405, SH * 0.325, 0, 0, Math.PI * 2);
-    sctx.stroke();
-    sctx.setLineDash([]);
-    // Orbiting sample markers make the motion legible even at a glance.
-    for (let i = 0; i < 3; i += 1) {
-      const angle = t / 1800 + i * Math.PI * 2 / 3;
-      const x = Math.cos(angle) * voidRX;
-      const y = Math.sin(angle) * voidRY;
-      sctx.fillStyle = i === 0
-        ? `rgba(245,179,1,${0.72 * scene})`
-        : `rgba(173,181,197,${0.46 * scene})`;
+    for (const point of statementDust) {
+      const x = ((point.x + (t / 90000) * point.z) % 1) * (SW + 40) - 20;
+      const y = ((point.y + (t / 260000) * point.z) % 1) * (SH + 40) - 20;
+      const twinkle = 0.55 + Math.sin(t / 1600 + point.phase) * 0.45;
+      const alpha = (0.09 + point.z * 0.46) * twinkle * scene;
+      sctx.fillStyle = point.amber
+        ? (isLightTheme() ? `rgba(162,105,0,${alpha * 0.85})` : `rgba(245,179,1,${alpha})`)
+        : (isLightTheme() ? `rgba(42,41,38,${alpha * 0.78})` : `rgba(226,222,210,${alpha})`);
       sctx.beginPath();
-      sctx.arc(x, y, i === 0 ? 2.4 : 1.7, 0, Math.PI * 2);
+      sctx.arc(x, y, point.z * (point.amber ? 2.1 : 1.65), 0, Math.PI * 2);
       sctx.fill();
     }
-    sctx.restore();
   }
   function sizeStatementArt() {
     SDPR = Math.min(devicePixelRatio || 1, 2);
     SW = statementCanvas.clientWidth; SH = statementCanvas.clientHeight;
     statementCanvas.width = SW * SDPR; statementCanvas.height = SH * SDPR;
-    buildTrainingCells();
+    buildStatementDust();
     if (reduced) drawTrainingField(5200, 1);
   }
   sizeStatementArt();
@@ -1694,7 +2045,20 @@
       const top = el.getBoundingClientRect().top;
       const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
       const entered = (innerHeight - finalTop) / innerHeight;
-      if (finalTop > 2 && entered >= threshold) { glideTo(scrollY + top, tau); return; }
+      if (finalTop > 2 && entered >= threshold) {
+        const landingTop = scrollY + top;
+        if (isAutoplaySection(el)) {
+          // Keep the entry glide and sticky playback in one uninterrupted
+          // motion. Starting from the current position avoids the old pause at
+          // the section top, while stickyProgress naturally remains at zero
+          // until that boundary is crossed and then begins the animation.
+          const rangeEnd = landingTop + Math.max(0, el.offsetHeight - innerHeight);
+          playRemainingRange(rangeEnd, performance.now());
+        } else {
+          glideTo(landingTop, tau);
+        }
+        return;
+      }
     }
   }
   function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
@@ -1914,6 +2278,7 @@
   const termCap = document.getElementById('term-caption');
   const termContours = document.getElementById('term-contours');
   const termBins = [document.getElementById('term-bin-1'), document.getElementById('term-bin-2')];
+  const siteNav = document.querySelector('nav');
 
   const splitStage = document.getElementById('split-stage');
   const splitPanel = document.getElementById('split-panel');
@@ -2031,16 +2396,36 @@
       const phone = innerWidth < 640;
       const w0 = phone ? innerWidth - 48 : Math.min(640, innerWidth * 0.62);
       const h0 = phone ? Math.min(320, innerHeight * 0.38) : Math.min(380, innerHeight * 0.42);
+      const captionGap = phone ? 18 : 26;
+      const headerGap = (siteNav ? siteNav.offsetHeight : (phone ? 60 : 68)) + (phone ? 12 : 20);
       // The preview opens enough to make the two live reasoning streams easy
-      // to follow, but remains a framed object in the page rather than taking
-      // over the viewport. Its cap matches the intended desktop composition.
+      // to follow, but remains a framed object in the page. Cap its height to
+      // the actual band between the sticky header and the caption so short
+      // viewports cannot push the outer frame underneath the navigation.
       const w1 = phone ? innerWidth - 20 : Math.min(1400, innerWidth * 0.74);
-      const h1 = phone ? Math.min(440, innerHeight * 0.62) : Math.min(680, innerHeight * 0.64);
+      const preferredH1 = phone ? Math.min(440, innerHeight * 0.62) : Math.min(680, innerHeight * 0.64);
+      const captionTop = termCap.offsetTop || (innerHeight - 190);
+      const safeExpandedH = Math.max(h0, (captionTop - captionGap - headerGap) / 1.08);
+      const h1 = Math.min(preferredH1, safeExpandedH);
       termStage.style.width = lerp(w0, w1, e) + 'px';
       termStage.style.height = lerp(h0, h1, e) + 'px';
       const stageSettle = clamp((p - 0.62) / 0.32, 0, 1);
-      termStage.style.transform =
-        `translateY(${-stageSettle * innerHeight * (phone ? 0.055 : 0.065)}px)`;
+      const animatedStageLift = -stageSettle * innerHeight * (phone ? 0.02 : 0.025);
+      // The caption can grow (for example when its CTA is present), so derive
+      // the final lift from its real top edge instead of assuming a fixed copy
+      // height. Account for the outer wireframe and preserve a readable gap.
+      const stageOuterBottom = termStage.offsetTop + termStage.offsetHeight * 1.04;
+      const clearCaptionLift = termCap.offsetTop - captionGap - stageOuterBottom;
+      const captionClearance = clamp((p - 0.78) / 0.18, 0, 1);
+      const desiredStageLift = lerp(
+        animatedStageLift,
+        Math.min(animatedStageLift, clearCaptionLift),
+        captionClearance
+      );
+      const stageOuterTop = termStage.offsetTop - termStage.offsetHeight * 0.04;
+      const headerClearanceLift = headerGap - stageOuterTop;
+      const stageLift = Math.max(desiredStageLift, headerClearanceLift);
+      termStage.style.transform = `translateY(${stageLift}px)`;
       termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e)}%`;
       termPanel.style.transform =
         `rotateY(${lerp(22, 0, e) * mob}deg) rotateX(${lerp(-10, 0, e) * mob}deg) translateY(${lerp(48, 0, e) * mob}px)`;
