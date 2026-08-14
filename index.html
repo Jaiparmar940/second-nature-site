@@ -468,8 +468,8 @@
   .bench-caption p em { font-style: normal; color: var(--text); }
   .bench-caption .bench-footnote { margin-top: 6px; font-size: 12.5px; color: var(--text-faint); }
 
-  /* ================= terminal showcase ================= */
-  .term-section { height: 170vh; position: relative; }
+  /* ================= environment window showcase ================= */
+  .term-section { height: 220vh; position: relative; }
   .term-sticky {
     position: sticky;
     top: 0;
@@ -480,82 +480,62 @@
     justify-content: center;
     flex-direction: column;
   }
-  .term-stage { width: min(860px, 92vw); height: 520px; }
-  .terminal {
+  .term-stage {
+    width: min(640px, 72vw);
+    height: min(380px, 42vh);
+    will-change: width, height;
+  }
+  .env-window {
     position: absolute;
-    inset: 6% 8%;
-    background: #0e0e0d;
-    border: 1px solid #2b2b28;
+    inset: 5% 6%;
+    background: #0a0a0b;
+    border: 1px solid #2a2a32;
     border-radius: 14px;
     box-shadow: 0 50px 120px rgba(0, 0, 0, 0.7);
     transform-style: preserve-3d;
     will-change: transform;
     overflow: hidden;
   }
-  .terminal-bar {
+  .env-window iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #0a0a0b;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .env-window.is-live iframe { opacity: 1; }
+  .env-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 13px 18px;
-    border-bottom: 1px solid #232320;
-  }
-  .terminal-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #2c2c29; }
-  .terminal-bar .title {
-    min-width: 0;
-    margin-left: 8px;
-    overflow: hidden;
-    color: var(--text-faint);
+    justify-content: center;
+    padding: 24px;
+    color: #8b8b96;
     font-family: var(--mono);
-    font-size: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
   }
-  .terminal-replay {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 5px;
-    margin-left: auto;
-    padding: 4px 8px;
-    border: 1px solid #353531;
-    border-radius: 999px;
-    background: #171715;
-    color: var(--text-dim);
-    font-family: var(--mono);
-    font-size: 10px;
-    line-height: 1;
-    cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  .env-window.is-live .env-veil { opacity: 0; }
+  .term-caption {
+    position: absolute;
+    left: 50%;
+    bottom: 4.5vh;
+    width: min(54ch, 88vw);
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
   }
-  .terminal-replay:hover { border-color: #595950; background: #1d1d1a; color: var(--text); }
-  .terminal-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .terminal-replay .icon { color: var(--accent); font-size: 13px; }
-  .terminal-body {
-    padding: 22px 26px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.95;
-  }
-  .t-line { opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; }
-  .t-line.on { opacity: 1; transform: none; }
-  .t-caret {
-    display: inline-block;
-    width: 8px;
-    height: 14px;
-    margin-left: 2px;
-    vertical-align: -2px;
-    background: #e2ded2;
-    animation: caret-blink 0.9s steps(1) infinite;
-  }
-  @keyframes caret-blink { 50% { opacity: 0; } }
-  .t-agent { color: var(--accent); }
-  .t-tool { color: #7fb4e8; }
-  .t-out { color: var(--text-dim); }
-  .t-verdict { color: #7ddb8a; }
-  .t-comment { color: var(--text-faint); }
-  .term-caption { text-align: center; margin-top: 8px; }
   .term-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
-  .term-caption p { margin: 10px auto 0; max-width: 54ch; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
+  .term-caption p { margin: 10px auto 0; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
+  .term-caption a { text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
 
   /* ================= split (applications-style) ================= */
   .split { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 60px; align-items: center; }
@@ -687,13 +667,10 @@
     .bench-caption { position: static; width: 92vw; margin-top: 20px; }
     .bench-caption h3 { font-size: 22px; }
     .bench-caption p { padding: 0 8px; font-size: 14px; }
-    /* terminal: smaller stage + mono so wrapped lines fit, with real margin
-       to the screen edge; settling animation can't ride over the caption */
-    .term-stage { width: calc(100vw - 48px); height: 430px; }
-    .terminal { inset: 4% 2%; }
-    .terminal-body { padding: 14px 16px; font-size: 11px; line-height: 1.8; }
-    .terminal-bar .title { font-size: 10.5px; }
-    .term-caption { margin-top: 24px; }
+    .term-section { height: 190vh; }
+    .term-stage { width: calc(100vw - 48px); height: min(320px, 38vh); }
+    .env-window { inset: 4% 2%; }
+    .term-caption { bottom: 3vh; width: 92vw; }
     .term-caption h3 { font-size: 22px; }
     .term-caption p { font-size: 14px; padding: 0 12px; }
     /* split panel */
@@ -703,10 +680,12 @@
   @media (prefers-reduced-motion: reduce) {
     .section-nav-button { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
-    .t-line { transition: none; opacity: 1; transform: none; }
-    .t-caret { display: none; }
-    .terminal-replay { display: none; }
     .hero-shell { height: auto; }
+    .term-section { height: auto; }
+    .term-sticky { position: static; height: auto; padding: 8vh 0 10vh; }
+    .term-stage { width: min(1240px, 94vw); height: min(86vh, 860px); }
+    .env-window { transform: none; }
+    .term-caption { position: static; transform: none; width: min(54ch, 88vw); margin: 28px auto 0; opacity: 1; }
     .hero-pin { position: static; height: 100vh; }
     .statement { height: auto; }
     .statement-pin { position: static; height: auto; padding: 20vh 0 16vh; }
@@ -770,23 +749,16 @@
     </div>
   </div>
 
-  <!-- ============ terminal: sticky framed episode ============ -->
+  <!-- ============ decision-layer: expanding live episode ============ -->
   <div class="term-section" id="environments">
     <div class="term-sticky">
       <div class="stage term-stage" id="term-stage">
-        <span class="bin" style="left:-2%; top:8%;">110</span>
-        <span class="bin" style="right:-2%; bottom:20%;">1011</span>
-        <svg class="contours" viewBox="0 0 860 520" preserveAspectRatio="none">
-          <!-- schematic car line-art, decorative -->
-          <g transform="translate(575,40) scale(0.42)" opacity="0.55">
-            <path d="M20,160 C50,150 70,120 130,112 C170,70 260,58 330,72 C400,84 450,110 500,124 C540,132 570,142 580,158 L582,182 L20,182 Z"/>
-            <circle cx="150" cy="182" r="30"/><circle cx="150" cy="182" r="12"/>
-            <circle cx="460" cy="182" r="30"/><circle cx="460" cy="182" r="12"/>
-            <line class="dash" x1="330" y1="72" x2="330" y2="10"/>
-            <line class="dash" x1="20" y1="160" x2="-60" y2="160"/>
-          </g>
+        <span class="bin" id="term-bin-1" style="left:-2%; top:8%;">110</span>
+        <span class="bin" id="term-bin-2" style="right:-2%; bottom:20%;">1011</span>
+        <svg class="contours" id="term-contours" viewBox="0 0 860 520" preserveAspectRatio="none">
           <path class="dash" d="M-20,300 C140,330 320,270 480,300 S760,340 890,300"/>
           <path class="dash" d="M60,-10 C80,120 40,300 70,530"/>
+          <path class="dash" d="M-10,90 C200,40 420,130 890,70"/>
           <polygon class="tri" points="480,296 489,301 480,306"/>
           <polygon class="tri" points="67,260 72,269 62,269"/>
         </svg>
@@ -794,34 +766,17 @@
         <div class="wireframe" id="term-frame-1" style="inset:1.5% 3%;">
           <span class="notch"></span>
         </div>
-        <div class="terminal" id="terminal">
-          <div class="terminal-bar">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            <span class="title">no-start-env — medium_corroded_ground · seed 41</span>
-            <button class="terminal-replay" id="terminal-replay" type="button" aria-label="Replay terminal transcript">
-              <span class="icon" aria-hidden="true">↻</span> Replay
-            </button>
-          </div>
-          <div class="terminal-body">
-            <div class="t-line on"><span class="t-comment"># complaint: engine cranks slowly, won't start</span></div>
-            <div class="t-line"><span class="t-agent">agent →</span> <span class="t-tool">measure_voltage</span>(battery_positive, battery_negative, resting)</div>
-            <div class="t-line"><span class="t-out">12.58 V</span> <span class="t-comment"># battery looks healthy</span></div>
-            <div class="t-line"><span class="t-agent">agent →</span> <span class="t-tool">measure_voltage</span>(battery_positive, battery_negative, cranking)</div>
-            <div class="t-line"><span class="t-out">10.41 V</span> <span class="t-comment"># holds under load — not the battery</span></div>
-            <div class="t-line"><span class="t-agent">agent →</span> <span class="t-tool">measure_voltage</span>(battery_negative, engine_block, cranking)</div>
-            <div class="t-line"><span class="t-out">2.75 V</span> <span class="t-comment"># massive drop across the ground path</span></div>
-            <div class="t-line"><span class="t-agent">agent →</span> <span class="t-tool">replace_part</span>(ground_strap) · <span class="t-tool">attempt_start</span>()</div>
-            <div class="t-line"><span class="t-verdict">engine starts ✓ — root cause: corroded ground strap · score 100 / 100</span></div>
-          </div>
+        <div class="env-window" id="env-window">
+          <iframe id="env-frame" title="hospitality-env live episode"></iframe>
+          <div class="env-veil" id="env-veil">Scroll to open · episode starts when the window fills</div>
         </div>
       </div>
-      <div class="term-caption">
+      <div class="term-caption" id="term-caption">
         <h3>One environment. A general method.</h3>
         <p>
-          no-start-env is our first public proof: an agent receives a goal, observes an instrumented
-          physical system, chooses actions, adapts to their consequences, and is graded by the resulting
-          state. Vehicle fault diagnosis gives this first environment objective ground truth; the method
-          applies wherever agents must make decisions about physical systems.
+          A live hospitality packing cell: verify the ticket, fold, bag, set aside exceptions.
+          The window opens as you scroll; once it fills the stage, a trained episode runs.
+          <a href="decision-layer/" target="_blank" rel="noopener">Open the full demo</a>.
         </p>
       </div>
     </div>
@@ -1217,90 +1172,41 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
-  /* ---------- terminal: AI-style typing ---------- */
-  // Agent lines type out character by character with a blinking caret; env
-  // output lines print all at once like a real terminal, with a tiny beat
-  // before and after the print. Text nodes are blanked up front and restored
-  // so the colored spans keep their markup. The first run starts after the
-  // terminal stage settles; the title-bar control can safely restart it later.
-  const termLines = [...document.querySelectorAll('#terminal .t-line')];
-  const replayTerminal = document.getElementById('terminal-replay');
-  const caret = document.createElement('span');
-  caret.className = 't-caret';
-  // The complaint is the scenario prompt, not agent output: it is on screen from
-  // the start (`.on` in the markup) and never retyped. Only the lines after it
-  // type, and the caret waits on the complaint until they do.
-  const typeLines = termLines.slice(1);
-  const typeSeq = typeLines.map((line) => {
-    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let n;
-    while ((n = walker.nextNode())) { nodes.push({ node: n, text: n.nodeValue }); }
-    return { line, nodes, isAgent: !!line.querySelector('.t-agent') };
-  });
-  if (!reduced) termLines[0].appendChild(caret);
-  let typeRun = 0;
-  function resetTerminalTranscript() {
-    if (reduced) return;
-    typeRun += 1;
-    caret.remove();
-    typeSeq.forEach(({ line, nodes }) => {
-      line.classList.remove('on');
-      nodes.forEach((t) => { t.node.nodeValue = ''; });
-    });
-    termLines[0].appendChild(caret);
+  /* ---------- environment window: prepare early, run once expanded ---------- */
+  const envWindow = document.getElementById('env-window');
+  const envFrame = document.getElementById('env-frame');
+  const envSrc = 'decision-layer/index.html?embed=1';
+  let envReady = false, envEpisodeQueued = false;
+  function markEnvReady() {
+    envReady = true;
+    envWindow.classList.add('is-live');
+    if (envEpisodeQueued) startEnvEpisode();
   }
-  function typeTerminal() {
-    if (reduced) { termLines.forEach((l) => l.classList.add('on')); return; }
-    resetTerminalTranscript();
-    const run = typeRun;
-    const later = (fn, delay) => setTimeout(() => {
-      if (run === typeRun) fn();
-    }, delay);
-    let li = 0;
-    (function nextLine() {
-      if (li >= typeSeq.length) {
-        typeSeq[typeSeq.length - 1].line.appendChild(caret);
-        return;
-      }
-      const { line, nodes, isAgent } = typeSeq[li++];
-      if (!isAgent) {
-        // env output: prints in one shot after a tiny beat, then holds ~500ms
-        // before the next agent command starts typing
-        later(() => {
-          nodes.forEach((t) => { t.node.nodeValue = t.text; });
-          line.classList.add('on');
-          line.appendChild(caret);
-          later(nextLine, 500);
-        }, 60);
-        return;
-      }
-      line.classList.add('on');
-      line.appendChild(caret);
-      const speed = 4; // brisk agent typing
-      let ni = 0, ci = 0;
-      (function tick() {
-        if (run !== typeRun) return;
-        if (ni >= nodes.length) { later(nextLine, 45); return; }
-        const t = nodes[ni];
-        ci += 1;
-        t.node.nodeValue = t.text.slice(0, ci);
-        if (ci >= t.text.length) { ni += 1; ci = 0; }
-        later(tick, speed);
-      })();
-    })();
-  }
-  // Typing is triggered from frame() once the terminal stage has settled at its
-  // final position — see the SETTLE gate there. Reduced motion has no stage
-  // animation to wait on, so the transcript is simply there.
-  let termTyped = false, termTypeTimer = 0, termWasInView = false;
-  replayTerminal.addEventListener('click', () => {
-    clearTimeout(termTypeTimer);
-    termTypeTimer = 0;
-    termTyped = true;
-    typeTerminal();
+  envFrame.addEventListener('load', () => {
+    if (envFrame.getAttribute('src') === envSrc) markEnvReady();
   });
-  if (reduced) { termTyped = true; typeTerminal(); }
+  addEventListener('message', (event) => {
+    if (event.source !== envFrame.contentWindow || event.origin !== location.origin ||
+        event.data?.type !== 'snl-env-ready') return;
+    markEnvReady();
+  });
+  function startEnvEpisode() {
+    if (!envReady) {
+      envEpisodeQueued = true;
+      if (envFrame.getAttribute('src') !== envSrc) envFrame.src = envSrc;
+      return;
+    }
+    envEpisodeQueued = false;
+    envFrame.contentWindow.postMessage({ type: 'snl-start-trained' }, location.origin);
+  }
+  function resetEnvEpisode() {
+    envEpisodeQueued = false;
+  }
+  let envStarted = false, envStartTimer = 0, envWasInView = false;
+  // Load and settle the compact preview before the visitor reaches it. This
+  // keeps the initial angled state populated without starting the trained run.
+  envFrame.src = envSrc;
+  if (reduced) { envStarted = true; envEpisodeQueued = true; }
 
   /* ---------- scroll direction ---------- */
   let lastY = scrollY, scrollDir = 1;
@@ -1374,7 +1280,7 @@
   // Nav links into a sticky section land on its first frame, where the stage is
   // still at its deepest tilt and nothing has filled in. These play the section
   // instead: glide to the top, then walk the sticky range at a readable pace so
-  // the tilt settles and the bars/transcript run. Constant-ish speed (eased at
+  // the tilt settles and the episode/bars run. Constant-ish speed (eased at
   // both ends) rather than the exponential glide, which would crawl through the
   // last stretch — exactly where the payoff is.
   const autoplayHrefs = ['#environments', '#benchmark'];
@@ -1666,9 +1572,13 @@
   const benchCap = document.getElementById('bench-caption');
   const benchBars = document.querySelectorAll('.bench-row');
 
-  const termPanel = document.getElementById('terminal');
+  const termStage = document.getElementById('term-stage');
+  const termPanel = document.getElementById('env-window');
   const termF1 = document.getElementById('term-frame-1');
   const termF2 = document.getElementById('term-frame-2');
+  const termCap = document.getElementById('term-caption');
+  const termContours = document.getElementById('term-contours');
+  const termBins = [document.getElementById('term-bin-1'), document.getElementById('term-bin-2')];
 
   const splitStage = document.getElementById('split-stage');
   const splitPanel = document.getElementById('split-panel');
@@ -1768,32 +1678,45 @@
       benchCap.style.opacity = clamp((p - 0.55) / 0.25, 0, 1);
       benchCap.style.transform = `translateY(${lerp(24, 0, clamp((p - 0.55) / 0.25, 0, 1))}px)`;
 
-      // Terminal stage: opposite tilt. Each downward entry re-arms the
-      // transcript once; upward passes keep the current transcript untouched.
+      // Environment stage: small angled window grows to fill the viewport,
+      // then the live episode starts. Opposite tilt from the benchmark.
       const termRect = termSection.getBoundingClientRect();
       const termInView = termRect.top < innerHeight && termRect.bottom > 0;
-      if (termInView && !termWasInView && scrollDir > 0) {
-        clearTimeout(termTypeTimer);
-        termTypeTimer = 0;
-        termTyped = false;
-        resetTerminalTranscript();
+      if (termInView && !envWasInView && scrollDir > 0) {
+        clearTimeout(envStartTimer);
+        envStartTimer = 0;
+        envStarted = false;
+        resetEnvEpisode();
       }
-      termWasInView = termInView;
+      envWasInView = termInView;
       p = stickyProgress(termSection);
       e = 1 - Math.pow(1 - p, 2);
+      const phone = innerWidth < 640;
+      const w0 = phone ? innerWidth - 48 : Math.min(640, innerWidth * 0.62);
+      const h0 = phone ? Math.min(320, innerHeight * 0.38) : Math.min(380, innerHeight * 0.42);
+      const w1 = innerWidth - (phone ? 20 : 36);
+      const h1 = innerHeight - (phone ? 16 : 28);
+      termStage.style.width = lerp(w0, w1, e) + 'px';
+      termStage.style.height = lerp(h0, h1, e) + 'px';
+      termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e)}%`;
       termPanel.style.transform =
-        `rotateY(${lerp(18, 5, e) * mob}deg) rotateX(${lerp(-8, -2, e) * mob}deg) translateY(${lerp(60, -6, e) * mob}px)`;
+        `rotateY(${lerp(22, 0, e) * mob}deg) rotateX(${lerp(-10, 0, e) * mob}deg) translateY(${lerp(48, 0, e) * mob}px)`;
       termF1.style.transform =
-        `rotateY(${lerp(22, 8, e) * mob}deg) rotateX(${lerp(-10, -3, e) * mob}deg) translateY(${lerp(90, 8, e) * mob}px) translateZ(${-60 * mob}px)`;
+        `rotateY(${lerp(26, 2, e) * mob}deg) rotateX(${lerp(-12, 0, e) * mob}deg) translateY(${lerp(72, 6, e) * mob}px) translateZ(${lerp(-80, -16, e) * mob}px)`;
       termF2.style.transform =
-        `rotateY(${lerp(26, 11, e) * mob}deg) rotateX(${lerp(-12, -4, e) * mob}deg) translateY(${lerp(120, 22, e) * mob}px) translateZ(${-130 * mob}px)`;
-      // SETTLE gate: the transcript starts typing three-quarters of the way
-      // through the stage's travel. The ease is quadratic-out, so by p 0.75 the
-      // panel is within ~6% of its resting tilt and still visibly easing in —
-      // the typing overlaps the tail of the motion rather than waiting it out.
-      if (!termTyped && p >= 0.75) {
-        termTyped = true;
-        termTypeTimer = setTimeout(typeTerminal, 120);
+        `rotateY(${lerp(30, 4, e) * mob}deg) rotateX(${lerp(-14, 0, e) * mob}deg) translateY(${lerp(100, 14, e) * mob}px) translateZ(${lerp(-150, -40, e) * mob}px)`;
+      const capT = clamp((p - 0.18) / 0.42, 0, 1);
+      termCap.style.opacity = String(1 - capT);
+      termCap.style.transform = `translateX(-50%) translateY(${capT * 18}px)`;
+      termCap.style.pointerEvents = capT > 0.55 ? 'none' : '';
+      const deco = 1 - clamp((p - 0.45) / 0.4, 0, 1);
+      termContours.style.opacity = String(deco);
+      termBins.forEach((el) => { if (el) el.style.opacity = String(deco); });
+      // Load the live app only after the window has reached size, so the
+      // three-column layout never has to paint inside the small tilted frame.
+      if (!envStarted && p >= 0.88) {
+        envStarted = true;
+        envStartTimer = setTimeout(startEnvEpisode, 80);
       }
 
       // Split stage: gentle parallax tilt as it crosses the viewport.

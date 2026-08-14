@@ -14,6 +14,76 @@
       rel="stylesheet"
     />
     <title>Decision-Layer Environment</title>
+    <style>
+      html.snl-embed .sidebar { display: none !important; }
+      html.snl-embed .app-body { margin-left: 0 !important; }
+      html.snl-embed,
+      html.snl-embed body,
+      html.snl-embed #root,
+      html.snl-embed .app-shell,
+      html.snl-embed .app-main,
+      html.snl-embed .app-body {
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden;
+      }
+      html.snl-embed .panel { max-height: none; }
+      html.snl-embed .main { min-height: 0; }
+    </style>
+    <script>
+      // The live view follows its newest planner/executor lines with
+      // scrollIntoView(). In an iframe that can also scroll the parent page,
+      // which rewinds the homepage's scroll-driven expansion. Keep the same
+      // log-following behavior inside the embedded panel without crossing the
+      // iframe boundary. The standalone demo keeps the native method.
+      if (new URLSearchParams(location.search).has('embed')) {
+        document.documentElement.classList.add('snl-embed');
+        Element.prototype.scrollIntoView = function () {
+          const pane = this.closest && this.closest('.panel-body');
+          if (pane) pane.scrollTop = pane.scrollHeight;
+        };
+
+        const buttonNamed = (label) => [...document.querySelectorAll('button')]
+          .find((button) => button.textContent.trim().toUpperCase() === label.toUpperCase()) || null;
+        let trainedRunQueued = false;
+
+        const startTrainedRun = () => {
+          const trained = buttonNamed('TRAINED');
+          const newEpisode = buttonNamed('NEW EPISODE');
+          if (!trained) return false;
+          trainedRunQueued = false;
+          if (!trained.classList.contains('active-green') &&
+              !trained.classList.contains('active')) {
+            trained.click();
+          } else if (newEpisode) {
+            newEpisode.click();
+          }
+          return true;
+        };
+        addEventListener('DOMContentLoaded', () => {
+          const readyTimer = setInterval(() => {
+            const baseline = buttonNamed('BASELINE');
+            const trained = buttonNamed('TRAINED');
+            const skip = buttonNamed('SKIP');
+            if (!baseline || !trained || !skip) return;
+
+            // Settle the automatic baseline run so the compact preview is
+            // populated and stable before its scroll animation begins.
+            if (!skip.disabled) skip.click();
+            clearInterval(readyTimer);
+            parent.postMessage({ type: 'snl-env-ready' }, location.origin);
+            if (trainedRunQueued) startTrainedRun();
+          }, 50);
+        });
+
+        addEventListener('message', (event) => {
+          if (event.source !== parent || event.origin !== location.origin ||
+              event.data?.type !== 'snl-start-trained') return;
+          trainedRunQueued = true;
+          startTrainedRun();
+        });
+      }
+    </script>
     <script type="module" crossorigin src="/decision-layer/assets/index-EI1OWCl1.js"></script>
     <link rel="stylesheet" crossorigin href="/decision-layer/assets/index-D51c8FKU.css">
   </head>
