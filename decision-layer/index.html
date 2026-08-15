@@ -81,6 +81,97 @@
       html.snl-embed.snl-playback-paused .log-line.snl-line-enter {
         animation-play-state: paused;
       }
+      /* The full demo needs a document-height mobile layout. The bundled app
+         fixes the shell to the viewport while stacking three minimum-height
+         panels, which makes them spill through the scorecard and footer. */
+      @media (max-width: 900px) {
+        html:not(.snl-embed),
+        html:not(.snl-embed) body,
+        html:not(.snl-embed) #root {
+          height: auto;
+          min-height: 100%;
+          overflow-x: hidden;
+          overflow-y: visible;
+        }
+        html:not(.snl-embed) body {
+          overflow-y: auto;
+        }
+        html:not(.snl-embed) .app-shell {
+          height: auto;
+          min-height: 100dvh;
+          overflow: visible;
+        }
+        html:not(.snl-embed) .app-main {
+          flex: none;
+          width: 100%;
+          min-height: 0;
+          overflow: visible;
+        }
+        html:not(.snl-embed) .app-body {
+          flex: 1 1 0%;
+          width: 0;
+          min-height: 0;
+          overflow: visible;
+        }
+        html:not(.snl-embed) .main {
+          flex: none;
+          grid-template-columns: minmax(0, 1fr);
+          min-height: 0;
+        }
+        html:not(.snl-embed) .main > .panel {
+          height: clamp(320px, 52dvh, 440px);
+          min-height: 0;
+          max-height: none;
+          overflow: hidden;
+        }
+        html:not(.snl-embed) .lower,
+        html:not(.snl-embed) .footer {
+          position: relative;
+          flex-shrink: 0;
+        }
+      }
+      @media (max-width: 640px) {
+        html:not(.snl-embed) {
+          --sidebar-w-collapsed: 44px;
+        }
+        html:not(.snl-embed) .sidebar-nav {
+          padding-inline: 5px;
+        }
+        html:not(.snl-embed) .sidebar-item {
+          padding-inline: 7px;
+        }
+        html:not(.snl-embed) .lower {
+          padding: 8px;
+        }
+        html:not(.snl-embed) .scorecard-dock {
+          gap: 10px;
+          padding: 10px;
+        }
+        html:not(.snl-embed) .scorecard-dock-main,
+        html:not(.snl-embed) .scorecard-dock-facts {
+          gap: 10px 12px;
+        }
+        html:not(.snl-embed) .scorecard-dock-btn {
+          margin-left: 0;
+        }
+        html:not(.snl-embed) .footer {
+          padding: 10px;
+        }
+      }
+      @media (max-width: 900px) and (hover: none),
+        (max-width: 900px) and (pointer: coarse) {
+        html:not(.snl-embed) .sidebar:hover,
+        html:not(.snl-embed) .sidebar:focus-within {
+          width: var(--sidebar-w-collapsed);
+          box-shadow: none;
+        }
+        html:not(.snl-embed) .sidebar:hover .sidebar-label,
+        html:not(.snl-embed) .sidebar:focus-within .sidebar-label {
+          opacity: 0;
+          transform: translateX(-6px);
+          pointer-events: none;
+        }
+      }
       @keyframes snl-line-enter {
         to { opacity: 1; transform: translateY(0); }
       }
@@ -93,12 +184,25 @@
       }
     </style>
     <script>
+      const snlEmbedMode = new URLSearchParams(location.search).has('embed');
+      if (!snlEmbedMode) {
+        const nativeScrollIntoView = Element.prototype.scrollIntoView;
+        const mobileLayout = matchMedia('(max-width: 900px)');
+        Element.prototype.scrollIntoView = function (options) {
+          const pane = this.closest?.('.panel-body');
+          if (mobileLayout.matches && pane) {
+            pane.scrollTop = pane.scrollHeight;
+            return;
+          }
+          return nativeScrollIntoView.call(this, options);
+        };
+      }
       // The standalone app follows new lines with scrollIntoView(). In the
       // embedded preview, the staged lines already exist in layout before they
       // fade in, so that native follow jumps ahead of what is actually visible.
       // Suppress it here; animateLine() advances a pane only when the next
       // revealed line crosses its visible bottom edge.
-      if (new URLSearchParams(location.search).has('embed')) {
+      if (snlEmbedMode) {
         document.documentElement.classList.add('snl-embed', 'snl-env-idle');
         Element.prototype.scrollIntoView = function () {};
 
