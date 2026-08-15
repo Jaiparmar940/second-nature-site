@@ -902,7 +902,7 @@
     position: absolute;
     left: 50%;
     bottom: clamp(36px, 4.5vh, 52px);
-    width: min(54ch, 88vw);
+    width: min(900px, 88vw);
     opacity: 0;
     transform: translateX(-50%) translateY(18px);
     text-align: center;
@@ -917,7 +917,7 @@
     transform: translateX(-50%) translateY(0);
   }
   .term-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
-  .term-caption p { margin: 10px auto 0; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
+  .term-caption p { margin: 10px auto 0; max-width: 54ch; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
   .term-caption a { text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
   .term-caption .term-demo-button {
     display: inline-flex;
@@ -1117,7 +1117,7 @@
     .term-sticky { position: static; height: auto; padding: 8vh 0 10vh; }
     .term-stage { width: min(1240px, 94vw); height: min(86vh, 860px); }
     .env-window { transform: none; }
-    .term-caption { position: static; transform: none; width: min(54ch, 88vw); margin: 28px auto 0; opacity: 1; }
+    .term-caption { position: static; transform: none; width: min(900px, 88vw); margin: 28px auto 0; opacity: 1; }
     .hero-pin { position: static; height: 100vh; }
     .statement { height: auto; }
     .statement-pin { position: static; height: auto; padding: 20vh 0 16vh; }
