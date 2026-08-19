@@ -83,10 +83,29 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { overflow-x: clip; }
   body {
-    background: var(--paper);
+    background: #060606;
     color: var(--ink);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* ================= fixed site background (the hero art) ================= */
+  /* The aurora + vector-field canvas + veil live in this fixed layer behind
+     the whole page: the background stays put and the content scrolls over it. */
+  .site-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #060606;
+  }
+  .site-bg canvas {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
   ::selection { background: var(--accent); color: #0a0a0a; }
   a { color: inherit; text-decoration: none; }
@@ -212,7 +231,7 @@
   .hero-shell {
     height: 150vh;
     position: relative;
-    background: #060606;
+    z-index: 1;
     margin-top: calc(-1 * var(--nav-h));
   }
   .hero-pin {
@@ -227,14 +246,6 @@
     position: relative;
     overflow: hidden;
     min-height: 0;
-    background: #060606;
-  }
-  .hero-card canvas {
-    position: absolute;
-    z-index: 1;
-    inset: 0;
-    width: 100%;
-    height: 100%;
   }
   .hero-aurora {
     position: absolute;
@@ -367,29 +378,9 @@
   /* ================= dark region ================= */
   .dark {
     position: relative;
+    z-index: 1;
     isolation: isolate;
-    background: var(--bg);
     color: var(--text);
-  }
-  /* The hero and statement use separate canvases. Bridge their shared edge
-     with a dark crossfade so neither animation starts or stops on a hard line. */
-  .dark::before {
-    content: "";
-    position: absolute;
-    z-index: 4;
-    top: clamp(-170px, -18vh, -110px);
-    left: 0;
-    right: 0;
-    height: clamp(220px, 36vh, 340px);
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 10, 10, 0) 0%,
-      rgba(10, 10, 10, 0.76) 34%,
-      var(--bg) 50%,
-      rgba(10, 10, 10, 0.72) 66%,
-      rgba(10, 10, 10, 0) 100%
-    );
   }
   section { padding: 96px 0; }
   .kicker {
@@ -422,7 +413,6 @@
     overflow: clip;
     display: grid;
     place-items: center;
-    background: #070808;
   }
   .statement-pin::after {
     content: "";
@@ -987,7 +977,7 @@
   .pillar p { font-size: 14.5px; line-height: 1.65; color: var(--text-dim); }
 
   /* ================= quickstart ================= */
-  .quickstart { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-raised); }
+  .quickstart { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(16, 16, 16, 0.82); }
   .qs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
   .qs-grid .section-sub { margin-top: 18px; max-width: 46ch; font-size: 15.5px; line-height: 1.65; color: var(--text-dim); }
   .codeblock {
@@ -1098,6 +1088,12 @@
 </head>
 <body>
 
+<div class="site-bg" aria-hidden="true">
+  <div class="hero-aurora"></div>
+  <canvas id="hero-art"></canvas>
+  <div class="hero-veil"></div>
+</div>
+
 <nav id="nav">
   <div class="wrap nav-inner">
     <a class="logo" href="#top">
@@ -1126,9 +1122,6 @@
 <div class="hero-shell" id="top">
   <div class="hero-pin">
     <div class="hero-card">
-      <div class="hero-aurora" aria-hidden="true"></div>
-      <canvas id="hero-art"></canvas>
-      <div class="hero-veil"></div>
       <div class="hero-copy">
         <h1>The physical world doesn't grade on a curve.</h1>
       </div>
@@ -1470,7 +1463,6 @@
   /* ---------- hero art: interactive causal vector field ---------- */
   const canvas = document.getElementById('hero-art');
   const hctx = canvas.getContext('2d');
-  const heroCardEl = document.querySelector('.hero-card');
   const heroShell = document.querySelector('.hero-shell');
   const heroH1 = document.querySelector('.hero-copy h1');
   const sectionNavLabel = document.querySelector('.section-nav-label');
@@ -1587,17 +1579,18 @@
   sizeHero();
   addEventListener('resize', sizeHero);
   if (!reduced) {
-    heroCardEl.addEventListener('pointermove', (event) => {
-      const rect = canvas.getBoundingClientRect();
-      heroPointer.tx = event.clientX - rect.left;
-      heroPointer.ty = event.clientY - rect.top;
+    // The canvas is a fixed viewport layer now, so pointer position maps to it
+    // directly — listen on the window so the field reacts everywhere.
+    addEventListener('pointermove', (event) => {
+      heroPointer.tx = event.clientX;
+      heroPointer.ty = event.clientY;
       if (heroPointer.x < -9000) {
         heroPointer.x = heroPointer.tx;
         heroPointer.y = heroPointer.ty;
       }
       heroPointer.energy = Math.min(1, heroPointer.energy + 0.12);
-    });
-    heroCardEl.addEventListener('pointerleave', () => {
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => {
       heroPointer.tx = -9999;
       heroPointer.ty = -9999;
     });
@@ -2389,9 +2382,10 @@
     }
     lastFrameT = now;
     if (!reduced) {
+      // The field is the fixed page background now — draw it every frame.
+      drawHero(now);
       // Hero: the headline floats out as the Polanyi statement approaches.
       const hr = heroShell.getBoundingClientRect();
-      if (hr.bottom > -100) drawHero(now);
       const sp = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
       const aOut = clamp(sp / 0.90, 0, 1);
       heroH1.style.transform = `translateY(${-aOut * 150}px) scale(${1 - aOut * 0.06})`;
