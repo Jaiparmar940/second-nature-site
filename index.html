@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Second Nature Labs — Physics-grounded environments and evals for physical AI</title>
-<meta name="description" content="Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
+<title>Second Nature Labs — Robots trained for your job</title>
+<meta name="description" content="Second Nature Labs trains robots for hard-to-staff facility jobs. A remote operator works from the first shift while every action trains the robot on your site.">
 <link rel="canonical" href="https://snlabs.dev/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://snlabs.dev/">
 <meta property="og:site_name" content="Second Nature Labs">
-<meta property="og:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
-<meta property="og:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
+<meta property="og:title" content="Second Nature Labs — Robots trained for your job">
+<meta property="og:description" content="Robots for hard-to-staff facility roles. Working from the first shift and learning on your site.">
 <meta property="og:image" content="https://snlabs.dev/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Second Nature Labs — physics-grounded environments and evals for AI that touches the real world.">
+<meta property="og:image:alt" content="Second Nature Labs — robots trained for your job, working from day one.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
-<meta name="twitter:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
+<meta name="twitter:title" content="Second Nature Labs — Robots trained for your job">
+<meta name="twitter:description" content="Robots for hard-to-staff facility roles. Working from the first shift and learning on your site.">
 <meta name="twitter:image" content="https://snlabs.dev/og-image.png">
 <script type="application/ld+json">
 {
@@ -29,7 +29,7 @@
       "name": "Second Nature Labs",
       "url": "https://snlabs.dev/",
       "logo": "https://snlabs.dev/logo-300.svg",
-      "description": "Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.",
+      "description": "Second Nature Labs trains robots for hard-to-staff facility jobs. A remote operator works from the first shift while every action trains the robot on site.",
       "email": "founders@snlabs.dev",
       "founder": {
         "@type": "Person",
@@ -45,7 +45,7 @@
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Any",
       "url": "https://github.com/Jaiparmar940/rlenv",
-      "description": "An Inspect-native agentic RL environment and benchmark where LLM agents diagnose simulated vehicle electrical no-start and charging faults, scored by a cheat-resistant 0–100 grader with verified fixes.",
+      "description": "An open technical test environment where software diagnoses simulated vehicle electrical faults and is scored on the verified repair outcome.",
       "author": { "@id": "https://snlabs.dev/#org" },
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
@@ -992,6 +992,37 @@
   }
   .codeblock .c { color: var(--text-faint); }
   .codeblock .p { color: var(--accent); user-select: none; }
+  .pilot-terms {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #0c0c0b;
+    overflow: hidden;
+  }
+  .pilot-term {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .pilot-term:last-child { border-bottom: 0; }
+  .pilot-term strong {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+  }
+  .pilot-term span { font-size: 14px; color: var(--text-dim); line-height: 1.45; }
+  .founder-section { border-bottom: 1px solid var(--line); }
+  .founder-photo {
+    width: min(100%, 420px);
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: center 28%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    filter: saturate(0.75) contrast(1.05);
+  }
 
   /* ================= final cta + footer ================= */
   .final-cta { text-align: center; padding: 120px 0; }
@@ -1061,6 +1092,7 @@
     /* split panel */
     .split-stage { height: 420px; }
     .split-panel { padding: 24px; }
+    .pilot-term { grid-template-columns: 94px 1fr; padding: 16px 18px; }
   }
   @media (max-width: 520px) {
     .nav-inner { gap: 8px; }
@@ -1101,14 +1133,14 @@
       Second Nature Labs
     </a>
     <div class="nav-links">
-      <a href="#environments">Product</a>
-      <a href="#benchmark">Benchmark</a>
-      <a href="#customers">Who it's for</a>
-      <a href="#quickstart">Open proof</a>
+      <a href="#platform">How it works</a>
+      <a href="#customers">Where we start</a>
+      <a href="#environments">Training proof</a>
+      <a href="#pilot">Pilot</a>
     </div>
     <div class="nav-cta">
       <a class="btn" href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn btn-ink" href="#contact">Get in touch</a>
+      <a class="btn btn-ink" href="#contact">Book a walkthrough</a>
     </div>
   </div>
 </nav>
@@ -1123,7 +1155,7 @@
   <div class="hero-pin">
     <div class="hero-card">
       <div class="hero-copy">
-        <h1>The physical world doesn't grade on a curve.</h1>
+        <h1>Robots, trained for your job. Working from day one.</h1>
       </div>
     </div>
   </div>
@@ -1135,22 +1167,110 @@
     <div class="statement-pin">
       <canvas class="statement-art" id="statement-art" aria-hidden="true"></canvas>
       <div class="wrap statement-copy" id="statement-copy">
-        <div class="kicker">What we build</div>
-        <h2><span class="statement-title-line">Training environments and evals</span> <span class="statement-title-line">for AI that acts in the physical world.</span></h2>
+        <div class="kicker">What we do</div>
+        <h2><span class="statement-title-line">A capable robot still has to learn</span> <span class="statement-title-line">your job, at your site.</span></h2>
         <p>
-          AI labs and robotics teams bring us a real workflow, its failure traces, and the outcomes
-          that matter. We turn them into an interactive simulator where an agent observes through
-          sensors and instruments, chooses actions, and <span class="keep-tail">experiences their physical consequences.</span>
+          We bring a generalist robot to your facility and train it for one specific role. A trained
+          remote operator runs it from the first shift, so the work gets done while the robot learns
+          <span class="keep-tail">your items, your pace, and your edge cases.</span>
         </p>
         <p class="statement-result">
-          <strong>The result is an RL-ready training ground and a cheat-resistant evaluation:</strong>
-          agents practice decisions and recovery under time, cost, and safety constraints, then earn
-          a score based on what actually happened instead of how <span class="keep-tail">plausible their explanation sounded.</span>
+          <strong>Every operator action becomes training data.</strong> As the robot gets more reliable,
+          the operator moves from doing each task to supervising the work. The goal is a robot that
+          can run the job on its own without changing <span class="keep-tail">what you pay per shift.</span>
         </p>
-        <div class="statement-quote">“We know more than we can tell.” - Michael Polanyi</div>
+        <div class="statement-quote">Starting with food processing and packing facilities in California's Central Valley.</div>
       </div>
     </div>
   </div>
+
+  <!-- ============ how it works ============ -->
+  <section id="platform">
+    <div class="wrap">
+      <div class="kicker reveal">How it works</div>
+      <h2 class="reveal" style="max-width: 20ch;">The job gets done now. The robot learns on site.</h2>
+      <div class="pillars">
+        <div class="pillar reveal">
+          <div class="index">01 / FIRST SHIFT</div>
+          <h3>Day one: it works.</h3>
+          <p>
+            We place a robot at your facility. A trained person operates it remotely. The job gets
+            done from the first shift while we learn how the work really happens.
+          </p>
+        </div>
+        <div class="pillar reveal">
+          <div class="index">02 / EACH SHIFT</div>
+          <h3>Every shift, it learns.</h3>
+          <p>
+            Each operator action teaches the robot about your tasks, your items, and the cases that
+            do not go as planned. Training comes from the real job at your site.
+          </p>
+        </div>
+        <div class="pillar reveal">
+          <div class="index">03 / OVER TIME</div>
+          <h3>Over time: it runs itself.</h3>
+          <p>
+            As performance improves, the operator steps back to supervising. You pay the same monthly
+            rate. The robot gets better at the bounded job until it can handle routine work on its own.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ starting jobs ============ -->
+  <section id="customers">
+    <div class="wrap split">
+      <div class="copy">
+        <div class="kicker reveal">Where we start</div>
+        <h2 class="reveal">The overnight jobs that stay open.</h2>
+        <p class="reveal">
+          We are starting with food processing and packing facilities in California's Central Valley.
+          The first jobs are overnight quality checks, sorting, and rework at sites that already run
+          automation.
+        </p>
+        <div class="cta-row reveal">
+          <a class="btn btn-green" href="#contact">Book a site walkthrough →</a>
+          <a class="btn btn-ghost-dark" href="#platform">See how it works</a>
+        </div>
+        <div class="tagrow reveal">
+          <span>OVERNIGHT</span><span>ONE JOB</span><span>ON-SITE TRAINING</span><span>CLEAR OUTPUT</span>
+        </div>
+      </div>
+      <div class="stage split-stage" id="split-stage">
+        <span class="bin" style="right:-2%; top:4%;">100</span>
+        <span class="bin" style="left:0; bottom:0;">0100</span>
+        <div class="wireframe dim" id="split-frame-2" style="inset:2% -2%;"></div>
+        <div class="wireframe" id="split-frame-1" style="inset:6% 4%;"></div>
+        <div class="split-panel" id="split-panel">
+          <div class="mono-head">A GOOD FIRST JOB</div>
+          <div class="big">Hard to staff.<br>Same station each shift.<br>Clear pass or fail.</div>
+          <div class="foot"><span>existing automation nearby</span><span>bounded work area</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ pilot ============ -->
+  <section class="quickstart" id="pilot">
+    <div class="wrap qs-grid">
+      <div>
+        <div class="kicker reveal">First pilot</div>
+        <h2 class="reveal">Start with one job at one site.</h2>
+        <p class="section-sub reveal">
+          We begin with a site walkthrough. If the work fits, the pilot includes a one-time deployment
+          and training fee, then a monthly rate per robot-shift. The rate is set below the loaded cost
+          of the unfilled role. Three-month minimum.
+        </p>
+      </div>
+      <div class="pilot-terms reveal" aria-label="Pilot terms">
+        <div class="pilot-term"><strong>ONE TIME</strong><span>Deployment and site training</span></div>
+        <div class="pilot-term"><strong>MONTHLY</strong><span>One rate per robot-shift</span></div>
+        <div class="pilot-term"><strong>PRICING</strong><span>Below the loaded cost of the unfilled role</span></div>
+        <div class="pilot-term"><strong>TERM</strong><span>Three-month minimum</span></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ decision-layer: expanding live episode ============ -->
   <div class="term-section" id="environments">
@@ -1207,21 +1327,21 @@
       <button class="env-switch env-switch-next" id="env-switch-next" type="button" aria-label="Show no-start diagnostic episode">→</button>
       <div class="term-caption" id="term-caption">
         <div class="term-caption-content is-active" id="decision-caption">
-          <h3>Watch planning and execution unfold.</h3>
+          <h3>See how we test whether a robot is ready.</h3>
           <p>
-            A trained planner decomposes a physical task while a stochastic executor carries it out,
-            surfaces failures, and triggers recovery.
+            This interactive demo shows our training and evaluation machinery. It breaks a job into
+            steps, introduces failures, and checks whether the system recovers safely.
           </p>
           <a class="term-demo-button" href="decision-layer/" target="_blank" rel="noopener">
-            Open the full demo <span aria-hidden="true">↗</span>
+            Open the technical demo <span aria-hidden="true">↗</span>
           </a>
         </div>
         <div class="term-caption-content" id="no-start-caption" aria-hidden="true">
-          <h3>One environment. A general method.</h3>
+          <h3>A second test. The same discipline.</h3>
           <p>
-            no-start-env gives an agent a goal, an instrumented physical system, and actions with
-            consequences. It must isolate the fault, repair it, verify the resulting state, and earn
-            its score from the outcome. <a href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">Open no-start-env</a>.
+            Before working on robot jobs, we built an open test for diagnosing vehicle electrical
+            faults. It scores the repair outcome, not the explanation. It shows how we turn hands-on
+            work into repeatable tests. <a href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">Open no-start-env</a>.
           </p>
         </div>
       </div>
@@ -1291,96 +1411,23 @@
         </div>
       </div>
       <div class="bench-caption" id="bench-caption">
-        <h3>A physical-reasoning gap you can measure.</h3>
-        <p>Our first benchmark uses 5 vehicle electrical scenarios × 5 epochs with outcome-based grading. <em>Showing 7 of 9 models; <a href="https://github.com/Jaiparmar940/rlenv/blob/main/results/scale_curve.md" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:2px;">full table in the repo</a>.</em></p>
-        <p class="bench-footnote">Per-cell scores at n=5 epochs carry wide uncertainty; tier-level patterns are the robust findings. Full methodology in the repo.</p>
+        <h3>Readiness has to be measured.</h3>
+        <p>Our first open benchmark uses 5 vehicle electrical scenarios with 5 runs each and scores the outcome. It is not a robot deployment; it shows how we build repeatable tests and document limits. <em>Showing 7 of 9 models; <a href="https://github.com/Jaiparmar940/rlenv/blob/main/results/scale_curve.md" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:2px;">full table in the repo</a>.</em></p>
+        <p class="bench-footnote">Each five-run cell carries wide uncertainty. The tier-level pattern is more reliable than any single score. Full methodology is in the repo.</p>
       </div>
     </div>
   </div>
 
-  <!-- ============ pillars ============ -->
-  <section id="platform">
-    <div class="wrap">
-      <div class="kicker reveal">The platform</div>
-      <h2 class="reveal" style="max-width: 20ch;">Training environments and test rigs for physical reasoning.</h2>
-      <div class="pillars">
-        <div class="pillar reveal">
-          <div class="index">01 / PHYSICS</div>
-          <h3>Physics, not scripted answers</h3>
-          <p>
-            Agents interact with a live system model, not a tree of hand-authored responses.
-            State, measurements, and consequences are computed from the governing physics, so
-            each task can vary without breaking the rules of the machine.
-          </p>
-        </div>
-        <div class="pillar reveal">
-          <div class="index">02 / GRADING</div>
-          <h3>Outcomes, not plausible text</h3>
-          <p>
-            Graders reward correct causal understanding, disciplined action, and efficient goal
-            completion against an expert baseline. The environment state determines whether an
-            action worked; confident explanations and brute-force guessing do not.
-          </p>
-        </div>
-        <div class="pillar reveal">
-          <div class="index">03 / VERIFICATION</div>
-          <h3>Expert verification is the moat</h3>
-          <p>
-            Models can generate simulations they cannot warrant. Coding agents produce much of the
-            implementation scaffolding, scenario variants, and automated tests; human expertise is
-            concentrated on verifying system dynamics, tasks, and rewards. In no-start-env, that review
-            caught four physics errors that passed the automated suite, and each became an invariant
-            that checks later scenarios.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ applications-style split ============ -->
-  <section id="customers">
-    <div class="wrap split">
-      <div class="copy">
-        <div class="kicker reveal">Applications</div>
-        <h2 class="reveal">From model capability to machine reliability.</h2>
-        <p class="reveal">
-          Built for frontier labs training general agents, robotics teams evaluating deployment
-          readiness, and companies developing models for vehicles and industrial machines. We measure
-          whether an agent can infer system state, choose an action, observe its consequences, and adapt
-          under physical constraints.
-        </p>
-        <div class="cta-row reveal">
-          <a class="btn btn-green" href="#contact">For AI labs →</a>
-          <a class="btn btn-ghost-dark" href="#contact">For robotics</a>
-        </div>
-        <div class="tagrow reveal">
-          <span>INTERACTIVE</span><span>PHYSICS-GROUNDED</span><span>RL-READY</span><span>EXPERT-VERIFIED</span>
-        </div>
-      </div>
-      <div class="stage split-stage" id="split-stage">
-        <span class="bin" style="right:-2%; top:4%;">100</span>
-        <span class="bin" style="left:0; bottom:0;">0100</span>
-        <div class="wireframe dim" id="split-frame-2" style="inset:2% -2%;"></div>
-        <div class="wireframe" id="split-frame-1" style="inset:6% 4%;"></div>
-        <div class="split-panel" id="split-panel">
-          <div class="mono-head">WHAT PHYSICAL EVALS REVEAL · v0.1</div>
-          <div class="big">Tool use without understanding.<br>Plans that break the physics.<br>Coaching dependence.</div>
-          <div class="foot"><span>13.6-pt uncoached gap</span><span>4 physics bugs human-caught</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ quickstart ============ -->
-  <section class="quickstart" id="quickstart">
+  <section id="quickstart">
     <div class="wrap qs-grid">
       <div>
-        <div class="kicker reveal">Open proof</div>
-        <h2 class="reveal">Inspect our first environment.</h2>
+        <div class="kicker reveal">Training proof</div>
+        <h2 class="reveal">Inspect our first test environment.</h2>
         <p class="section-sub reveal">
-          no-start-env is open source and pip-installable. See how a physical system model,
-          instrumented action space, outcome-based grader, and expert-verified invariants fit
-          together — then run the benchmark on any Inspect-supported model.
+          no-start-env is open source and pip-installable. It shows how we turn a hands-on job into
+          repeatable scenarios, score the outcome, and document where the test is limited. It is
+          training machinery, not a customer deployment.
         </p>
       </div>
       <div class="codeblock reveal">
@@ -1393,18 +1440,35 @@
     </div>
   </section>
 
+  <!-- ============ founder ============ -->
+  <section class="founder-section" id="about">
+    <div class="wrap qs-grid">
+      <div>
+        <img class="founder-photo reveal" src="assets/founder.jpg" alt="Jaivir Parmar, founder of Second Nature Labs">
+      </div>
+      <div>
+        <div class="kicker reveal">Who we are</div>
+        <h2 class="reveal">Built by people who work on machines.</h2>
+        <p class="section-sub reveal">
+          Founder Jaivir Parmar has a background in hands-on machining and repair. He built and ran a
+          repair-and-resale business before studying mechanical engineering and computer science.
+          We've spent years making physical machines actually work.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ final CTA ============ -->
   <section class="final-cta" id="contact">
     <div class="wrap">
-      <h2 class="reveal">Build the missing<br>training ground.</h2>
+      <h2 class="reveal">Walk the site with us.</h2>
       <p class="reveal">
-        We build verified environment families for AI labs and robotics companies, turning real system
-        dynamics and expert judgment into training signal and rigorous evals. If your agents must observe
-        a physical system, act under constraints, and adapt to the consequences, we'd like to talk.
+        Show us the shift, station, and work that is hard to staff. We'll tell you plainly whether it
+        is a fit for a first pilot.
       </p>
       <div class="cta-row reveal">
-        <a class="btn btn-green" href="mailto:founders@snlabs.dev">Build an environment</a>
-        <a class="btn btn-ghost-dark" href="#quickstart">Inspect the open proof</a>
+        <a class="btn btn-green" href="mailto:founders@snlabs.dev">Book a site walkthrough</a>
+        <a class="btn btn-ghost-dark" href="#pilot">Read the pilot terms</a>
       </div>
     </div>
   </section>
@@ -1417,14 +1481,14 @@
             <img class="foot-logo" src="logo-300.svg" alt="" width="24" height="24">
             Second Nature Labs
           </a>
-          <p>Physics-grounded environments and evals for AI that touches the real world.</p>
+          <p>We train robots for hard-to-staff jobs at specific sites.</p>
         </div>
         <div class="foot-cols">
           <div class="foot-col">
-            <h4>Product</h4>
-            <a href="#environments">First environment</a>
-            <a href="#benchmark">Benchmark</a>
-            <a href="#quickstart">Open proof</a>
+            <h4>Work with us</h4>
+            <a href="#platform">How it works</a>
+            <a href="#customers">Where we start</a>
+            <a href="#pilot">Pilot terms</a>
           </div>
           <div class="foot-col">
             <h4>Resources</h4>
@@ -1434,6 +1498,7 @@
           </div>
           <div class="foot-col">
             <h4>Company</h4>
+            <a href="#about">About</a>
             <a href="#contact">Contact</a>
           </div>
         </div>
@@ -1916,15 +1981,17 @@
   const sectionNavTargets = [
     heroShell,
     statementSection,
-    termSection,
-    benchSection,
     document.getElementById('platform'),
     document.getElementById('customers'),
+    document.getElementById('pilot'),
+    termSection,
+    benchSection,
     document.getElementById('quickstart'),
+    document.getElementById('about'),
     document.getElementById('contact')
   ].filter(Boolean);
-  const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
-    '#customers', '#quickstart', '#contact']
+  const gestureBounds = ['.statement', '#platform', '#customers', '#pilot',
+    '#environments', '#benchmark', '#quickstart', '#about', '#contact']
     .map((s) => document.querySelector(s)).filter(Boolean);
   // The pinned scenes play their animation across the section's extra
   // height; a boundary at top + (height − viewport) is the exact point where

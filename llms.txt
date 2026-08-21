@@ -1,20 +1,23 @@
 # Second Nature Labs
 
-> Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.
+> Second Nature Labs trains robots for hard-to-staff facility jobs. A remote operator works from the first shift while every action trains the robot on site.
 
-Second Nature Labs sells training environments and evaluation benchmarks for physical AI
-to AI labs and robotics companies. Environments are simulation-grounded — 100% computed
-physics (resistance networks, V = I×R, seeded noise), zero hand-authored sensor values —
-and expert-verified: a human domain expert plays each environment and catches physics bugs
-that pass automated test suites.
+Second Nature Labs trains generalist robots for specific jobs at specific sites. A trained
+remote operator does the work from the first shift. Each operator action becomes training
+data. As the robot becomes reliable, the operator moves from doing each task to supervising.
 
-## Products
+The company is starting with overnight quality, sorting, and rework roles at food processing
+and packing facilities in California's Central Valley that already run automation. There are
+no customer deployments yet.
 
-- [no-start-env](https://github.com/Jaiparmar940/rlenv): Inspect-native agentic RL
-  environment and benchmark. LLM agents diagnose simulated vehicle electrical no-start and
-  charging faults using realistic shop tools, scored by a cheat-resistant 0–100 grader
-  (root cause 60 / parts discipline 25 / time efficiency 15; fixes must be verified by a
-  successful engine start).
+## Training and evaluation machinery
+
+- [Robot training demo](https://snlabs.dev/decision-layer/): an interactive technical demo
+  that shows task breakdown, execution failures, recovery, episode review, and scoring.
+- [no-start-env](https://github.com/Jaiparmar940/rlenv): an open technical test environment.
+  Software diagnoses simulated vehicle electrical faults using realistic shop tools and is
+  scored on the verified repair outcome. This is evidence of measurement discipline, not a
+  customer deployment.
 
 ## Benchmark results (2026-07, 9 models, 25 episodes per model)
 
@@ -28,6 +31,7 @@ that pass automated test suites.
 ## Company
 
 - Website: https://snlabs.dev
-- Founder: Jaivir Parmar — mechanical engineer and computer scientist; robotics, embedded
-  systems, fabrication, physical-system modeling. https://github.com/Jaiparmar940
+- Founder: Jaivir Parmar — hands-on machining and repair background; built and ran a
+  repair-and-resale business; mechanical engineer and computer scientist.
+  https://github.com/Jaiparmar940
 - Contact: founders@snlabs.dev

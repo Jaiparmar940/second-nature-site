@@ -1,7 +1,9 @@
 # second-nature-site
 
-One-page site for Second Nature Labs — physics-grounded environments and evals
-for physical AI. Single self-contained `index.html`, no build step.
+One-page site for Second Nature Labs — the integration layer for deployed robots.
+The company trains robots for hard-to-staff facility roles. A remote operator works
+from the first shift while every action trains the robot toward autonomy. Single self-contained
+`index.html`, no build step.
 
 - **View locally:** open `index.html` in a browser, or `python3 -m http.server 8712`.
 - **Deploy:** GitHub Pages from `main`; pushing to `main` publishes.
