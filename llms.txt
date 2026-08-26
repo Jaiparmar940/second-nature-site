@@ -1,37 +1,34 @@
 # Second Nature Labs
 
-> Second Nature Labs trains robots for hard-to-staff facility jobs. A remote operator works from the first shift while every action trains the robot on site.
+> We run the shift that doesn't exist.
 
-Second Nature Labs trains generalist robots for specific jobs at specific sites. A trained
-remote operator does the work from the first shift. Each operator action becomes training
-data. As the robot becomes reliable, the operator moves from doing each task to supervising.
+Second Nature Labs runs hard-to-staff facility shifts with robots and remote operators. A
+trained operator controls the robot from the first shift. Each intervention becomes an
+example that helps the robot handle more of the job over time.
 
-The company is starting with overnight quality, sorting, and rework roles at food processing
-and packing facilities in California's Central Valley that already run automation. There are
-no customer deployments yet.
+The company is selecting its first pilot sites at food processing and packing facilities on
+California's Central Coast. There are no customer deployments yet.
 
-## Training and evaluation machinery
+## Starting jobs
 
-- [Robot training demo](https://snlabs.dev/decision-layer/): an interactive technical demo
-  that shows task breakdown, execution failures, recovery, episode review, and scoring.
-- [no-start-env](https://github.com/Jaiparmar940/rlenv): an open technical test environment.
-  Software diagnoses simulated vehicle electrical faults using realistic shop tools and is
-  scored on the verified repair outcome. This is evidence of measurement discipline, not a
-  customer deployment.
+- Overnight quality checks
+- Sorting and grading
+- Packing and case loading
+- Bounded rework and exception handling
 
-## Benchmark results (2026-07, 9 models, 25 episodes per model)
+The best first job repeats at one station, has a clear finish, and already sits near existing
+automation.
 
-- Mean scores /100: claude-fable-5 86.0, gpt-5.5 82.3, grok-4 74.9, claude-sonnet-5 74.5,
-  gemini-3.5-flash 59.7, claude-haiku-4-5 39.9, ministral-3b 23.0, qwen-2.5-7b 20.9,
-  llama-3.1-8b 7.2.
-- Frontier models have cleared textbook short-horizon automotive diagnosis; the hard tier
-  (intermittent CAN fault, compound battery+ground fault) is not saturated — no model
-  passes every episode.
+## Pilot format
 
-## Company
+- One-time deployment and training fee
+- Monthly rate per robot-shift
+- Target price below the loaded cost of the unfilled role
+- Three-month minimum
+
+Final scope and price depend on the station, cycle time, safety requirements, and robot fit.
+
+## Contact
 
 - Website: https://snlabs.dev
-- Founder: Jaivir Parmar — hands-on machining and repair background; built and ran a
-  repair-and-resale business; mechanical engineer and computer scientist.
-  https://github.com/Jaiparmar940
-- Contact: founders@snlabs.dev
+- Site walkthrough: founders@snlabs.dev
