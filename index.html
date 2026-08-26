@@ -1966,9 +1966,9 @@
   //  2. When input goes idle with a showcase partially entered, the target
   //     moves to the section top and the glide carries you in (forward-only),
   //     briskly after a fast gesture, gently after a slow one.
-  // Keyboard, scrollbar, and touch scrolling stay native. Anything that ends
-  // up parked mid-way through a data scene after momentum settles is finished
-  // by the idle assist. Disabled under reduced motion.
+  // Keyboard and scrollbar scrolling stay native. Touch stays native while the
+  // finger and momentum are moving, then settles to the same one-boundary cap
+  // as desktop. Disabled under reduced motion.
   const statementSection = document.getElementById('training-gap');
   const termSection = document.getElementById('environments');
   const benchSection = document.getElementById('benchmark');
@@ -2008,19 +2008,35 @@
   const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
   const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
   let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
-  let mobileSettleTimer = 0, mobileProgrammatic = false, mobileTarget = scrollY;
+  let mobileSettleTimer = 0, mobileProgrammatic = false;
+  const mobileTween = { active: false, from: 0, to: 0, t0: 0, dur: 0 };
+  const mobileScenePace = 3200;
+  let mobileGestureStartY = scrollY, mobileGestureIntent = 0, mobileGesturePending = false;
   let statementSnapLock = false, statementSnapLastWheelT = 0;
   let statementSnapStartedAt = 0, statementSnapLastAbsDy = 0;
   let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
+  function startMobileTween(y, msPerViewport = 1800) {
+    const target = clamp(y, 0, maxScroll());
+    const dist = Math.abs(target - scrollY);
+    if (dist <= 1) {
+      scrollTo(0, target);
+      mobileProgrammatic = false;
+      return;
+    }
+    mobileTween.from = scrollY;
+    mobileTween.to = target;
+    mobileTween.t0 = performance.now();
+    mobileTween.dur = clamp((dist / innerHeight) * msPerViewport, 620, 2600);
+    mobileTween.active = true;
+    mobileProgrammatic = true;
+  }
   function glideTo(y, tau) {
     smooth.target = clamp(y, 0, maxScroll());
     smooth.current = scrollY;
     smooth.tau = tau || 110;
     if (mobileScroll) {
       smooth.active = false;
-      mobileProgrammatic = true;
-      mobileTarget = smooth.target;
-      scrollTo({ top: mobileTarget, behavior: 'smooth' });
+      startMobileTween(smooth.target, tau >= 150 ? 2000 : 1800);
       return;
     }
     smooth.active = true;
@@ -2036,6 +2052,7 @@
   let pendingAutoplay = 0;
   function cancelAutoplay() {
     autoplay.active = false;
+    mobileTween.active = false;
     pendingAutoplay = 0;
     if (mobileScroll) {
       mobileProgrammatic = false;
@@ -2050,9 +2067,13 @@
     // ~2.56s per viewport of travel: a sticky range is ~0.7vh, so ≈1.8s end to
     // end (25% quicker than the first pass, which read as sluggish)
     const minDur = msPerViewport < 2000 ? 720 : 960;
-    autoplay.dur = clamp((dist / innerHeight) * msPerViewport, minDur, 3360);
+    autoplay.dur = clamp((dist / innerHeight) * msPerViewport, minDur,
+      mobileScroll ? 4800 : 3360);
     autoplay.t0 = now;
     autoplay.active = true;
+    if (mobileScroll) {
+      mobileProgrammatic = true;
+    }
   }
   function playRemainingRange(to, now, msPerViewport) {
     scrollDir = 1;
@@ -2064,7 +2085,7 @@
       cancelAutoplay();
       smooth.target = smooth.current = scrollY;
       smooth.active = false;
-      glideTo(to, 0);
+      startAutoplay(scrollY, to, now, msPerViewport || mobileScenePace);
       return;
     }
     if (!autoplay.active) {
@@ -2077,6 +2098,17 @@
   let sectionNavIndex = 0;
   const sectionTop = (el) => el.getBoundingClientRect().top + scrollY;
   const isAutoplaySection = (el) => el === termSection || el === benchSection;
+  const isViewportSection = (el) => el === heroShell || el === statementSection ||
+    isAutoplaySection(el);
+  function sectionLanding(el) {
+    const top = sectionTop(el);
+    if (!mobileScroll || isViewportSection(el)) return clamp(top, 0, maxScroll());
+    // Desktop's 96px section padding leaves a comfortable gap below its 68px
+    // header. Mobile uses 60px for both, so offset the section itself slightly
+    // to restore that breathing room without changing the layout.
+    const inset = clamp(Math.round((navEl ? navEl.offsetHeight : 60) * 0.4), 20, 28);
+    return clamp(top - inset, 0, maxScroll());
+  }
   function updateSectionNav() {
     const probe = scrollY + innerHeight * 0.5;
     let index = 0;
@@ -2097,9 +2129,10 @@
     if (index === sectionNavIndex) return;
     const el = sectionNavTargets[index];
     const top = sectionTop(el);
+    const landing = sectionLanding(el);
     const rangeEnd = top + Math.max(0, el.offsetHeight - innerHeight);
     const autoplayForward = direction > 0 && isAutoplaySection(el);
-    const target = direction < 0 && isAutoplaySection(el) ? rangeEnd : top;
+    const target = direction < 0 && isAutoplaySection(el) ? rangeEnd : landing;
 
     cancelAutoplay();
     statementSnapLock = false;
@@ -2178,27 +2211,72 @@
     }
   }
   function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
+  function settleMobileGesture(projectedY = scrollY, commitSwipe = false) {
+    if (!mobileGesturePending) return false;
+    if (mobileGestureIntent <= 0 || projectedY <= mobileGestureStartY + 4) {
+      mobileGesturePending = false;
+      return false;
+    }
+
+    // Match the desktop gesture cap: one swipe can finish at the next section
+    // start, or at the completed frame of a sticky scene when the swipe began
+    // inside it. Native momentum may overshoot; the controlled settle returns
+    // to that same boundary instead of allowing a multi-section jump.
+    const margin = innerHeight * 0.16;
+    const boundaries = sectionNavTargets.slice(1).map((el) => ({
+      y: sectionLanding(el),
+      triggerY: sectionTop(el),
+      kind: 'section',
+      el
+    }));
+    for (const el of stickyEnds) {
+      const top = sectionTop(el);
+      const end = top + el.offsetHeight - innerHeight;
+      boundaries.push({ y: end, triggerY: end, kind: 'sticky-end', el });
+    }
+    boundaries.sort((a, b) => a.y - b.y);
+    const boundary = boundaries.find(({ y }) => y > mobileGestureStartY + margin);
+    if (!boundary) {
+      mobileGesturePending = false;
+      return false;
+    }
+
+    const threshold = boundary.el === termSection ? 0.35 : 0.25;
+    const activationY = boundary.kind === 'sticky-end'
+      ? mobileGestureStartY + 24
+      : boundary.triggerY - innerHeight * (1 - threshold);
+    if (!commitSwipe && projectedY < activationY) return false;
+    mobileGesturePending = false;
+    scrollDir = 1;
+    const playAfterLanding = boundary.kind === 'section' && isAutoplaySection(boundary.el);
+    if (playAfterLanding) {
+      pendingAutoplay = sectionTop(boundary.el) +
+        Math.max(0, boundary.el.offsetHeight - innerHeight);
+    }
+    if (Math.abs(scrollY - boundary.y) <= 2) {
+      scrollTo(0, boundary.y);
+      if (playAfterLanding) {
+        const rangeEnd = pendingAutoplay;
+        pendingAutoplay = 0;
+        requestAnimationFrame(() => playRemainingRange(
+          rangeEnd, performance.now(), mobileScenePace));
+      }
+      return true;
+    }
+    if (boundary.kind === 'sticky-end' && scrollY < boundary.y) {
+      playRemainingRange(boundary.y, performance.now(), mobileScenePace);
+    } else {
+      glideTo(boundary.y, 150);
+    }
+    return true;
+  }
   function finishMobileScroll() {
     clearTimeout(mobileSettleTimer);
     if (!mobileScroll || touchActive) return;
+    if (mobileProgrammatic || mobileTween.active || autoplay.active) return;
     smooth.target = smooth.current = scrollY;
     smooth.active = false;
-    if (mobileProgrammatic) {
-      mobileProgrammatic = false;
-      // Native smooth scrolling can finish on a fractional CSS pixel. Pin the
-      // final frame to the requested integer so sticky progress reaches the
-      // exact 0/1 boundary instead of stopping just short.
-      const exactTarget = clamp(Math.round(mobileTarget), 0, maxScroll());
-      if (Math.abs(scrollY - exactTarget) > 0.5) scrollTo(0, exactTarget);
-      smooth.target = smooth.current = exactTarget;
-    }
-    if (pendingAutoplay) {
-      const rangeEnd = pendingAutoplay;
-      pendingAutoplay = 0;
-      requestAnimationFrame(() => playRemainingRange(rangeEnd, performance.now()));
-      return;
-    }
-    queueSnap(0);
+    settleMobileGesture();
   }
   function queueMobileSettle(delay = 280) {
     clearTimeout(mobileSettleTimer);
@@ -2305,7 +2383,9 @@
       if (mobileScroll) {
         smooth.target = smooth.current = scrollY;
         smooth.active = false;
-        if (!touchActive) queueMobileSettle();
+        if (!touchActive && !mobileProgrammatic && !mobileTween.active && !autoplay.active) {
+          queueMobileSettle();
+        }
         return;
       }
       // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it,
@@ -2326,7 +2406,7 @@
         e.preventDefault();
         cancelAutoplay();
         statementSnapLock = false;
-        const top = scrollY + el.getBoundingClientRect().top;
+        const top = sectionLanding(el);
         const play = autoplayHrefs.includes(href);
         // sections that go on to autoplay get a brisker approach: the arrival is
         // a beat before the real motion, not the main event
@@ -2335,34 +2415,64 @@
         if (play) pendingAutoplay = top + (el.offsetHeight - innerHeight);
       });
     });
-    // Mobile touch remains native while the finger and inertial scrolling are
-    // active. Once the browser reports that motion has settled, the assist uses
-    // the browser's composited smooth scroll instead of the desktop rAF lerp.
-    // This avoids two scroll engines fighting during iOS/Android momentum.
-    let touchY = 0;
+    // Keep 1:1 native movement while the finger is down. On release, project a
+    // short distance from the swipe velocity and take over immediately when it
+    // clearly targets the next boundary; the idle timer remains only as a
+    // fallback for browsers that report their final momentum position later.
+    let touchY = 0, touchStartClientY = 0, touchLastT = 0, touchVelocity = 0;
     addEventListener('touchstart', (e) => {
       cancelAutoplay();
       mobileProgrammatic = false;
-      mobileTarget = scrollY;
       clearTimeout(mobileSettleTimer);
       statementSnapLock = false;
       touchActive = true;
+      mobileGestureStartY = scrollY;
+      mobileGestureIntent = 0;
+      mobileGesturePending = false;
       touchY = e.touches[0] ? e.touches[0].clientY : 0;
+      touchStartClientY = touchY;
+      touchLastT = e.timeStamp;
+      touchVelocity = 0;
     }, { passive: true });
     addEventListener('touchmove', (e) => {
       const touch = e.touches[0];
       if (!touch) return;
-      const dy = touchY - touch.clientY;
+      const dt = Math.max(1, e.timeStamp - touchLastT);
+      const stepDy = touchY - touch.clientY;
+      const stepVelocity = stepDy / dt;
+      touchVelocity = touchVelocity * 0.62 + stepVelocity * 0.38;
       touchY = touch.clientY;
+      touchLastT = e.timeStamp;
+      const totalDy = touchStartClientY - touch.clientY;
       // record intent even before the scroll position moves (e.g. an upward
       // drag while parked at a scene end must block the forward-only assist)
-      if (dy > 2) scrollDir = 1;
-      else if (dy < -2) scrollDir = -1;
+      if (totalDy > 8) {
+        scrollDir = 1;
+        mobileGestureIntent = 1;
+        mobileGesturePending = true;
+      } else if (totalDy < -8) {
+        scrollDir = -1;
+        mobileGestureIntent = -1;
+        mobileGesturePending = true;
+      }
     }, { passive: true });
     addEventListener('touchend', (e) => {
       touchActive = e.touches.length > 0;
       if (!touchActive) {
-        if (mobileScroll) queueMobileSettle();
+        if (mobileScroll) {
+          const fingerTravel = Math.max(0, touchStartClientY - touchY);
+          const projectedTravel = clamp(Math.max(
+            Math.max(0, touchVelocity) * 220,
+            fingerTravel * 1.1
+          ),
+            0, innerHeight * 0.7);
+          // A clear release commits to exactly one next boundary immediately.
+          // Small drags keep native momentum and the conservative idle check.
+          const commitSwipe = fingerTravel >= 56 || touchVelocity >= 0.32;
+          if (!settleMobileGesture(scrollY + projectedTravel, commitSwipe)) {
+            queueMobileSettle();
+          }
+        }
         else queueSnap(180);
       }
     }, { passive: true });
@@ -2414,7 +2524,26 @@
   function frame(now) {
     now = now || 0;
     // smooth-scroll step first, so the stages below read the eased position
-    if (!reduced && autoplay.active) {
+    if (!reduced && mobileTween.active) {
+      const k = clamp((now - mobileTween.t0) / mobileTween.dur, 0, 1);
+      const eK = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      smooth.current = smooth.target = lerp(mobileTween.from, mobileTween.to, eK);
+      scrollTo(0, smooth.current);
+      if (k >= 1) {
+        mobileTween.active = false;
+        const exactTarget = clamp(Math.round(mobileTween.to), 0, maxScroll());
+        smooth.current = smooth.target = exactTarget;
+        scrollTo(0, exactTarget);
+        if (pendingAutoplay) {
+          const rangeEnd = pendingAutoplay;
+          pendingAutoplay = 0;
+          startAutoplay(exactTarget, rangeEnd, now, mobileScenePace);
+          if (!autoplay.active) mobileProgrammatic = false;
+        } else {
+          mobileProgrammatic = false;
+        }
+      }
+    } else if (!reduced && autoplay.active) {
       // nav-link playback through a sticky section, keeping smooth.* in step so
       // the wheel/scroll handlers see a position they wrote and don't fight it.
       // Trapezoid velocity — short ramp, cruise, long settle — rather than a
@@ -2427,7 +2556,15 @@
         : 1 - V * (1 - k) * (1 - k) / (2 * D);
       smooth.current = smooth.target = lerp(autoplay.from, autoplay.to, eK);
       scrollTo(0, smooth.current);
-      if (k >= 1) autoplay.active = false;
+      if (k >= 1) {
+        autoplay.active = false;
+        if (mobileScroll) {
+          const exactTarget = clamp(Math.round(autoplay.to), 0, maxScroll());
+          smooth.current = smooth.target = exactTarget;
+          scrollTo(0, exactTarget);
+          mobileProgrammatic = false;
+        }
+      }
     } else if (!reduced && smooth.active) {
       const dt = Math.min(64, now - lastFrameT) || 16;
       const k = 1 - Math.exp(-dt / smooth.tau);
