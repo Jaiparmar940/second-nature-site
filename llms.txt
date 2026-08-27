@@ -37,13 +37,21 @@ automation.
 - Success and exceptions can be defined clearly.
 - The site can support a robot workcell and safe remote operation.
 
+## Safety and decision authority
+
+- Guarding, e-stop placement, operating procedures, insurance requirements, and responsibility
+  are agreed in writing for the specific station before a pilot starts.
+- Anywhere a call touches product safety, the station routes conservatively and the facility's
+  people decide.
+- The station never makes the final call where product safety is involved. Uncertain items go
+  to the facility's people.
+
 ## Pilot format
 
 - One-time deployment and training fee
 - Monthly rate per robot-shift
 - Target price below the loaded cost of the unfilled role
 - Additional training and task execution available for an added fee
-- Outright purchase option with a one-time charge and a small recurring model-access subscription
 - Three-month minimum
 
 Final scope and price depend on the station, cycle time, safety requirements, and robot fit.
@@ -64,3 +72,4 @@ not customer traction.
 
 - Website: https://snlabs.dev
 - Site walkthrough: founders@snlabs.dev
+- Phone: +1-805-779-1524
