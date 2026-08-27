@@ -1,33 +1,36 @@
 # Second Nature Labs
 
-> Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.
+> We run the shift that doesn't exist.
 
-Second Nature Labs sells training environments and evaluation benchmarks for physical AI
-to AI labs and robotics companies. Environments are simulation-grounded — 100% computed
-physics (resistance networks, V = I×R, seeded noise), zero hand-authored sensor values —
-and expert-verified: a human domain expert plays each environment and catches physics bugs
-that pass automated test suites.
+Second Nature Labs runs hard-to-staff facility shifts with robots and remote operators. A
+trained operator controls the robot from the first shift. Each intervention becomes an
+example that helps the robot handle more of the job over time.
 
-## Products
+The company is selecting its first pilot sites at food processing and packing facilities on
+California's Central Coast. There are no customer deployments yet.
 
-- [no-start-env](https://github.com/Jaiparmar940/rlenv): Inspect-native agentic RL
-  environment and benchmark. LLM agents diagnose simulated vehicle electrical no-start and
-  charging faults using realistic shop tools, scored by a cheat-resistant 0–100 grader
-  (root cause 60 / parts discipline 25 / time efficiency 15; fixes must be verified by a
-  successful engine start).
+## Starting jobs
 
-## Benchmark results (2026-07, 9 models, 25 episodes per model)
+- Overnight quality checks
+- Sorting and grading
+- Packing and case loading
+- Bounded rework and exception handling
 
-- Mean scores /100: claude-fable-5 86.0, gpt-5.5 82.3, grok-4 74.9, claude-sonnet-5 74.5,
-  gemini-3.5-flash 59.7, claude-haiku-4-5 39.9, ministral-3b 23.0, qwen-2.5-7b 20.9,
-  llama-3.1-8b 7.2.
-- Frontier models have cleared textbook short-horizon automotive diagnosis; the hard tier
-  (intermittent CAN fault, compound battery+ground fault) is not saturated — no model
-  passes every episode.
+The best first job repeats at one station, has a clear finish, and already sits near existing
+automation.
 
-## Company
+## Pilot format
+
+- One-time deployment and training fee
+- Monthly rate per robot-shift
+- Target price below the loaded cost of the unfilled role
+- Additional training and task execution available for an added fee
+- Outright purchase option with a one-time charge and a small recurring model-access subscription
+- Three-month minimum
+
+Final scope and price depend on the station, cycle time, safety requirements, and robot fit.
+
+## Contact
 
 - Website: https://snlabs.dev
-- Founder: Jaivir Parmar — mechanical engineer and computer scientist; robotics, embedded
-  systems, fabrication, physical-system modeling. https://github.com/Jaiparmar940
-- Contact: founders@snlabs.dev
+- Site walkthrough: founders@snlabs.dev

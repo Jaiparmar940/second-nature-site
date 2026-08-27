@@ -1,12 +1,12 @@
 # second-nature-site
 
-One-page site for Second Nature Labs — physics-grounded environments and evals
-for physical AI. Single self-contained `index.html`, no build step.
+One-page site for Second Nature Labs. The company runs hard-to-staff facility shifts with
+robots and remote operators, starting with overnight quality, sorting, packing, and rework
+on California's Central Coast.
 
-- **View locally:** open `index.html` in a browser, or `python3 -m http.server 8712`.
-- **Deploy:** GitHub Pages from `main`; pushing to `main` publishes.
-- **Editing context:** see [CLAUDE.md](CLAUDE.md) — it documents where every number on the
-  page comes from (the [no-start-env] benchmark) and which figures are placeholders or
-  pending a final results sync.
+The homepage is a self-contained `index.html` with no build step or external dependencies.
 
-[no-start-env]: https://github.com/Jaiparmar940/rlenv
+- **View locally:** open `index.html`, or run `python3 -m http.server 8712`.
+- **Publish:** the `main` branch is the production source. Do not merge without approval.
+- **Legacy routes:** keep `/decision-layer/` and `/hospitality-env/` available for old links,
+  even though the homepage no longer promotes them.

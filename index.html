@@ -1,2535 +1,1350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Second Nature Labs — Physics-grounded environments and evals for physical AI</title>
-<meta name="description" content="Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
-<link rel="canonical" href="https://snlabs.dev/">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://snlabs.dev/">
-<meta property="og:site_name" content="Second Nature Labs">
-<meta property="og:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
-<meta property="og:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
-<meta property="og:image" content="https://snlabs.dev/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Second Nature Labs — physics-grounded environments and evals for AI that touches the real world.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Second Nature Labs — Physics-grounded environments and evals for physical AI">
-<meta name="twitter:description" content="Expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.">
-<meta name="twitter:image" content="https://snlabs.dev/og-image.png">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://snlabs.dev/#org",
-      "name": "Second Nature Labs",
-      "url": "https://snlabs.dev/",
-      "logo": "https://snlabs.dev/logo-300.svg",
-      "description": "Second Nature Labs builds expert-verified, physics-grounded RL environments and cheat-resistant evals for AI that must reason about and act in the physical world.",
-      "email": "founders@snlabs.dev",
-      "founder": {
-        "@type": "Person",
-        "name": "Jaivir Parmar",
-        "sameAs": ["https://github.com/Jaiparmar940", "https://x.com/ja1v1r", "https://www.linkedin.com/in/jaivir-parmar"]
-      },
-      "sameAs": ["https://github.com/Jaiparmar940/rlenv"]
-    },
-    {
-      "@type": "SoftwareApplication",
-      "@id": "https://snlabs.dev/#no-start-env",
-      "name": "no-start-env",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Any",
-      "url": "https://github.com/Jaiparmar940/rlenv",
-      "description": "An Inspect-native agentic RL environment and benchmark where LLM agents diagnose simulated vehicle electrical no-start and charging faults, scored by a cheat-resistant 0–100 grader with verified fixes.",
-      "author": { "@id": "https://snlabs.dev/#org" },
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Second Nature Labs — We run the shift that doesn't exist</title>
+  <meta name="description" content="Robot-operated shift coverage for hard-to-staff quality, sorting, packing, and rework jobs at Central Coast facilities.">
+  <link rel="canonical" href="https://snlabs.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://snlabs.dev/">
+  <meta property="og:site_name" content="Second Nature Labs">
+  <meta property="og:title" content="We run the shift that doesn't exist">
+  <meta property="og:description" content="Robot-operated shift coverage for hard-to-staff facility jobs, with a remote person in the loop.">
+  <meta property="og:image" content="https://snlabs.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Second Nature Labs — We run the shift that doesn't exist.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="We run the shift that doesn't exist">
+  <meta name="twitter:description" content="Robot-operated shift coverage for hard-to-staff facility jobs, with a remote person in the loop.">
+  <meta name="twitter:image" content="https://snlabs.dev/og-image.png">
+  <link rel="icon" type="image/svg+xml" href="logo-300.svg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Second Nature Labs",
+    "url": "https://snlabs.dev/",
+    "logo": "https://snlabs.dev/logo-300.svg",
+    "description": "Second Nature Labs provides robot-operated shift coverage for hard-to-staff facility jobs, with a remote person in the loop.",
+    "email": "founders@snlabs.dev"
+  }
+  </script>
+  <style>
+    :root {
+      --ink: #172019;
+      --ink-2: #2d3930;
+      --muted: #69726b;
+      --line: #d9ddd4;
+      --cream: #f2efe5;
+      --paper: #fbfaf5;
+      --green: #173e34;
+      --teal: #3aa189;
+      --lime: #c9ec74;
+      --orange: #ff8d65;
+      --blue: #7da7f2;
+      --yellow: #f2c75c;
+      --radius: 26px;
+      --shadow: 0 24px 70px rgba(31, 45, 35, 0.12);
+      --max: 1240px;
     }
-  ]
-}
-</script>
-<link rel="icon" type="image/svg+xml" href="logo-300.svg">
-<style>
-  :root {
-    --paper: #e9e8e4;
-    --paper-hi: #ffffff;
-    --ink: #0d0d0c;
-    --bg: #0a0a0a;
-    --bg-raised: #101010;
-    --line: #222220;
-    --wire: rgba(255, 255, 255, 0.38);
-    --wire-dim: rgba(255, 255, 255, 0.16);
-    --text: #f2f0eb;
-    --text-dim: #9b9890;
-    --text-faint: #5c5a54;
-    --accent: #f5b301;
-    --green: #2c5541;
-    --green-hi: #35664e;
-    --bar-a: #c96442;
-    --bar-b: #3aa189;
-    --bar-c: #4a7fd4;
-    --mono: "SF Mono", "Menlo", "Consolas", monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
-    /* Nav sits in flow above the pinned hero, so at scrollTop 0 the 100svh card
-       hangs this far below the fold. Anything anchored to the card's bottom edge
-       has to pay it back or it lands off screen. */
-    --nav-h: 68px;
-  }
-  html { color-scheme: dark; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { overflow-x: clip; }
-  body {
-    background: #060606;
-    color: var(--ink);
-    font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
-  }
 
-  /* ================= fixed site background (the hero art) ================= */
-  /* The aurora + vector-field canvas + veil live in this fixed layer behind
-     the whole page: the background stays put and the content scrolls over it. */
-  .site-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-    background: #060606;
-  }
-  .site-bg canvas {
-    position: absolute;
-    z-index: 1;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-  ::selection { background: var(--accent); color: #0a0a0a; }
-  a { color: inherit; text-decoration: none; }
-  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.menu-open { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button, summary { font: inherit; }
+    img { display: block; max-width: 100%; }
+    .wrap { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      left: 18px;
+      top: 12px;
+      transform: translateY(-150%);
+      background: var(--ink);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+    .skip-link:focus { transform: translateY(0); }
 
-  /* ================= opaque glass chrome ================= */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    isolation: isolate;
-    color: var(--text);
-    background: rgba(8, 8, 8, 0.1);
-    border-bottom: 1px solid transparent;
-    box-shadow: none;
-    backdrop-filter: blur(10px) saturate(120%);
-    -webkit-backdrop-filter: blur(10px) saturate(120%);
-    transition: background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, backdrop-filter 0.28s ease;
-  }
-  nav::after {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.35;
-    background:
-      linear-gradient(110deg, rgba(255, 255, 255, 0.045), transparent 25%, transparent 72%, rgba(255, 255, 255, 0.018)),
-      radial-gradient(ellipse 42% 120% at 16% -45%, rgba(255, 255, 255, 0.055), transparent 72%);
-    transition: opacity 0.28s ease;
-  }
-  nav.is-scrolled {
-    background: linear-gradient(180deg, rgba(15, 16, 16, 0.7) 0%, rgba(7, 7, 7, 0.58) 56%, rgba(5, 5, 5, 0.54) 100%);
-    border-bottom-color: rgba(255, 255, 255, 0.16);
-    box-shadow:
-      inset 0 1px rgba(255, 255, 255, 0.12),
-      inset 0 -1px rgba(0, 0, 0, 0.46),
-      0 12px 34px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
-    -webkit-backdrop-filter: blur(11px) saturate(135%) brightness(0.88);
-  }
-  nav.is-scrolled::after { opacity: 1; }
-  .nav-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    height: var(--nav-h);
-    gap: 48px;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 17px;
-    letter-spacing: -0.02em;
-  }
-  .nav-logo-mark { display: block; width: 28px; height: 28px; object-fit: contain; }
-  .nav-links { display: flex; gap: 34px; font-size: 14.5px; }
-  .nav-links a { color: var(--text-dim); opacity: 1; }
-  .nav-links a:hover { color: var(--text); }
-  .nav-cta { margin-left: auto; display: flex; gap: 12px; align-items: center; }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 11px 22px;
-    border-radius: 7px;
-    border: 1px solid rgba(0, 0, 0, 0.18);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.18s ease;
-  }
-  .btn:hover { border-color: rgba(0, 0, 0, 0.45); }
-  .btn-ink { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .btn-ink:hover { background: #2a2a28; }
-  .btn-green { background: var(--green); color: #fff; border-color: var(--green); }
-  .btn-green:hover { background: var(--green-hi); }
-  .btn-ghost-dark { border-color: rgba(255, 255, 255, 0.25); color: var(--text); }
-  .btn-ghost-dark:hover { border-color: rgba(255, 255, 255, 0.6); }
-  nav .btn {
-    color: var(--text);
-    border-color: rgba(242, 240, 235, 0.42);
-    background: rgba(255, 255, 255, 0.02);
-  }
-  nav .btn:hover {
-    border-color: rgba(242, 240, 235, 0.86);
-    background: rgba(255, 255, 255, 0.07);
-  }
-  nav .btn-ink {
-    position: relative;
-    color: #78d4be;
-    border-color: rgba(82, 205, 176, 0.86);
-    background: transparent;
-    box-shadow:
-      0 0 0 1px rgba(58, 161, 137, 0.1),
-      0 0 22px rgba(58, 161, 137, 0.16);
-    text-shadow: 0 0 14px rgba(98, 222, 192, 0.22);
-  }
-  nav .btn-ink::after {
-    content: "↗";
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1;
-    transition: transform 0.18s ease;
-  }
-  nav .btn-ink:hover {
-    color: #a4ead9;
-    border-color: #72dbc2;
-    background: transparent;
-    box-shadow:
-      0 0 0 1px rgba(93, 220, 190, 0.18),
-      0 0 30px rgba(58, 161, 137, 0.3);
-    text-shadow: 0 0 16px rgba(125, 232, 207, 0.34);
-    transform: translateY(-1px);
-  }
-  nav .btn-ink:hover::after { transform: translate(2px, -2px); }
-  nav .btn-ink:focus-visible { outline: 2px solid #72dbc2; outline-offset: 3px; }
-  /* ================= hero: pinned headline ================= */
-  .hero-shell {
-    height: 150vh;
-    position: relative;
-    z-index: 1;
-    margin-top: calc(-1 * var(--nav-h));
-  }
-  .hero-pin {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100svh; /* mobile Safari: center against the visible viewport, not the URL-bar-hidden one */
-    display: flex;
-  }
-  .hero-card {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    min-height: 0;
-  }
-  .hero-aurora {
-    position: absolute;
-    z-index: 0;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    background: #050506;
-  }
-  .hero-aurora::before,
-  .hero-aurora::after {
-    content: "";
-    position: absolute;
-    pointer-events: none;
-  }
-  .hero-aurora::before {
-    inset: -55%;
-    background: conic-gradient(
-      from 180deg at 50% 45%,
-      rgba(58, 161, 137, 0) 0deg,
-      rgba(58, 161, 137, 0.4) 80deg,
-      rgba(62, 92, 148, 0.28) 160deg,
-      rgba(245, 179, 1, 0.12) 230deg,
-      rgba(58, 161, 137, 0) 300deg
-    );
-    filter: blur(52px);
-    animation: aurora-spin 16s linear infinite;
-  }
-  .hero-aurora::after {
-    width: 58%;
-    height: 70%;
-    left: 8%;
-    top: 12%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(58, 161, 137, 0.32), transparent 68%);
-    filter: blur(36px);
-    animation: aurora-slide 8s linear infinite alternate;
-  }
-  @keyframes aurora-spin { to { transform: rotate(1turn); } }
-  @keyframes aurora-slide {
-    from { transform: translate(-18%, -8%); }
-    to { transform: translate(42%, 16%); }
-  }
-  .hero-veil {
-    position: absolute;
-    z-index: 2;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 75% 60% at 50% 52%, rgba(0, 0, 0, 0.28), transparent 70%),
-      linear-gradient(180deg, rgba(0, 0, 0, 0.22), transparent 30%, transparent 66%, rgba(10, 10, 10, 0.62));
-  }
-  .hero-copy {
-    position: absolute;
-    z-index: 3;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    /* Hero fills the viewport under the nav, so center on the page with no
-       nav-height offset — the old bottom padding sat the headline too high. */
-    padding: 0 24px;
-  }
-  .hero-copy h1 {
-    color: #f5f3ee;
-    font-size: clamp(40px, 5.6vw, 76px);
-    line-height: 1.08;
-    font-weight: 550;
-    letter-spacing: -0.03em;
-    max-width: 22ch;
-    text-wrap: balance;
-    text-shadow: 0 2px 40px rgba(0, 0, 0, 0.45);
-  }
-  .section-nav {
-    position: fixed;
-    right: 34px;
-    bottom: 28px;
-    z-index: 90;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    color: #e9e6df;
-    font-size: 14px;
-  }
-  .section-nav-label { white-space: nowrap; }
-  .section-nav [hidden] { display: none; }
-  .section-nav-button {
-    width: 40px;
-    height: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: 8px;
-    background: rgba(6, 6, 6, 0.72);
-    color: inherit;
-    font: inherit;
-    font-size: 21px;
-    line-height: 1;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-  }
-  .section-nav-button:hover {
-    border-color: rgba(255, 255, 255, 0.9);
-    background: rgba(18, 18, 18, 0.86);
-    transform: translateY(-1px);
-  }
-  .section-nav-button:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-  }
-  .section-nav-button.is-invisible {
-    visibility: hidden;
-    pointer-events: none;
-  }
-  .section-nav-down {
-    animation: cue-bob 2.4s ease-in-out infinite;
-  }
-  .section-nav-up {
-    animation: cue-bob-up 2.4s ease-in-out infinite;
-  }
-  .section-nav-button:hover { animation-play-state: paused; }
-  @keyframes cue-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-  @keyframes cue-bob-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    .site-header {
+      position: fixed;
+      z-index: 40;
+      top: 18px;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+    }
+    .nav {
+      pointer-events: auto;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 9px 10px 9px 12px;
+      background: rgba(251, 250, 245, 0.92);
+      border: 1px solid rgba(23, 32, 25, 0.12);
+      border-radius: 999px;
+      box-shadow: 0 14px 45px rgba(23, 32, 25, 0.12);
+      backdrop-filter: blur(18px);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      min-width: max-content;
+      font-weight: 760;
+      letter-spacing: -0.025em;
+    }
+    .brand img { width: 29.4px; height: 29.4px; border-radius: 7.7px; transform: translateX(5px); }
+    .nav-links { display: flex; align-items: center; gap: 28px; margin-left: auto; }
+    .nav-links a {
+      color: var(--ink-2);
+      font-size: 14px;
+      font-weight: 620;
+    }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links .mobile-menu-cta { display: none; }
+    .nav-cta,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--ink);
+      color: white;
+      font-size: 14px;
+      font-weight: 740;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+    .nav-cta:hover,
+    .button:hover { transform: translateY(-2px); background: var(--green); }
+    .button.light { background: var(--lime); color: var(--ink); border-color: var(--lime); }
+    .button.light:hover { background: #d6f48e; }
+    .button.outline { background: transparent; color: var(--ink); border-color: rgba(23, 32, 25, 0.28); }
+    .button.outline:hover { border-color: var(--ink); background: rgba(255,255,255,0.45); }
+    .menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      margin-left: auto;
+      border: 0;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      cursor: pointer;
+    }
 
-  .hero-card { will-change: transform; }
-  .hero-copy h1 { will-change: transform, opacity; }
+    .hero {
+      min-height: 100svh;
+      padding: 116px 0 54px;
+      display: grid;
+      align-items: center;
+      background:
+        radial-gradient(circle at 13% 18%, rgba(201, 236, 116, 0.44), transparent 25%),
+        radial-gradient(circle at 92% 74%, rgba(58, 161, 137, 0.2), transparent 28%),
+        var(--cream);
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(430px, 0.98fr);
+      gap: clamp(44px, 7vw, 96px);
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      font-weight: 780;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 6px rgba(58, 161, 137, 0.13);
+    }
+    .hero h1 {
+      margin: 0;
+      max-width: 11ch;
+      font-size: clamp(58px, 7.2vw, 108px);
+      line-height: 0.91;
+      letter-spacing: -0.07em;
+      font-weight: 720;
+    }
+    .hero-copy > p {
+      max-width: 620px;
+      margin: 30px 0 0;
+      color: var(--ink-2);
+      font-size: clamp(18px, 1.7vw, 23px);
+      line-height: 1.48;
+      letter-spacing: -0.02em;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .pilot-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 520px;
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .pilot-note span:first-child { color: var(--teal); font-size: 18px; line-height: 1; }
 
-  /* ================= dark region ================= */
-  .dark {
-    position: relative;
-    z-index: 1;
-    isolation: isolate;
-    color: var(--text);
-  }
-  section { padding: 96px 0; }
-  .kicker {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 22px;
-  }
-  .kicker::before { content: "◤"; font-size: 10px; color: var(--text-faint); }
-  h2 {
-    font-size: clamp(30px, 4vw, 50px);
-    line-height: 1.1;
-    font-weight: 550;
-    letter-spacing: -0.025em;
-  }
-  .statement {
-    height: 120vh;
-    position: relative;
-  }
-  .statement-pin {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100svh;
-    overflow: clip;
-    display: grid;
-    place-items: center;
-  }
-  .statement-pin::after {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    inset: 0;
-    background: radial-gradient(ellipse 40% 31% at 50% 50%, rgba(10, 10, 10, 0.64), rgba(10, 10, 10, 0.24) 54%, transparent 76%);
-    pointer-events: none;
-  }
-  .statement-art {
-    position: absolute;
-    z-index: 0;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.22) 8%, #000 24%);
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.22) 8%, #000 24%);
-  }
-  .statement-copy {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-  .statement-copy .kicker { justify-content: center; }
-  .statement-copy h2 { max-width: none; margin: 0 auto; }
-  .statement-title-line { display: block; white-space: nowrap; }
-  .statement-copy p {
-    margin: 24px auto 0;
-    max-width: 62ch;
-    font-size: 16.5px;
-    line-height: 1.65;
-    color: var(--text-dim);
-    text-wrap: pretty;
-  }
-  .keep-tail { white-space: nowrap; }
-  .statement-copy .statement-result { margin-top: 12px; }
-  .statement-copy .statement-quote {
-    margin-top: 22px;
-    color: var(--text-faint);
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.06em;
-  }
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.on { opacity: 1; transform: none; }
+    .shift-card {
+      position: relative;
+      min-height: 610px;
+      padding: 24px;
+      border-radius: 36px;
+      background: var(--green);
+      color: white;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .shift-card::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -110px;
+      top: -150px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 50%;
+      box-shadow: 0 0 0 64px rgba(255,255,255,0.035), 0 0 0 128px rgba(255,255,255,0.025);
+    }
+    .shift-head { position: relative; display: flex; justify-content: space-between; gap: 18px; align-items: center; }
+    .shift-label { font-size: 12px; font-weight: 780; letter-spacing: 0.12em; text-transform: uppercase; color: #c8d5cd; }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: var(--ink);
+      background: var(--lime);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .status-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .shift-title { position: relative; margin: 46px 0 4px; font-size: 32px; line-height: 1.05; letter-spacing: -0.045em; }
+    .shift-time { position: relative; color: #b9c9bf; font-size: 16px; }
+    .shift-tasks { position: relative; display: grid; gap: 10px; margin-top: 28px; }
+    .shift-task {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.065);
+    }
+    .shift-task .num {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: var(--lime);
+      font-weight: 760;
+    }
+    .shift-task strong { display: block; font-size: 14px; }
+    .shift-task small { color: #aebfb4; font-size: 12px; }
+    .shift-task .covered { color: var(--lime); font-size: 12px; font-weight: 720; }
 
-  /* ============ wireframe stage primitives (Scale-style) ============ */
-  .stage {
-    position: relative;
-    perspective: 1400px;
-    perspective-origin: 50% 45%;
-  }
-  .wireframe {
-    position: absolute;
-    border: 1px solid var(--wire);
-    border-radius: 22px;
-    pointer-events: none;
-    transform-style: preserve-3d;
-  }
-  .wireframe.dim { border-color: var(--wire-dim); }
-  .wireframe .notch {
-    position: absolute;
-    left: 24px;
-    top: 26px;
-    width: 90px;
-    height: 26px;
-    border: 1px solid var(--wire-dim);
-    border-radius: 6px;
-  }
-  .wireframe .ticks {
-    position: absolute;
-    left: 24px;
-    top: 72px;
-    display: grid;
-    gap: 18px;
-  }
-  .wireframe .ticks i {
-    display: block;
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--wire-dim);
-    border-radius: 4px;
-  }
-  .bin {
-    position: absolute;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    color: rgba(255, 255, 255, 0.4);
-    pointer-events: none;
-  }
-  .contours {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: visible;
-  }
-  .contours path, .contours circle, .contours line {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.34);
-    stroke-width: 1;
-  }
-  .contours .dash { stroke-dasharray: 3 6; stroke: rgba(255, 255, 255, 0.28); }
-  .contours .tri { fill: rgba(255, 255, 255, 0.4); stroke: none; }
-  /* ================= benchmark showcase ================= */
-  .showcase { height: 165vh; position: relative; }
-  .showcase-sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow: clip;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .bench-stage { width: min(920px, 92vw); height: 560px; }
-  .bench-panel {
-    position: absolute;
-    inset: 8% 6%;
-    background: #d8d6d0;
-    color: #171715;
-    border-radius: 14px;
-    padding: 26px 30px;
-    box-shadow: 0 60px 140px rgba(0, 0, 0, 0.65);
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-  .bench-tabs { display: flex; gap: 8px; align-items: center; font-family: var(--mono); font-size: 11.5px; }
-  .bench-tabs .tab { border: 1px solid #9c9a94; border-radius: 4px; padding: 5px 12px; color: #4c4b47; }
-  .bench-tabs .tab.active { background: #171715; color: #e8e6e0; border-color: #171715; }
-  .bench-tabs .right { margin-left: auto; color: #6c6a64; display: flex; align-items: center; gap: 8px; }
-  .bench-tabs .toggle { width: 30px; height: 16px; border-radius: 9px; background: #b3b1aa; position: relative; }
-  .bench-tabs .toggle::after { content: ""; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #f2f0ea; }
-  .bench-head {
-    display: grid;
-    grid-template-columns: 44px 1fr 90px 1.15fr;
-    gap: 16px;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    color: #6c6a64;
-    padding: 14px 4px 8px;
-    border-bottom: 1px solid #b9b7b0;
-  }
-  .bench-row {
-    display: grid;
-    grid-template-columns: 44px 1fr 90px 1.15fr;
-    gap: 16px;
-    align-items: center;
-    padding: 8px 4px;
-    border-bottom: 1px solid #c6c4bd;
-    font-family: var(--mono);
-    font-size: 13px;
-  }
-  .bench-row:last-child { border-bottom: none; }
-  .bench-row .rank {
-    width: 22px;
-    height: 22px;
-    display: grid;
-    place-items: center;
-    background: #171715;
-    color: #e8e6e0;
-    font-size: 11px;
-    border-radius: 3px;
-  }
-  .bench-row .rank.mid { background: #8b8983; }
-  .bench-row .eps { color: #6c6a64; font-size: 12px; }
-  .bench-row .scorecell { display: grid; gap: 6px; }
-  .bench-row .scorenum { font-size: 12.5px; }
-  .bench-row .scorenum b { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .bench-row .scorenum small { color: #8b8983; font-weight: 400; margin-left: 8px; }
-  .bench-row .bar-track { height: 9px; border-radius: 5px; border: 1px solid #aeaca5; padding: 1px; }
-  .bench-row .bar { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--bar-a); will-change: width; }
-  .bench-row.r1 .bar { background: var(--accent); }
-  .bench-row.r3 .bar { background: var(--bar-b); }
-  .bench-row.r4 .bar { background: var(--bar-c); }
-  .bench-row.r5 .bar { background: #8a5fa8; }
-  .bench-row.r6 .bar { background: #8b8983; }
-  .bench-row.r7 .bar { background: #b4642e; }
-  .bench-caption {
-    position: static;
-    width: min(1120px, 94vw);
-    margin-top: 48px;
-    text-align: center;
-    opacity: 0;
-    will-change: opacity, transform;
-  }
-  .bench-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
-  .bench-caption p { margin-top: 10px; color: var(--text-dim); font-size: 15px; }
-  .bench-caption p em { font-style: normal; color: var(--text); }
-  .bench-caption .bench-footnote { margin-top: 6px; font-size: 12.5px; color: var(--text-faint); }
+    .workcell {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      height: 180px;
+      border-radius: 20px;
+      background: #0f2d25;
+      border: 1px solid rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+    .workcell-photo,
+    .job-photo,
+    .operator-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .workcell-photo { position: absolute; inset: 0; filter: saturate(0.88) brightness(0.74); }
+    .workcell::after {
+      content: "Illustrative pilot setup";
+      position: absolute;
+      z-index: 6;
+      right: 12px;
+      bottom: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15,45,37,0.84);
+      color: #dce7df;
+      font-size: 7px;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    .workcell .station-label {
+      position: absolute;
+      z-index: 6;
+      left: 16px;
+      top: 14px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15,45,37,0.82);
+      color: #dce7df;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .inspection-feed {
+      position: absolute;
+      z-index: 7;
+      left: 16px;
+      top: 40px;
+      width: 184px;
+      height: 54px;
+      padding: 8px 10px 7px 16px;
+      border-radius: 4px 9px 9px 4px;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 7px 22px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .inspection-feed::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 7px;
+      background: repeating-linear-gradient(180deg, var(--green) 0 4px, transparent 4px 8px);
+      opacity: 0.42;
+    }
+    .feed-title {
+      display: block;
+      color: var(--muted);
+      font-size: 7px;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .inspection-entry {
+      position: absolute;
+      left: 16px;
+      right: 8px;
+      bottom: 8px;
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      transform: translateY(8px);
+      font-size: 8px;
+      white-space: nowrap;
+    }
+    .shift-card:not(.is-visible) .inspection-entry:nth-child(2) { opacity: 1; transform: none; }
+    .inspection-entry b { font-size: 9px; }
+    .inspection-entry span { color: var(--muted); }
+    .inspection-entry strong { color: var(--teal); font-size: 8px; letter-spacing: 0.04em; }
+    .belt { position: absolute; left: 28px; right: 28px; bottom: 36px; height: 32px; border-radius: 8px; background: #41554a; }
+    .belt::after { content: ""; position: absolute; inset: 8px; background: repeating-linear-gradient(90deg, #78877f 0 18px, transparent 18px 30px); opacity: 0.65; }
+    .case { position: absolute; bottom: 66px; width: 54px; height: 48px; border-radius: 7px; background: var(--paper); box-shadow: inset 0 -10px rgba(23,32,25,0.1); }
+    .case.one { left: 80px; --item-delay: 0s; }
+    .case.two { left: 165px; --item-delay: -2.4s; background: var(--yellow); }
+    .case.three { left: 255px; --item-delay: -4.8s; background: var(--orange); }
+    .scan-line { position: absolute; left: 185px; bottom: 59px; width: 2px; height: 98px; background: var(--lime); box-shadow: 0 0 18px var(--lime); }
+    .arm-visual {
+      position: absolute;
+      z-index: 6;
+      width: 132px;
+      height: 140px;
+      transform-origin: 108px 119px;
+      filter: drop-shadow(0 5px 5px rgba(23,32,25,0.12));
+    }
+    .arm-visual i { position: absolute; display: block; }
+    .arm-base {
+      right: 0;
+      bottom: 2px;
+      width: 58px;
+      height: 21px;
+      border: 3px solid var(--ink);
+      border-radius: 7px 7px 15px 15px;
+      background: #aebbb4;
+      box-shadow: inset 0 5px rgba(255,255,255,0.42);
+    }
+    .arm-base::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      bottom: -8px;
+      height: 8px;
+      border-radius: 0 0 5px 5px;
+      background: var(--ink);
+    }
+    .arm-shoulder {
+      right: 20px;
+      bottom: 17px;
+      width: 31px;
+      height: 31px;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: inset 0 0 0 4px #cfe1d9;
+    }
+    .arm-link {
+      height: 19px;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f4f6f3 0 45%, #c9d2cd 46% 100%);
+      box-shadow: inset 8px 0 rgba(58,161,137,0.16);
+      transform-origin: right center;
+    }
+    .arm-lower { right: 38px; bottom: 37px; width: 76px; transform: rotate(54deg); }
+    .arm-elbow {
+      left: 43px;
+      top: 31px;
+      width: 29px;
+      height: 29px;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: inset 0 0 0 5px var(--teal);
+    }
+    .arm-upper { left: 2px; top: 38px; width: 61px; transform: rotate(-30deg); }
+    .arm-wrist {
+      left: 0;
+      top: 65px;
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: #dfe5e1;
+    }
+    .arm-tool { left: -12px; top: 79px; }
+    .tool-vision .arm-tool {
+      width: 34px;
+      height: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 6px;
+      background: #f4f6f3;
+    }
+    .tool-vision .arm-tool::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 4px;
+      width: 9px;
+      height: 9px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: var(--teal);
+    }
+    .tool-vision .arm-tool::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      bottom: -8px;
+      width: 19px;
+      height: 7px;
+      border-radius: 0 0 5px 5px;
+      background: var(--lime);
+    }
+    .tool-vacuum .arm-tool {
+      width: 27px;
+      height: 18px;
+      border: 3px solid var(--ink);
+      border-radius: 7px;
+      background: #dfe5e1;
+    }
+    .tool-vacuum .arm-tool::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 14px;
+      width: 5px;
+      height: 15px;
+      background: var(--ink);
+    }
+    .tool-vacuum .arm-tool::after {
+      content: "";
+      position: absolute;
+      left: 1px;
+      top: 26px;
+      width: 21px;
+      height: 9px;
+      border: 3px solid var(--ink);
+      border-radius: 50% 50% 7px 7px;
+      background: var(--teal);
+    }
+    .tool-gripper .arm-tool { width: 23px; height: 17px; border: 3px solid var(--ink); border-radius: 6px; background: #dfe5e1; }
+    .tool-gripper .arm-tool::before,
+    .tool-gripper .arm-tool::after { content: ""; position: absolute; top: 13px; width: 5px; height: 20px; border-radius: 3px; background: var(--ink); }
+    .tool-gripper .arm-tool::before { left: 1px; transform: rotate(14deg); }
+    .tool-gripper .arm-tool::after { right: 1px; transform: rotate(-14deg); }
+    .tool-seal .arm-tool { width: 29px; height: 13px; border: 3px solid var(--ink); border-radius: 7px; background: #dfe5e1; transform: rotate(-8deg); }
+    .tool-seal .arm-tool::after { content: ""; position: absolute; left: 5px; top: 10px; width: 17px; height: 11px; border: 3px solid var(--ink); border-radius: 50%; background: var(--orange); }
+    .robot-arm { right: 17px; top: 24px; transform: scale(0.66); transform-origin: bottom right; }
 
-  /* ================= environment window showcase ================= */
-  .term-section { height: 220vh; position: relative; }
-  .term-sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow: clip;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-  .term-stage {
-    width: min(640px, 72vw);
-    height: min(380px, 42vh);
-    will-change: width, height, transform;
-  }
-  .env-window {
-    position: absolute;
-    inset: 5% 6%;
-    background: #0a0a0b;
-    border: 1px solid #2a2a32;
-    border-radius: 14px;
-    box-shadow: 0 50px 120px rgba(0, 0, 0, 0.7);
-    transform-style: preserve-3d;
-    will-change: transform;
-    overflow: hidden;
-    scale: 1;
-    transition: scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 0.24s ease, box-shadow 0.3s ease;
-  }
-  .env-display {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    background: #0a0a0b;
-    transform-origin: 50% 50%;
-    will-change: transform, opacity, filter;
-  }
-  .env-display::after {
-    content: "";
-    position: absolute;
-    z-index: 12;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 72% 3px at 50% 50%, rgba(226, 238, 232, 0.96), rgba(128, 174, 157, 0.42) 38%, transparent 76%),
-      linear-gradient(180deg, transparent 49.4%, rgba(225, 235, 230, 0.38) 50%, transparent 50.6%);
-    opacity: 0;
-    pointer-events: none;
-    mix-blend-mode: screen;
-  }
-  .env-window.is-switching {
-    scale: 0.94;
-    border-color: #3a3a40;
-    box-shadow: 0 34px 84px rgba(0, 0, 0, 0.78);
-    pointer-events: none;
-    transition: inset 0.34s cubic-bezier(0.22, 1, 0.36, 1),
-      scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      border-color 0.24s ease, box-shadow 0.3s ease;
-  }
-  .env-window.is-switching iframe,
-  .env-window.is-switching .no-start-view { transition: none; }
-  .env-window.is-powering-on { scale: 1; }
-  .env-window.is-powering-off .env-display {
-    animation: env-power-off 0.3s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
-  .env-window.is-powering-on .env-display {
-    animation: env-power-on 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  .env-window.is-powering-off .env-display::after {
-    animation: env-flash-off 0.3s ease-out both;
-  }
-  .env-window.is-powering-on .env-display::after {
-    animation: env-flash-on 0.42s ease-out both;
-  }
-  @keyframes env-power-off {
-    0% { opacity: 1; transform: scale(1, 1); filter: brightness(1) contrast(1); }
-    52% { opacity: 1; transform: scale(1, 0.024); filter: brightness(2.8) contrast(1.35); }
-    78% { opacity: 1; transform: scale(0.22, 0.008); filter: brightness(5) contrast(1.6); }
-    100% { opacity: 0; transform: scale(0, 0.006); filter: brightness(6) contrast(1.8); }
-  }
-  @keyframes env-power-on {
-    0% { opacity: 0; transform: scale(0, 0.006); filter: brightness(6) contrast(1.8); }
-    18% { opacity: 1; transform: scale(0.24, 0.009); filter: brightness(4.5) contrast(1.55); }
-    46% { opacity: 1; transform: scale(1, 0.032); filter: brightness(2.2) contrast(1.25); }
-    100% { opacity: 1; transform: scale(1, 1); filter: brightness(1) contrast(1); }
-  }
-  @keyframes env-flash-off {
-    0%, 28% { opacity: 0; }
-    58% { opacity: 0.9; }
-    100% { opacity: 0; }
-  }
-  @keyframes env-flash-on {
-    0% { opacity: 0; }
-    20% { opacity: 0.92; }
-    62%, 100% { opacity: 0; }
-  }
-  .env-window iframe {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: #0a0a0b;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
-  }
-  .env-window.is-live iframe { opacity: 1; }
-  .env-window.is-expanded iframe { pointer-events: auto; }
-  .env-window.show-no-start iframe {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-  .env-veil {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    color: #8b8b96;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .env-window.is-live .env-veil { opacity: 0; }
-  .env-window.show-no-start .env-veil { opacity: 0; }
-  .no-start-view {
-    position: absolute;
-    z-index: 3;
-    inset: 0;
-    overflow: hidden;
-    background: #0e0e0d;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.38s ease, visibility 0s linear 0.38s;
-  }
-  .env-window.show-no-start .no-start-view {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-  }
-  .no-start-terminal {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-  }
-  .no-start-bar {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 8px;
-    padding: 13px 18px;
-    border-bottom: 1px solid #232320;
-  }
-  .no-start-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #2c2c29; }
-  .no-start-title {
-    min-width: 0;
-    margin-left: 8px;
-    overflow: hidden;
-    color: var(--text-faint);
-    font-family: var(--mono);
-    font-size: 12px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .no-start-replay {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 5px;
-    margin-left: auto;
-    padding: 4px 8px;
-    border: 1px solid #353531;
-    border-radius: 999px;
-    background: #171715;
-    color: var(--text-dim);
-    font-family: var(--mono);
-    font-size: 10px;
-    line-height: 1;
-    cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-  }
-  .no-start-replay:hover { border-color: #595950; background: #1d1d1a; color: var(--text); }
-  .no-start-replay:focus-visible,
-  .env-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .no-start-replay .icon { color: var(--accent); font-size: 13px; }
-  .no-start-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    padding: 22px 26px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.95;
-  }
-  .no-start-line { opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; }
-  .no-start-line.on { opacity: 1; transform: none; }
-  .no-start-caret {
-    display: inline-block;
-    width: 8px;
-    height: 14px;
-    margin-left: 2px;
-    vertical-align: -2px;
-    background: #e2ded2;
-    animation: caret-blink 0.9s steps(1) infinite;
-  }
-  @keyframes caret-blink { 50% { opacity: 0; } }
-  .no-start-agent { color: var(--accent); }
-  .no-start-tool { color: #7fb4e8; }
-  .no-start-out { color: var(--text-dim); }
-  .no-start-verdict { color: #7ddb8a; }
-  .no-start-comment { color: var(--text-faint); }
-  .env-switch {
-    position: absolute;
-    z-index: 8;
-    top: 47%;
-    display: grid;
-    width: 52px;
-    height: 52px;
-    place-items: center;
-    border: 1px solid #5d5d5a;
-    border-radius: 12px;
-    background: rgba(12, 12, 12, 0.88);
-    color: var(--text);
-    font-size: 26px;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-50%) scale(0.9);
-    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.2s ease,
-      background 0.2s ease, visibility 0s linear 0.3s;
-  }
-  .env-switch:hover { border-color: var(--text-dim); background: #181817; }
-  .env-switch.is-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) scale(1);
-    transition-delay: 0s;
-  }
-  .env-switch-next { right: clamp(18px, 2.8vw, 52px); }
-  .env-switch-prev { left: clamp(18px, 2.8vw, 52px); }
-  .term-caption {
-    position: absolute;
-    left: 50%;
-    bottom: clamp(36px, 4.5vh, 52px);
-    width: min(900px, 88vw);
-    opacity: 0;
-    transform: translateX(-50%) translateY(18px);
-    text-align: center;
-    pointer-events: none;
-    transition: opacity 0.7s ease 0.12s,
-      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
-    will-change: opacity, transform;
-    display: grid;
-  }
-  .term-caption.is-visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .term-caption h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 550; letter-spacing: -0.02em; }
-  .term-caption p { margin: 10px auto 0; max-width: 54ch; color: var(--text-dim); font-size: 15px; line-height: 1.6; }
-  .term-caption a { text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
-  .term-caption .term-demo-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    margin-top: 18px;
-    padding: 11px 18px;
-    border: 1px solid var(--accent);
-    border-radius: 7px;
-    background: var(--accent);
-    color: #0a0a0a;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-    text-decoration: none;
-    box-shadow: 0 10px 30px rgba(245, 179, 1, 0.16);
-    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-  }
-  .term-caption .term-demo-button:hover {
-    background: #ffc526;
-    transform: translateY(-1px);
-    box-shadow: 0 13px 34px rgba(245, 179, 1, 0.24);
-  }
-  .term-caption .term-demo-button:focus-visible {
-    outline: 2px solid var(--text);
-    outline-offset: 3px;
-  }
-  .term-demo-button span { font-size: 16px; font-weight: 500; }
-  .term-caption-content {
-    grid-area: 1 / 1;
-    opacity: 0;
-    transform: translateX(16px);
-    pointer-events: none;
-    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .term-caption-content.is-active {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
-  }
+    section { padding: 112px 0; }
+    .section-kicker { color: var(--teal); font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    .section-title { margin: 16px 0 0; max-width: 850px; font-size: clamp(42px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.055em; font-weight: 690; }
+    .section-intro { margin: 24px 0 0; max-width: 650px; color: var(--muted); font-size: 18px; line-height: 1.6; }
 
-  /* ================= split (applications-style) ================= */
-  .split { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 60px; align-items: center; }
-  .split .copy h2 { max-width: 14ch; }
-  .split .copy > p {
-    margin: 22px 0 30px;
-    max-width: 40ch;
-    font-size: 15.5px;
-    line-height: 1.65;
-    color: var(--text-dim);
-  }
-  .split .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .tagrow { margin-top: 40px; display: flex; gap: 10px; flex-wrap: wrap; }
-  .tagrow span {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-faint);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 6px 10px;
-  }
-  .split-stage { height: 480px; }
-  .split-panel {
-    position: absolute;
-    inset: 12% 10%;
-    border-radius: 16px;
-    background: linear-gradient(150deg, #14201a, #0d1310 55%);
-    border: 1px solid #23352b;
-    padding: 34px;
-    transform-style: preserve-3d;
-    will-change: transform;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .split-panel .mono-head { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: #6f8a7c; }
-  .split-panel .big { font-size: clamp(26px, 3vw, 40px); font-weight: 550; letter-spacing: -0.02em; line-height: 1.15; }
-  .split-panel .foot { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: #6f8a7c; }
+    .benefits { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .benefit-grid { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 62px; border-top: 1px solid var(--line); }
+    .benefit {
+      min-height: 310px;
+      padding: 30px 26px 28px 0;
+      border-right: 1px solid var(--line);
+    }
+    .benefit + .benefit { padding-left: 26px; }
+    .benefit:last-child { border-right: 0; }
+    .benefit-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-bottom: 52px;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      color: var(--green);
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .benefit h3 { margin: 0; font-size: 23px; line-height: 1.08; letter-spacing: -0.035em; }
+    .benefit p { margin: 15px 0 0; color: var(--muted); font-size: 15px; line-height: 1.62; }
 
-  /* ================= pillars ================= */
-  .pillars { margin-top: 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .pillar {
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 34px 30px;
-    background: var(--bg-raised);
-    transition: border-color 0.25s ease, transform 0.25s ease;
-  }
-  .pillar:hover { border-color: #3a3a36; transform: translateY(-3px); }
-  .pillar .index { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--text-faint); margin-bottom: 26px; }
-  .pillar h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 13px; }
-  .pillar p { font-size: 14.5px; line-height: 1.65; color: var(--text-dim); }
+    .jobs { background: var(--green); color: white; }
+    .jobs .section-kicker { color: var(--lime); }
+    .jobs .section-intro { color: #bac9c0; }
+    .job-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 58px; }
+    .job-card {
+      min-height: 520px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      overflow: hidden;
+    }
+    .job-scene {
+      position: relative;
+      min-height: 310px;
+      border-radius: 18px;
+      background: var(--scene-bg, #dce8df);
+      overflow: hidden;
+    }
+    .job-scene::after {
+      content: "Illustrative pilot setup";
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(251,250,245,0.86);
+      color: var(--ink-2);
+      font-size: 10px;
+      font-weight: 760;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+    .job-photo { position: absolute; inset: 0; }
+    .scene-events {
+      position: absolute;
+      z-index: 8;
+      top: 14px;
+      right: 14px;
+      width: 170px;
+      height: 30px;
+      border: 1px solid rgba(23,32,25,0.15);
+      border-radius: 9px;
+      background: rgba(251,250,245,0.9);
+      color: var(--ink);
+      box-shadow: 0 6px 18px rgba(23,32,25,0.08);
+      overflow: hidden;
+    }
+    .scene-events::before {
+      content: "LIVE";
+      position: absolute;
+      z-index: 2;
+      left: 8px;
+      top: 8px;
+      color: var(--teal);
+      font-size: 7px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+    .scene-event {
+      position: absolute;
+      inset: 0 7px 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      opacity: 0;
+      transform: translateY(8px);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .job-scene:not(.is-visible) .scene-event:first-child { opacity: 1; transform: none; }
+    .job-copy { padding: 26px 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; }
+    .job-copy h3 { margin: 0; font-size: 31px; letter-spacing: -0.045em; }
+    .job-copy p { max-width: 430px; margin: 9px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .job-tags { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .job-tags span { padding: 7px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 10px; font-weight: 720; text-transform: uppercase; letter-spacing: 0.07em; }
 
-  /* ================= quickstart ================= */
-  .quickstart { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(16, 16, 16, 0.82); }
-  .qs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-  .qs-grid .section-sub { margin-top: 18px; max-width: 46ch; font-size: 15.5px; line-height: 1.65; color: var(--text-dim); }
-  .codeblock {
-    background: #0c0c0b;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 26px 28px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 2.05;
-    overflow-x: auto;
-  }
-  .codeblock .c { color: var(--text-faint); }
-  .codeblock .p { color: var(--accent); user-select: none; }
+    .station-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 42%; background: rgba(255,255,255,0.5); transform: skewY(-3deg); transform-origin: left bottom; }
+    .scene-belt { position: absolute; left: 9%; right: 9%; bottom: 26%; height: 42px; border-radius: 8px; background: #50625a; box-shadow: 0 17px 0 #2d3930; }
+    .scene-belt::after { content: ""; position: absolute; inset: 11px; background: repeating-linear-gradient(90deg, rgba(255,255,255,0.65) 0 18px, transparent 18px 34px); }
+    .scene-item { position: absolute; z-index: 2; bottom: 38%; width: 54px; height: 54px; border-radius: 12px; background: var(--item, var(--orange)); box-shadow: inset 0 -8px rgba(23,32,25,0.1); }
+    .scene-item.i1 { left: 19%; }
+    .scene-item.i2 { left: 43%; --item: var(--yellow); }
+    .scene-item.i3 { left: 67%; --item: var(--teal); }
+    .vision-frame { position: absolute; z-index: 3; left: 39%; bottom: 34%; width: 72px; height: 76px; border: 3px solid var(--ink); border-radius: 15px; }
+    .vision-frame::before, .vision-frame::after { content: ""; position: absolute; width: 14px; height: 3px; background: var(--lime); top: 50%; }
+    .vision-frame::before { left: -8px; }
+    .vision-frame::after { right: -8px; }
+    .mini-arm { right: 7%; top: 18%; }
 
-  /* ================= final cta + footer ================= */
-  .final-cta { text-align: center; padding: 120px 0; }
-  .final-cta h2 { font-size: clamp(34px, 5vw, 60px); }
-  .final-cta p { margin: 22px auto 0; max-width: 52ch; font-size: 16.5px; line-height: 1.6; color: var(--text-dim); }
-  .final-cta .cta-row { margin-top: 42px; display: flex; gap: 12px; justify-content: center; }
-  footer { border-top: 1px solid var(--line); padding: 56px 0 40px; }
-  .foot-grid { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
-  .foot-brand p { margin-top: 14px; font-size: 13.5px; color: var(--text-faint); max-width: 34ch; line-height: 1.6; }
-  .foot-logo { display: block; width: 24px; height: 24px; object-fit: contain; }
-  .foot-cols { display: flex; gap: 72px; }
-  .foot-col h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; }
-  .foot-col a { display: block; font-size: 14px; color: var(--text-dim); padding: 5px 0; }
-  .foot-col a:hover { color: var(--text); }
-  .foot-legal { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-faint); }
+    .bins { position: absolute; left: 8%; right: 8%; bottom: 13%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .bin { height: 112px; border: 4px solid var(--ink); border-top-width: 12px; border-radius: 8px 8px 18px 18px; background: rgba(255,255,255,0.28); }
+    .bin:nth-child(1) { border-color: #ef6e4f; }
+    .bin:nth-child(2) { border-color: #c79925; }
+    .bin:nth-child(3) { border-color: #238e78; }
+    .sort-items { position: absolute; inset: 0; }
+    .sort-items span { position: absolute; left: 44%; top: 22%; width: 48px; height: 48px; border-radius: 50% 46% 52% 44%; background: var(--orange); box-shadow: inset 0 -7px rgba(23,32,25,0.1); }
+    .sort-items .grade-b { left: 48%; top: 25%; background: var(--yellow); }
+    .sort-items .grade-c { left: 52%; top: 21%; background: var(--teal); }
 
-  @media (max-width: 940px) {
-    .nav-links { display: none; }
-    .split, .qs-grid { grid-template-columns: 1fr; }
-    .pillars { grid-template-columns: 1fr; }
-    .showcase { height: 150vh; }
-    .bench-stage { height: 480px; }
-    .bench-panel { inset: 4% 2%; padding: 18px; }
-    .bench-row, .bench-head { grid-template-columns: 34px 1fr 1.1fr; }
-    .bench-row .eps, .bench-head .h-eps { display: none; }
-    section { padding: 72px 0; }
-    .statement-copy h2 { max-width: 22ch; }
-    .statement-title-line { display: inline; white-space: normal; }
-  }
-  @media (max-width: 640px) {
-    .wrap { padding: 0 20px; }
-    section { padding: 60px 0; }
-    .final-cta { padding: 88px 0; }
-    /* nav: keep buttons on one line */
-    :root { --nav-h: 60px; }
-    .nav-inner { gap: 16px; }
-    .nav-cta { gap: 8px; }
-    .btn { white-space: nowrap; padding: 9px 14px; font-size: 13px; }
-    .section-nav { right: 20px; bottom: 20px; gap: 10px; }
-    .statement-copy h2 { font-size: clamp(27px, 8vw, 38px); }
-    .statement-copy p { font-size: 14.5px; line-height: 1.55; }
-    .statement-copy .statement-quote { font-size: 10.5px; }
-    /* benchmark: tighter rows so all 7 fit the panel; caption drops into flow
-       below the stage so it can never overlap the panel */
-    .bench-stage { width: calc(100vw - 36px); height: 440px; }
-    .bench-panel { padding: 14px; }
-    .bench-tabs .tab:nth-child(2), .bench-tabs .tab:nth-child(3) { display: none; }
-    .bench-head { padding: 8px 2px 6px; }
-    .bench-row { padding: 6px 2px; gap: 10px; font-size: 12px; }
-    .bench-row .scorenum small { display: none; }
-    .bench-row .bar-track { height: 7px; }
-    .bench-caption { position: static; width: 92vw; margin-top: 20px; }
-    .bench-caption h3 { font-size: 22px; }
-    .bench-caption p { padding: 0 8px; font-size: 14px; }
-    .term-section { height: 190vh; }
-    .term-stage { width: calc(100vw - 48px); height: min(320px, 38vh); }
-    .env-window { inset: 4% 2%; }
-    .term-caption { bottom: 3vh; width: 92vw; }
-    .term-caption h3 { font-size: 22px; }
-    .term-caption p { font-size: 14px; padding: 0 12px; }
-    .env-switch { top: 43%; width: 44px; height: 44px; border-radius: 10px; font-size: 22px; }
-    .env-switch-next { right: 8px; }
-    .env-switch-prev { left: 8px; }
-    .no-start-bar { padding: 10px 12px; }
-    .no-start-title { margin-left: 2px; font-size: 10px; }
-    .no-start-body { padding: 14px 16px; font-size: 10.5px; line-height: 1.75; }
-    /* split panel */
-    .split-stage { height: 420px; }
-    .split-panel { padding: 24px; }
-  }
-  @media (max-width: 520px) {
-    .nav-inner { gap: 8px; }
-    .logo { font-size: 15px; }
-    nav .nav-cta > .btn:not(.btn-ink) { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .env-window { transition: none; }
-    .section-nav-button { animation: none; }
-    .reveal { transition: none; opacity: 1; transform: none; }
-    .hero-aurora::before,
-    .hero-aurora::after { animation: none; }
-    .hero-shell { height: auto; }
-    .term-section { height: auto; }
-    .term-sticky { position: static; height: auto; padding: 8vh 0 10vh; }
-    .term-stage { width: min(1240px, 94vw); height: min(86vh, 860px); }
-    .env-window { transform: none; }
-    .term-caption { position: static; transform: none; width: min(900px, 88vw); margin: 28px auto 0; opacity: 1; }
-    .hero-pin { position: static; height: 100vh; }
-    .statement { height: auto; }
-    .statement-pin { position: static; height: auto; padding: 20vh 0 16vh; }
-    .statement-copy { opacity: 1; transform: none; }
-  }
-</style>
+    .box-stack { position: absolute; left: 12%; bottom: 16%; width: 46%; height: 56%; }
+    .box-stack span { position: absolute; width: 126px; height: 92px; border: 4px solid var(--ink); border-radius: 8px; background: #d9b77e; }
+    .box-stack span:nth-child(1) { left: 0; bottom: 0; }
+    .box-stack span:nth-child(2) { left: 105px; bottom: 18px; background: #e8c995; }
+    .box-stack span:nth-child(3) { left: 48px; bottom: 92px; width: 112px; height: 76px; background: #caa56d; }
+    .packing-list { position: absolute; right: 10%; top: 20%; width: 150px; padding: 18px; border: 3px solid var(--ink); border-radius: 12px; background: var(--paper); transform: rotate(3deg); }
+    .packing-list strong { display: block; margin-bottom: 12px; }
+    .packing-list i { display: block; height: 7px; margin: 8px 0; border-radius: 5px; background: var(--line); }
+    .packing-list i:nth-child(2) { width: 90%; background: var(--teal); }
+    .packing-list i:nth-child(4) { width: 72%; background: var(--orange); }
+    .pack-item { position: absolute; z-index: 5; right: 21%; bottom: 22%; width: 58px; height: 42px; border: 3px solid var(--ink); border-radius: 8px; background: var(--yellow); box-shadow: inset 0 -7px rgba(23,32,25,0.1); }
+
+    .rework-table { position: absolute; left: 8%; right: 8%; bottom: 19%; height: 22px; background: var(--ink); border-radius: 8px; box-shadow: 22px 22px 0 -8px var(--ink), -22px 22px 0 -8px var(--ink); }
+    .rework-item { position: absolute; left: 30%; bottom: 27%; width: 160px; height: 94px; border-radius: 16px; background: var(--orange); border: 4px solid var(--ink); }
+    .rework-item::before { content: ""; position: absolute; left: 21px; right: 21px; top: 38px; height: 7px; background: var(--ink); transform: rotate(-5deg); }
+    .rework-item::after { content: "RECHECK"; position: absolute; right: -72px; top: -38px; padding: 9px 12px; border-radius: 8px; background: var(--lime); border: 3px solid var(--ink); font-size: 11px; font-weight: 850; letter-spacing: 0.08em; }
+
+    .labor-extension { background: var(--lime); padding: 86px 0; }
+    .labor-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 80px; align-items: end; }
+    .labor-extension h2 { margin: 0; max-width: 780px; font-size: clamp(44px, 5.5vw, 82px); line-height: 0.96; letter-spacing: -0.06em; font-weight: 700; }
+    .labor-extension p { margin: 0; max-width: 430px; font-size: 19px; line-height: 1.55; color: var(--ink-2); }
+
+    .how { background: var(--paper); }
+    .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 60px; }
+    .step { min-height: 360px; display: flex; flex-direction: column; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
+    .step-num { width: max-content; padding: 7px 10px; border-radius: 999px; background: var(--green); color: var(--lime); font-size: 11px; font-weight: 800; letter-spacing: 0.09em; }
+    .step h3 { margin: auto 0 0; max-width: 11ch; font-size: 32px; line-height: 1.06; letter-spacing: -0.04em; }
+    .step p { margin: 15px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+    .intervention { background: var(--ink); color: white; }
+    .intervention-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 72px; align-items: center; }
+    .intervention .section-kicker { color: var(--lime); }
+    .intervention .section-title { font-size: clamp(42px, 4.6vw, 68px); }
+    .intervention p { max-width: 560px; margin: 24px 0 0; color: #b7c2bb; font-size: 17px; line-height: 1.65; }
+    .operator-panel { border: 1px solid rgba(255,255,255,0.16); border-radius: 28px; background: #202a23; padding: 18px; box-shadow: 0 25px 70px rgba(0,0,0,0.26); }
+    .operator-top { display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 16px; }
+    .operator-top strong { font-size: 13px; letter-spacing: 0.04em; }
+    .operator-state { color: var(--lime); font-size: 11px; font-weight: 780; letter-spacing: 0.08em; text-transform: uppercase; }
+    .camera-view { position: relative; min-height: 320px; border-radius: 18px; background: #d7ded7; overflow: hidden; }
+    .operator-photo { position: absolute; inset: 0; }
+    .camera-view::after {
+      content: "Illustrative pilot setup";
+      position: absolute;
+      z-index: 2;
+      left: 14px;
+      top: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(251,250,245,0.88);
+      color: var(--ink-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .camera-view .scene-belt { bottom: 22%; }
+    .camera-view .scene-item { bottom: 34%; }
+    .camera-view .mini-arm { top: 10%; right: 7%; }
+    .camera-overlay { position: absolute; z-index: 8; left: 18px; right: 18px; bottom: 18px; display: flex; justify-content: space-between; gap: 10px; }
+    .camera-alert, .camera-control { padding: 12px 14px; border-radius: 12px; backdrop-filter: blur(10px); font-size: 12px; font-weight: 700; }
+    .camera-alert { background: rgba(23,32,25,0.9); color: white; }
+    .camera-control { background: rgba(201,236,116,0.94); color: var(--ink); }
+    .operator-log { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+    .log-item { padding: 13px; border-radius: 12px; background: rgba(255,255,255,0.06); }
+    .log-item small { color: #8fa096; font-size: 9px; letter-spacing: 0.09em; text-transform: uppercase; }
+    .log-item strong { display: block; margin-top: 5px; font-size: 12px; }
+
+    /* Motion is explanatory: item enters, the station evaluates it, then the action is recorded. */
+    .is-visible .belt::after,
+    .is-visible .scene-belt::after { animation: beltTravel 0.8s linear infinite; }
+    .shift-card.is-visible .case {
+      animation: heroCase 7.2s linear infinite;
+      animation-delay: var(--item-delay);
+    }
+    .shift-card.is-visible .scan-line { animation: scanPulse 2.4s ease-in-out infinite; }
+    .shift-card.is-visible .robot-arm { animation: heroArm 7.2s ease-in-out infinite; }
+    .shift-card.is-visible .inspection-entry {
+      animation: eventPrint 7.2s ease infinite;
+      animation-delay: calc(var(--item-delay) + 3.15s);
+      animation-fill-mode: both;
+    }
+
+    .scene-item.i1 { --item-delay: 0s; }
+    .scene-item.i2 { --item-delay: -2.4s; }
+    .scene-item.i3 { --item-delay: -4.8s; }
+    .quality-scene.is-visible .scene-item {
+      animation: qualityItem 7.2s linear infinite;
+      animation-delay: var(--item-delay);
+    }
+    .quality-scene.is-visible .vision-frame { animation: visionRead 2.4s ease-in-out infinite; }
+    .quality-scene.is-visible .mini-arm { animation: qualityArm 7.2s ease-in-out infinite; }
+
+    .scene-event { --event-delay: 0s; }
+    .scene-event:nth-child(2) { --event-delay: -2.2s; }
+    .scene-event:nth-child(3) { --event-delay: -4.4s; }
+    .job-scene.is-visible .scene-event {
+      animation: sceneEvent 6.6s ease infinite;
+      animation-delay: var(--event-delay);
+    }
+    .sort-scene.is-visible .grade-a { animation: sortToA 6.6s ease-in-out infinite; }
+    .sort-scene.is-visible .grade-b { animation: sortToB 6.6s ease-in-out -2.2s infinite; }
+    .sort-scene.is-visible .grade-c { animation: sortToC 6.6s ease-in-out -4.4s infinite; }
+    .sort-scene.is-visible .mini-arm { animation: sortArm 2.2s ease-in-out infinite; }
+
+    .pack-scene.is-visible .pack-item { animation: packMove 5.4s ease-in-out infinite; }
+    .pack-scene.is-visible .mini-arm { animation: packArm 5.4s ease-in-out infinite; }
+    .pack-scene.is-visible .packing-list i { animation: listCheck 5.4s ease-in-out infinite; }
+    .pack-scene.is-visible .packing-list i:nth-child(2) { animation-delay: -4.05s; }
+    .pack-scene.is-visible .packing-list i:nth-child(3) { animation-delay: -2.7s; }
+    .pack-scene.is-visible .packing-list i:nth-child(4) { animation-delay: -1.35s; }
+
+    .rework-scene.is-visible .mini-arm { animation: reworkArm 5.8s ease-in-out infinite; }
+    .rework-scene.is-visible .rework-item { animation: reworkItem 5.8s ease-in-out infinite; }
+    .rework-scene.is-visible .rework-item::before { animation: reworkSeal 5.8s ease-in-out infinite; }
+    .rework-scene.is-visible .rework-item::after { animation: reworkTag 5.8s ease-in-out infinite; }
+
+    .operator-panel.is-visible .operator-state { animation: operatorState 2s ease-in-out infinite; }
+    .operator-panel.is-visible .camera-view .scene-item.i1 { animation: interventionItem 7s linear infinite; }
+    .operator-panel.is-visible .camera-view .scene-item.i2 { animation: interventionItem 7s linear -3.5s infinite; }
+    .operator-panel.is-visible .camera-view .mini-arm { animation: interventionArm 7s ease-in-out infinite; }
+    .operator-panel.is-visible .camera-alert { animation: alertCycle 7s ease-in-out infinite; }
+    .operator-panel.is-visible .camera-control { animation: controlCycle 7s ease-in-out infinite; }
+    .operator-panel.is-visible .log-item { animation: logStep 7s ease-in-out infinite; }
+    .operator-panel.is-visible .log-item:nth-child(2) { animation-delay: -4.65s; }
+    .operator-panel.is-visible .log-item:nth-child(3) { animation-delay: -2.3s; }
+
+    @keyframes beltTravel { to { background-position: 30px 0; } }
+    @keyframes heroCase {
+      0% { left: -64px; }
+      100% { left: calc(100% + 10px); }
+    }
+    @keyframes scanPulse {
+      0%, 38%, 64%, 100% { opacity: 0.45; box-shadow: 0 0 8px var(--lime); }
+      48%, 54% { opacity: 1; box-shadow: 0 0 24px 5px var(--lime); }
+    }
+    @keyframes heroArm {
+      0%, 54%, 100% { transform: scale(0.66) rotate(0deg); }
+      61%, 70% { transform: scale(0.66) rotate(7deg); }
+    }
+    @keyframes eventPrint {
+      0%, 4% { opacity: 0; transform: translateY(8px); }
+      7%, 37% { opacity: 1; transform: translateY(0); }
+      40%, 100% { opacity: 0; transform: translateY(-7px); }
+    }
+    @keyframes qualityItem {
+      0% { left: -60px; }
+      100% { left: calc(100% + 8px); }
+    }
+    @keyframes visionRead {
+      0%, 38%, 65%, 100% { border-color: var(--ink); box-shadow: none; }
+      46%, 56% { border-color: var(--teal); box-shadow: 0 0 0 6px rgba(58,161,137,0.18); }
+    }
+    @keyframes qualityArm {
+      0%, 56%, 100% { transform: rotate(0deg); }
+      64%, 74% { transform: rotate(6deg); }
+    }
+    @keyframes sceneEvent {
+      0%, 4% { opacity: 0; transform: translateY(8px); }
+      7%, 37% { opacity: 1; transform: translateY(0); }
+      40%, 100% { opacity: 0; transform: translateY(-7px); }
+    }
+    @keyframes sortToA {
+      0%, 5% { left: 44%; top: 22%; opacity: 0; }
+      12%, 48% { opacity: 1; }
+      67% { left: 15%; top: 64%; opacity: 1; }
+      78%, 100% { left: 15%; top: 64%; opacity: 0; }
+    }
+    @keyframes sortToB {
+      0%, 5% { left: 44%; top: 22%; opacity: 0; }
+      12%, 48% { opacity: 1; }
+      67% { left: 45%; top: 64%; opacity: 1; }
+      78%, 100% { left: 45%; top: 64%; opacity: 0; }
+    }
+    @keyframes sortToC {
+      0%, 5% { left: 44%; top: 22%; opacity: 0; }
+      12%, 48% { opacity: 1; }
+      67% { left: 75%; top: 64%; opacity: 1; }
+      78%, 100% { left: 75%; top: 64%; opacity: 0; }
+    }
+    @keyframes sortArm {
+      0%, 100% { transform: rotate(-6deg); }
+      45%, 62% { transform: rotate(10deg); }
+    }
+    @keyframes packMove {
+      0%, 10% { right: 21%; bottom: 22%; opacity: 0; transform: rotate(0); }
+      18%, 36% { opacity: 1; }
+      52% { right: 30%; bottom: 47%; transform: rotate(-4deg); }
+      76% { right: 58%; bottom: 43%; opacity: 1; transform: rotate(2deg); }
+      88%, 100% { right: 58%; bottom: 43%; opacity: 0; }
+    }
+    @keyframes packArm {
+      0%, 18%, 100% { transform: rotate(0deg); }
+      40%, 56% { transform: rotate(9deg); }
+      76%, 86% { transform: rotate(-7deg); }
+    }
+    @keyframes listCheck {
+      0%, 18% { background: var(--line); transform: scaleX(0.82); transform-origin: left; }
+      26%, 70% { background: var(--teal); transform: scaleX(1); }
+      84%, 100% { background: var(--line); }
+    }
+    @keyframes reworkArm {
+      0%, 18%, 100% { transform: rotate(0deg); }
+      34%, 62% { transform: rotate(11deg); }
+      76%, 88% { transform: rotate(-4deg); }
+    }
+    @keyframes reworkItem {
+      0%, 29%, 70%, 100% { transform: translateX(0); }
+      36%, 44%, 52%, 60% { transform: translateX(3px); }
+      40%, 48%, 56%, 64% { transform: translateX(-3px); }
+    }
+    @keyframes reworkSeal {
+      0%, 52% { background: var(--ink); box-shadow: none; }
+      64%, 88% { background: var(--teal); box-shadow: 0 0 0 4px rgba(58,161,137,0.2); }
+      100% { background: var(--ink); }
+    }
+    @keyframes reworkTag {
+      0%, 54% { content: "RECHECK"; background: var(--lime); }
+      65%, 90% { content: "VERIFIED"; background: #9edbc9; }
+      100% { content: "RECHECK"; background: var(--lime); }
+    }
+    @keyframes operatorState { 50% { opacity: 0.48; } }
+    @keyframes interventionItem {
+      0% { left: -60px; }
+      28%, 58% { left: 43%; }
+      82%, 100% { left: calc(100% + 8px); }
+    }
+    @keyframes interventionArm {
+      0%, 25%, 72%, 100% { transform: rotate(0deg); }
+      38%, 57% { transform: rotate(12deg); }
+    }
+    @keyframes alertCycle {
+      0%, 24%, 72%, 100% { opacity: 0; transform: translateY(6px); }
+      30%, 62% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes controlCycle {
+      0%, 34%, 78%, 100% { opacity: 0.45; transform: translateX(0); }
+      43%, 63% { opacity: 1; transform: translateX(-5px); }
+    }
+    @keyframes logStep {
+      0%, 7%, 38%, 100% { background: rgba(255,255,255,0.06); transform: translateY(0); }
+      12%, 31% { background: rgba(201,236,116,0.16); transform: translateY(-3px); }
+    }
+
+    .engagement { background: var(--cream); }
+    .engagement-card { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 70px; padding: clamp(34px, 6vw, 78px); border-radius: 34px; background: var(--paper); border: 1px solid var(--line); }
+    .engagement-card h2 { margin: 0; font-size: clamp(43px, 5vw, 72px); line-height: 0.97; letter-spacing: -0.055em; }
+    .terms { display: grid; align-content: start; border-top: 1px solid var(--line); }
+    .term { display: grid; grid-template-columns: 130px 1fr; gap: 20px; padding: 21px 0; border-bottom: 1px solid var(--line); }
+    .term strong { color: var(--teal); font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; }
+    .term span { font-size: 15px; line-height: 1.45; }
+    .terms-note { margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+
+    .faq { background: var(--paper); border-top: 1px solid var(--line); }
+    .faq-grid { display: grid; grid-template-columns: 0.72fr 1.28fr; gap: 90px; }
+    .faq-intro { position: sticky; top: 120px; align-self: start; }
+    .faq-intro h2 { margin: 18px 0 0; font-size: clamp(42px, 4.5vw, 66px); line-height: 1; letter-spacing: -0.055em; }
+    .faq-intro p { max-width: 380px; margin: 20px 0 0; color: var(--muted); font-size: 16px; line-height: 1.6; }
+    .faq-list { border-top: 1px solid var(--line); }
+    details { border-bottom: 1px solid var(--line); }
+    summary {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 46px;
+      gap: 22px;
+      align-items: center;
+      padding: 27px 0;
+      cursor: pointer;
+      font-size: 21px;
+      font-weight: 670;
+      letter-spacing: -0.025em;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; font-size: 24px; font-weight: 400; transition: transform 180ms ease; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { margin: -4px 64px 28px 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
+
+    .final-cta { padding: 36px 0 56px; background: var(--paper); }
+    .cta-card { position: relative; overflow: hidden; min-height: 520px; display: grid; place-items: center; text-align: center; padding: 70px 24px; border-radius: 36px; background: var(--green); color: white; }
+    .cta-card::before, .cta-card::after { content: ""; position: absolute; border: 1px solid rgba(255,255,255,0.12); border-radius: 50%; }
+    .cta-card::before { width: 520px; height: 520px; left: -260px; bottom: -260px; box-shadow: 0 0 0 85px rgba(255,255,255,0.025); }
+    .cta-card::after { width: 390px; height: 390px; right: -180px; top: -210px; box-shadow: 0 0 0 70px rgba(255,255,255,0.025); }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-content h2 { max-width: 780px; margin: 0 auto; font-size: clamp(50px, 6vw, 86px); line-height: 0.94; letter-spacing: -0.065em; }
+    .cta-content p { max-width: 560px; margin: 24px auto 0; color: #bfd0c5; font-size: 17px; line-height: 1.6; }
+    .cta-content .button { margin-top: 30px; }
+
+    footer { padding: 34px 0 42px; background: var(--paper); }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding-top: 30px; border-top: 1px solid var(--line); }
+    .footer-brand { display: flex; align-items: center; gap: 12px; font-weight: 740; }
+    .footer-brand img { width: 36px; height: 36px; border-radius: 9px; }
+    .footer-copy { color: var(--muted); font-size: 12px; }
+    .footer-links { display: flex; gap: 22px; color: var(--muted); font-size: 13px; }
+
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+
+    @media (max-width: 1040px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { padding-top: 40px; }
+      .hero h1 { max-width: 10ch; }
+      .shift-card { min-height: 600px; }
+      .benefit-grid { grid-template-columns: repeat(2, 1fr); }
+      .benefit:nth-child(2) { border-right: 0; }
+      .benefit:nth-child(3), .benefit:nth-child(4) { border-top: 1px solid var(--line); }
+      .job-copy { grid-template-columns: 1fr; }
+      .job-tags { justify-content: flex-start; }
+      .labor-grid, .intervention-grid, .engagement-card, .faq-grid { grid-template-columns: 1fr; }
+      .faq-intro { position: static; }
+      .step-grid { grid-template-columns: 1fr; }
+      .step { min-height: 260px; }
+      .intervention-grid { gap: 46px; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 28px, var(--max)); }
+      .site-header { top: 9px; }
+      .nav { min-height: 58px; padding: 7px 8px 7px 9px; }
+      .brand img { width: 28px; height: 28px; }
+      .brand span { font-size: 14px; }
+      .nav > .nav-cta { display: none; }
+      .menu-toggle { display: grid; place-items: center; }
+      .nav-links {
+        position: fixed;
+        inset: 76px 14px auto;
+        display: grid;
+        gap: 0;
+        padding: 16px;
+        border-radius: 22px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(-12px);
+        pointer-events: none;
+        transition: opacity 180ms ease, transform 180ms ease;
+      }
+      .nav-links.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+      .nav-links a { padding: 15px 10px; border-bottom: 1px solid var(--line); font-size: 16px; }
+      .nav-links a:last-child { border-bottom: 0; }
+      .nav-links .mobile-menu-cta {
+        display: inline-flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--ink);
+        color: white;
+      }
+      .hero { padding: 100px 0 28px; }
+      .hero-grid { gap: 34px; }
+      .hero h1 { font-size: clamp(54px, 16vw, 78px); }
+      .hero-copy > p { font-size: 18px; }
+      .hero-actions { align-items: stretch; }
+      .hero-actions .button { flex: 1 1 100%; }
+      .shift-card { min-height: 580px; border-radius: 26px; padding: 18px; }
+      .shift-title { margin-top: 36px; font-size: 28px; }
+      .workcell { left: 18px; right: 18px; bottom: 18px; }
+      .case.one { left: 42px; }
+      .case.two { left: 116px; }
+      .case.three { left: 190px; }
+      .scan-line { left: 135px; }
+      .robot-arm { right: 48px; }
+      section { padding: 78px 0; }
+      .section-title { font-size: 46px; }
+      .benefit-grid { grid-template-columns: 1fr; }
+      .benefit, .benefit + .benefit { min-height: auto; padding: 28px 0; border-right: 0; border-top: 1px solid var(--line); }
+      .benefit:first-child { border-top: 0; }
+      .benefit-mark { margin-bottom: 34px; }
+      .job-grid { grid-template-columns: 1fr; }
+      .job-card { min-height: 480px; }
+      .job-scene { min-height: 285px; }
+      .job-copy h3 { font-size: 28px; }
+      .labor-extension { padding: 68px 0; }
+      .labor-grid { gap: 28px; }
+      .labor-extension h2 { font-size: 48px; }
+      .operator-panel { padding: 12px; border-radius: 22px; }
+      .camera-view { min-height: 250px; }
+      .operator-log { grid-template-columns: 1fr; }
+      .engagement-card { padding: 30px 22px; gap: 40px; }
+      .term { grid-template-columns: 100px 1fr; }
+      .faq-grid { gap: 44px; }
+      summary { font-size: 18px; grid-template-columns: 1fr 42px; }
+      summary::after { width: 40px; height: 40px; }
+      details p { margin-right: 0; }
+      .cta-card { min-height: 480px; border-radius: 26px; }
+      .footer-row { align-items: flex-start; flex-direction: column; }
+      .footer-links { flex-wrap: wrap; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .inspection-entry, .scene-event { opacity: 0 !important; transform: none !important; }
+      .inspection-entry:nth-child(2), .scene-event:first-child { opacity: 1 !important; }
+    }
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<div class="site-bg" aria-hidden="true">
-  <div class="hero-aurora"></div>
-  <canvas id="hero-art"></canvas>
-  <div class="hero-veil"></div>
-</div>
-
-<nav id="nav">
-  <div class="wrap nav-inner">
-    <a class="logo" href="#top">
-      <img class="nav-logo-mark" src="logo-300.svg" alt="" width="28" height="28">
-      Second Nature Labs
-    </a>
-    <div class="nav-links">
-      <a href="#environments">Product</a>
-      <a href="#benchmark">Benchmark</a>
-      <a href="#customers">Who it's for</a>
-      <a href="#quickstart">Open proof</a>
-    </div>
-    <div class="nav-cta">
-      <a class="btn" href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn btn-ink" href="#contact">Get in touch</a>
-    </div>
-  </div>
-</nav>
-
-<div class="section-nav" aria-label="Section navigation">
-  <span class="section-nav-label">Scroll or press arrows to explore.</span>
-  <button class="section-nav-button section-nav-up" type="button" aria-label="Go to previous section" hidden>↑</button>
-  <button class="section-nav-button section-nav-down" type="button" aria-label="Go to next section">↓</button>
-</div>
-
-<div class="hero-shell" id="top">
-  <div class="hero-pin">
-    <div class="hero-card">
-      <div class="hero-copy">
-        <h1>The physical world doesn't grade on a curve.</h1>
+  <header class="site-header">
+    <nav class="wrap nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Second Nature Labs home">
+        <img src="logo-300.svg" alt="">
+        <span>Second Nature Labs</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#benefits">Benefits</a>
+        <a href="#jobs">Jobs</a>
+        <a href="#how">How it works</a>
+        <a href="#faq">FAQ</a>
+        <a class="mobile-menu-cta" href="mailto:founders@snlabs.dev?subject=Site%20walkthrough">Book a walkthrough <span aria-hidden="true">↗</span></a>
       </div>
-    </div>
-  </div>
-</div>
+      <a class="nav-cta" href="mailto:founders@snlabs.dev?subject=Site%20walkthrough">Book a site walkthrough <span aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation">☰</button>
+    </nav>
+  </header>
 
-<div class="dark">
-
-  <div class="statement" id="training-gap">
-    <div class="statement-pin">
-      <canvas class="statement-art" id="statement-art" aria-hidden="true"></canvas>
-      <div class="wrap statement-copy" id="statement-copy">
-        <div class="kicker">What we build</div>
-        <h2><span class="statement-title-line">Training environments and evals</span> <span class="statement-title-line">for AI that acts in the physical world.</span></h2>
-        <p>
-          AI labs and robotics teams bring us a real workflow, its failure traces, and the outcomes
-          that matter. We turn them into an interactive simulator where an agent observes through
-          sensors and instruments, chooses actions, and <span class="keep-tail">experiences their physical consequences.</span>
-        </p>
-        <p class="statement-result">
-          <strong>The result is an RL-ready training ground and a cheat-resistant evaluation:</strong>
-          agents practice decisions and recovery under time, cost, and safety constraints, then earn
-          a score based on what actually happened instead of how <span class="keep-tail">plausible their explanation sounded.</span>
-        </p>
-        <div class="statement-quote">“We know more than we can tell.” - Michael Polanyi</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ decision-layer: expanding live episode ============ -->
-  <div class="term-section" id="environments">
-    <div class="term-sticky">
-      <div class="stage term-stage" id="term-stage">
-        <span class="bin" id="term-bin-1" style="left:-2%; top:8%;">110</span>
-        <span class="bin" id="term-bin-2" style="right:-2%; bottom:20%;">1011</span>
-        <svg class="contours" id="term-contours" viewBox="0 0 860 520" preserveAspectRatio="none">
-          <path class="dash" d="M-20,300 C140,330 320,270 480,300 S760,340 890,300"/>
-          <path class="dash" d="M60,-10 C80,120 40,300 70,530"/>
-          <path class="dash" d="M-10,90 C200,40 420,130 890,70"/>
-          <polygon class="tri" points="480,296 489,301 480,306"/>
-          <polygon class="tri" points="67,260 72,269 62,269"/>
-        </svg>
-        <div class="wireframe dim" id="term-frame-2" style="inset:-3% -3%;"></div>
-        <div class="wireframe" id="term-frame-1" style="inset:1.5% 3%;">
-          <span class="notch"></span>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Now Serving Central Coast facilities</div>
+          <h1>We run the shift that doesn't exist.</h1>
+          <p>We place a robot at your station and run the job with a remote operator from the first shift. Start with overnight quality, sorting, packing, or rework.</p>
+          <div class="hero-actions">
+            <a class="button" href="mailto:founders@snlabs.dev?subject=Site%20walkthrough">Walk the shift with us <span aria-hidden="true">↗</span></a>
+            <a class="button outline" href="#jobs">See example jobs <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="pilot-note"><span aria-hidden="true">●</span><span>We are selecting our first pilot sites. No customer deployment is implied by the examples on this page.</span></p>
         </div>
-        <div class="env-window" id="env-window">
-          <div class="env-display">
-            <iframe id="env-frame" title="hospitality-env live episode"></iframe>
-            <div class="env-veil" id="env-veil">Scroll to open · episode starts when the window fills</div>
-            <div class="no-start-view" id="no-start-view" aria-hidden="true">
-              <div class="no-start-terminal" id="no-start-terminal">
-                <div class="no-start-bar">
-                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                  <span class="no-start-title">no-start-env — hard_compound_battery_and_ground · seed 3002</span>
-                  <button class="no-start-replay" id="no-start-replay" type="button" aria-label="Replay no-start episode">
-                    <span class="icon" aria-hidden="true">↻</span> Replay
-                  </button>
-                </div>
-                <div class="no-start-body">
-                  <div class="no-start-line on"><span class="no-start-comment"># complaint: cranks slow and usually won't catch</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">attempt_start</span>()</div>
-                  <div class="no-start-line"><span class="no-start-out">slow_crank</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, key_off)</div>
-                  <div class="no-start-line"><span class="no-start-out">10.97 V</span> <span class="no-start-comment"># battery is genuinely weak</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, battery_negative, cranking)</div>
-                  <div class="no-start-line"><span class="no-start-out">8.60 V</span> <span class="no-start-comment"># fails load test — one real fault</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_negative, engine_block, cranking)</div>
-                  <div class="no-start-line"><span class="no-start-out">−1.76 V</span> <span class="no-start-comment"># 1.76 V ground-path drop — second fault</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">measure_voltage</span>(battery_positive, starter_stud, cranking)</div>
-                  <div class="no-start-line"><span class="no-start-out">0.16 V</span> <span class="no-start-comment"># positive feed path is healthy</span></div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">replace_part</span>(ground_strap) · <span class="no-start-tool">replace_part</span>(battery)</div>
-                  <div class="no-start-line"><span class="no-start-agent">agent →</span> <span class="no-start-tool">attempt_start</span>()</div>
-                  <div class="no-start-line"><span class="no-start-verdict">engine starts ✓ — diagnosis: corroded ground strap + weak battery · score 100 / 100</span></div>
-                </div>
-              </div>
+
+        <div class="shift-card" data-motion aria-label="Illustrative overnight shift coverage card">
+          <div class="shift-head">
+            <span class="shift-label">Example robot-shift</span>
+            <span class="status-pill">Pilot format</span>
+          </div>
+          <h2 class="shift-title">Overnight quality line</h2>
+          <div class="shift-time">10:00 PM → 6:00 AM</div>
+          <div class="shift-tasks">
+            <div class="shift-task"><span class="num">01</span><span><strong>Inspect produce</strong><small>Check color and surface</small></span><span class="covered">Covered</span></div>
+            <div class="shift-task"><span class="num">02</span><span><strong>Sort exceptions</strong><small>Route failed checks</small></span><span class="covered">Covered</span></div>
+            <div class="shift-task"><span class="num">03</span><span><strong>Rework seals</strong><small>Operator handles edge cases</small></span><span class="covered">Covered</span></div>
+          </div>
+          <div class="workcell" aria-hidden="true">
+            <img class="workcell-photo" src="assets/stills/hero-quality-line.jpg" alt="" width="1672" height="941" decoding="async" fetchpriority="high">
+            <span class="station-label">Station view · Quality line 02</span>
+            <div class="inspection-feed">
+              <span class="feed-title">Inspection / action</span>
+              <span class="inspection-entry" style="--item-delay:0s"><b>021</b><span>Color + surface</span><strong>Pass →</strong></span>
+              <span class="inspection-entry" style="--item-delay:-2.4s"><b>022</b><span>Surface mark</span><strong>Rework ↗</strong></span>
+              <span class="inspection-entry" style="--item-delay:-4.8s"><b>023</b><span>Color + stem</span><strong>Pass →</strong></span>
             </div>
           </div>
         </div>
       </div>
-      <button class="env-switch env-switch-prev" id="env-switch-prev" type="button" aria-label="Show planning and execution episode">←</button>
-      <button class="env-switch env-switch-next" id="env-switch-next" type="button" aria-label="Show no-start diagnostic episode">→</button>
-      <div class="term-caption" id="term-caption">
-        <div class="term-caption-content is-active" id="decision-caption">
-          <h3>Watch planning and execution unfold.</h3>
-          <p>
-            A trained planner decomposes a physical task while a stochastic executor carries it out,
-            surfaces failures, and triggers recovery.
-          </p>
-          <a class="term-demo-button" href="decision-layer/" target="_blank" rel="noopener">
-            Open the full demo <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-        <div class="term-caption-content" id="no-start-caption" aria-hidden="true">
-          <h3>One environment. A general method.</h3>
-          <p>
-            no-start-env gives an agent a goal, an instrumented physical system, and actions with
-            consequences. It must isolate the fault, repair it, verify the resulting state, and earn
-            its score from the outcome. <a href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">Open no-start-env</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ============ benchmark: sticky 3D leaderboard ============ -->
-  <div class="showcase" id="benchmark">
-    <div class="showcase-sticky">
-      <div class="stage bench-stage" id="bench-stage">
-        <span class="bin" style="left:-4%; top:12%;">111</span>
-        <span class="bin" style="right:-3%; top:26%;">0001</span>
-        <span class="bin" style="right:2%; bottom:14%;">1110</span>
-        <span class="bin" style="left:2%; bottom:6%;">000</span>
-        <svg class="contours" viewBox="0 0 920 560" preserveAspectRatio="none">
-          <path class="dash" d="M-20,120 C160,90 300,170 470,140 S800,80 950,130"/>
-          <path class="dash" d="M-20,430 C180,470 380,390 560,430 S820,480 950,440"/>
-          <path class="dash" d="M120,-10 C140,150 90,320 130,570"/>
-          <polygon class="tri" points="470,136 479,141 470,146"/>
-          <polygon class="tri" points="560,426 569,431 560,436"/>
-          <polygon class="tri" points="127,320 132,329 122,329"/>
-          <polygon class="tri" points="740,102 749,107 740,112"/>
-        </svg>
-        <div class="wireframe dim" id="bench-frame-2" style="inset:-2% -4%;"></div>
-        <div class="wireframe" id="bench-frame-1" style="inset:3% 1%;">
-          <span class="notch"></span>
-          <span class="ticks"><i></i><i></i><i></i><i></i><i></i></span>
-        </div>
-        <div class="bench-panel" id="bench-panel">
-          <div class="bench-tabs">
-            <span class="tab active">Mean score ⓘ</span>
-            <span class="tab">pass^k ⓘ</span>
-            <span class="tab">v0.1 ▾</span>
-            <span class="right">Uncoached ⓘ <span class="toggle"></span></span>
-          </div>
-          <div class="bench-head">
-            <span># ↑</span><span>MODEL</span><span class="h-eps">EPISODES</span><span>SCORE / 100</span>
-          </div>
-          <div class="bench-row r1" data-score="86.0">
-            <span class="rank">1</span><span>fable-5</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>86.0</b><small>root cause 19/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r2" data-score="82.3">
-            <span class="rank mid">2</span><span>gpt-5.5</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>82.3</b><small>root cause 20/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r3" data-score="74.9">
-            <span class="rank mid">3</span><span>grok-4</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>74.9</b><small>root cause 16/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r4" data-score="74.5">
-            <span class="rank mid">4</span><span>sonnet-5</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>74.5</b><small>root cause 19/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r5" data-score="59.7">
-            <span class="rank mid">5</span><span>gemini-3.5-flash</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>59.7</b><small>root cause 14/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r6" data-score="39.9">
-            <span class="rank mid">6</span><span>haiku-4.5</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>39.9</b><small>root cause 10/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
-          <div class="bench-row r7" data-score="23.0">
-            <span class="rank mid">7</span><span>ministral-3b</span><span class="eps">25</span>
-            <span class="scorecell"><span class="scorenum"><b>23.0</b><small>root cause 6/25</small></span><span class="bar-track"><span class="bar"></span></span></span>
-          </div>
+    <section class="benefits" id="benefits">
+      <div class="wrap">
+        <div class="section-kicker">What you get</div>
+        <h2 class="section-title">More coverage. Less hiring pressure.</h2>
+        <p class="section-intro">This is an operated shift, not a robot dropped at your dock. We stay responsible for keeping the work moving.</p>
+        <div class="benefit-grid">
+          <article class="benefit">
+            <div class="benefit-mark">01</div>
+            <h3>Coverage beyond day shift</h3>
+            <p>Schedule work for nights, weekends, and the hours that are hardest to staff.</p>
+          </article>
+          <article class="benefit">
+            <div class="benefit-mark">02</div>
+            <h3>A person stays in the loop</h3>
+            <p>A remote operator steps in when the job needs judgment. The line does not wait for perfect autonomy.</p>
+          </article>
+          <article class="benefit">
+            <div class="benefit-mark">03</div>
+            <h3>A predictable shift rate</h3>
+            <p>After deployment and training, you pay one monthly rate for each robot-shift.</p>
+          </article>
+          <article class="benefit">
+            <div class="benefit-mark">04</div>
+            <h3>Capacity without a layoff plan</h3>
+            <p>Use the robot where the role is open or the shift does not exist. Keep your team on the work that needs them.</p>
+          </article>
         </div>
       </div>
-      <div class="bench-caption" id="bench-caption">
-        <h3>A physical-reasoning gap you can measure.</h3>
-        <p>Our first benchmark uses 5 vehicle electrical scenarios × 5 epochs with outcome-based grading. <em>Showing 7 of 9 models; <a href="https://github.com/Jaiparmar940/rlenv/blob/main/results/scale_curve.md" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:2px;">full table in the repo</a>.</em></p>
-        <p class="bench-footnote">Per-cell scores at n=5 epochs carry wide uncertainty; tier-level patterns are the robust findings. Full methodology in the repo.</p>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ============ pillars ============ -->
-  <section id="platform">
-    <div class="wrap">
-      <div class="kicker reveal">The platform</div>
-      <h2 class="reveal" style="max-width: 20ch;">Training environments and test rigs for physical reasoning.</h2>
-      <div class="pillars">
-        <div class="pillar reveal">
-          <div class="index">01 / PHYSICS</div>
-          <h3>Physics, not scripted answers</h3>
-          <p>
-            Agents interact with a live system model, not a tree of hand-authored responses.
-            State, measurements, and consequences are computed from the governing physics, so
-            each task can vary without breaking the rules of the machine.
-          </p>
-        </div>
-        <div class="pillar reveal">
-          <div class="index">02 / GRADING</div>
-          <h3>Outcomes, not plausible text</h3>
-          <p>
-            Graders reward correct causal understanding, disciplined action, and efficient goal
-            completion against an expert baseline. The environment state determines whether an
-            action worked; confident explanations and brute-force guessing do not.
-          </p>
-        </div>
-        <div class="pillar reveal">
-          <div class="index">03 / VERIFICATION</div>
-          <h3>Expert verification is the moat</h3>
-          <p>
-            Models can generate simulations they cannot warrant. Coding agents produce much of the
-            implementation scaffolding, scenario variants, and automated tests; human expertise is
-            concentrated on verifying system dynamics, tasks, and rewards. In no-start-env, that review
-            caught four physics errors that passed the automated suite, and each became an invariant
-            that checks later scenarios.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+    <section class="jobs" id="jobs">
+      <div class="wrap">
+        <div class="section-kicker">Example starting jobs</div>
+        <h2 class="section-title">Put the missing shift to work.</h2>
+        <p class="section-intro">We start with one bounded station. The best first jobs repeat, have a clear finish, and already sit near automation.</p>
 
-  <!-- ============ applications-style split ============ -->
-  <section id="customers">
-    <div class="wrap split">
-      <div class="copy">
-        <div class="kicker reveal">Applications</div>
-        <h2 class="reveal">From model capability to machine reliability.</h2>
-        <p class="reveal">
-          Built for frontier labs training general agents, robotics teams evaluating deployment
-          readiness, and companies developing models for vehicles and industrial machines. We measure
-          whether an agent can infer system state, choose an action, observe its consequences, and adapt
-          under physical constraints.
-        </p>
-        <div class="cta-row reveal">
-          <a class="btn btn-green" href="#contact">For AI labs →</a>
-          <a class="btn btn-ghost-dark" href="#contact">For robotics</a>
-        </div>
-        <div class="tagrow reveal">
-          <span>INTERACTIVE</span><span>PHYSICS-GROUNDED</span><span>RL-READY</span><span>EXPERT-VERIFIED</span>
-        </div>
-      </div>
-      <div class="stage split-stage" id="split-stage">
-        <span class="bin" style="right:-2%; top:4%;">100</span>
-        <span class="bin" style="left:0; bottom:0;">0100</span>
-        <div class="wireframe dim" id="split-frame-2" style="inset:2% -2%;"></div>
-        <div class="wireframe" id="split-frame-1" style="inset:6% 4%;"></div>
-        <div class="split-panel" id="split-panel">
-          <div class="mono-head">WHAT PHYSICAL EVALS REVEAL · v0.1</div>
-          <div class="big">Tool use without understanding.<br>Plans that break the physics.<br>Coaching dependence.</div>
-          <div class="foot"><span>13.6-pt uncoached gap</span><span>4 physics bugs human-caught</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div class="job-grid">
+          <article class="job-card">
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/quality-checks.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
+            </div>
+            <div class="job-copy">
+              <div><h3>Quality checks</h3><p>Present each item, check a visible condition, and route failures for review.</p></div>
+              <div class="job-tags"><span>Clear pass / fail</span><span>Repeated items</span></div>
+            </div>
+          </article>
 
-  <!-- ============ quickstart ============ -->
-  <section class="quickstart" id="quickstart">
-    <div class="wrap qs-grid">
-      <div>
-        <div class="kicker reveal">Open proof</div>
-        <h2 class="reveal">Inspect our first environment.</h2>
-        <p class="section-sub reveal">
-          no-start-env is open source and pip-installable. See how a physical system model,
-          instrumented action space, outcome-based grader, and expert-verified invariants fit
-          together — then run the benchmark on any Inspect-supported model.
-        </p>
-      </div>
-      <div class="codeblock reveal">
-        <div><span class="p">$</span> git clone https://github.com/Jaiparmar940/rlenv</div>
-        <div><span class="p">$</span> pip install -e ".[dev]"</div>
-        <div><span class="p">$</span> python scripts/sanity_check.py <span class="c"># physics invariants</span></div>
-        <div><span class="p">$</span> python scripts/run_evals.py --scenarios all</div>
-        <div><span class="c"># → scored table: root cause · parts · efficiency</span></div>
-      </div>
-    </div>
-  </section>
+          <article class="job-card">
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/sorting-grading.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
+            </div>
+            <div class="job-copy">
+              <div><h3>Sorting & grading</h3><p>Separate items by visible grade, destination, or exception category.</p></div>
+              <div class="job-tags"><span>Known categories</span><span>Station work</span></div>
+            </div>
+          </article>
 
-  <!-- ============ final CTA ============ -->
-  <section class="final-cta" id="contact">
-    <div class="wrap">
-      <h2 class="reveal">Build the missing<br>training ground.</h2>
-      <p class="reveal">
-        We build verified environment families for AI labs and robotics companies, turning real system
-        dynamics and expert judgment into training signal and rigorous evals. If your agents must observe
-        a physical system, act under constraints, and adapt to the consequences, we'd like to talk.
-      </p>
-      <div class="cta-row reveal">
-        <a class="btn btn-green" href="mailto:founders@snlabs.dev">Build an environment</a>
-        <a class="btn btn-ghost-dark" href="#quickstart">Inspect the open proof</a>
+          <article class="job-card">
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/packing-case-loading.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
+            </div>
+            <div class="job-copy">
+              <div><h3>Packing & case loading</h3><p>Place finished items into a repeatable pack pattern and flag mismatches.</p></div>
+              <div class="job-tags"><span>Known pattern</span><span>Measured output</span></div>
+            </div>
+          </article>
+
+          <article class="job-card">
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/rework-exceptions.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
+            </div>
+            <div class="job-copy">
+              <div><h3>Rework & exceptions</h3><p>Redo a bounded step, verify the result, and hand unusual cases to a person.</p></div>
+              <div class="job-tags"><span>Defined repair</span><span>Human escalation</span></div>
+            </div>
+          </article>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="labor-extension">
+      <div class="wrap labor-grid">
+        <h2>Not a replacement plan. A way to cover work your team cannot staff.</h2>
+        <p>The robot extends your labor capacity into a missing shift. Your current team keeps the work that needs experience, judgment, and local ownership.</p>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <div class="wrap">
+        <div class="section-kicker">How it works</div>
+        <h2 class="section-title">Start with the job. Then earn autonomy.</h2>
+        <div class="step-grid">
+          <article class="step"><span class="step-num">STEP 01</span><h3>Walk one station.</h3><p>Show us the task, the pace, the exceptions, and what a good shift looks like.</p></article>
+          <article class="step"><span class="step-num">STEP 02</span><h3>Run it with an operator.</h3><p>A trained person controls the robot remotely from the first shift. The work gets done while we collect training data.</p></article>
+          <article class="step"><span class="step-num">STEP 03</span><h3>Step back over time.</h3><p>Routine actions move toward autonomy. The operator stays available for judgment and new edge cases.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="intervention" id="supervision">
+      <div class="wrap intervention-grid">
+        <div>
+          <div class="section-kicker">Human supervision</div>
+          <h2 class="section-title">When the robot hesitates, a person takes over.</h2>
+          <p>A jammed item, a bad seal, or something new should not stop the shift. The operator sees the station, guides the robot through the case, and returns control when the job is ready.</p>
+          <p>Each intervention becomes an example for the next similar case. The goal is fewer takeovers, not a floor with no people.</p>
+        </div>
+        <div class="operator-panel" aria-label="Illustrative remote intervention screen">
+          <div class="operator-top"><strong>Remote operator · Station 02</strong><span class="operator-state">Intervening</span></div>
+          <div class="camera-view" aria-hidden="true">
+            <img class="operator-photo" src="assets/stills/human-supervision.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
+          </div>
+          <div class="operator-log">
+            <div class="log-item"><small>Detected</small><strong>10:42:13 PM</strong></div>
+            <div class="log-item"><small>Response</small><strong>Operator connected</strong></div>
+            <div class="log-item"><small>Next</small><strong>Verify and resume</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="engagement" id="pilot">
+      <div class="wrap engagement-card">
+        <div>
+          <div class="section-kicker">First pilot</div>
+          <h2>Pay for a working shift, not a robotics program.</h2>
+          <p class="section-intro">We scope one job, bring the robot and operator, and stay responsible for making the shift work.</p>
+          <a class="button" style="margin-top:28px" href="mailto:founders@snlabs.dev?subject=Pilot%20site%20walkthrough">Discuss a pilot <span aria-hidden="true">↗</span></a>
+        </div>
+        <div>
+          <div class="terms">
+            <div class="term"><strong>Start</strong><span>One-time deployment and training fee</span></div>
+            <div class="term"><strong>Ongoing</strong><span>Monthly rate per robot-shift</span></div>
+            <div class="term"><strong>Target</strong><span>Priced below the loaded cost of the unfilled role</span></div>
+            <div class="term"><strong>Minimum</strong><span>Three-month pilot</span></div>
+          </div>
+          <p class="terms-note">Final scope depends on the station, cycle time, safety requirements, and robot fit. No exact price is promised before a walkthrough.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap faq-grid">
+        <div class="faq-intro">
+          <div class="section-kicker">Frequently asked</div>
+          <h2>The questions an operations team should ask.</h2>
+          <p>Plain answers for evaluating a first robot-operated shift.</p>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>What exactly am I hiring?</summary>
+            <p>A robot-operated shift for one defined job. We bring the robot, train the task, provide remote operation, and stay involved as the work moves toward greater autonomy.</p>
+          </details>
+          <details>
+            <summary>What kinds of work are a good first fit?</summary>
+            <p>Bounded, repetitive station work with clear inputs and outputs. Overnight quality checks, sorting, packing, and defined rework are the jobs we want to walk first.</p>
+          </details>
+          <details>
+            <summary>What happens when the robot gets stuck?</summary>
+            <p>A remote operator takes control, works through the case, verifies the result, and returns the robot to the routine task. The intervention is saved as training data.</p>
+          </details>
+          <details>
+            <summary>Do I need my team to operate it?</summary>
+            <p>No. Your team shows us the workflow and owns the requirements for the station. We remotely operate the robot throughout each shift, so you do not need to assign a dedicated robot operator.</p>
+          </details>
+          <details>
+            <summary>Does every station qualify?</summary>
+            <p>We begin with stations that match the robot's current reach, cycle time, safety limits, and ability to handle variation. As training improves, we are expanding the range of roles and station types we can support.</p>
+          </details>
+          <details>
+            <summary>How does pricing work?</summary>
+            <p>The pilot includes a one-time deployment and training fee, followed by a monthly rate per robot-shift. We target a rate below the loaded cost of the unfilled role. Additional training and task execution are available for an added fee. Alternatively, the robot can be purchased outright for a one-time charge, with a small recurring subscription for model access.</p>
+          </details>
+          <details>
+            <summary>How do we get started?</summary>
+            <p>Walk us through the missing shift: the station, normal cycle, edge cases, and staffing gap. If it fits, we will propose one bounded three-month pilot.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" id="contact">
+      <div class="wrap cta-card">
+        <div class="cta-content">
+          <h2>Show us the shift you cannot fill.</h2>
+          <p>We are selecting first pilot sites across California's Central Coast. Start with a walkthrough of one job at one station.</p>
+          <a class="button light" href="mailto:founders@snlabs.dev?subject=Site%20walkthrough">Book a site walkthrough <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    <div class="wrap">
-      <div class="foot-grid">
-        <div class="foot-brand">
-          <a class="logo" href="#top" style="color: var(--text);">
-            <img class="foot-logo" src="logo-300.svg" alt="" width="24" height="24">
-            Second Nature Labs
-          </a>
-          <p>Physics-grounded environments and evals for AI that touches the real world.</p>
-        </div>
-        <div class="foot-cols">
-          <div class="foot-col">
-            <h4>Product</h4>
-            <a href="#environments">First environment</a>
-            <a href="#benchmark">Benchmark</a>
-            <a href="#quickstart">Open proof</a>
-          </div>
-          <div class="foot-col">
-            <h4>Resources</h4>
-            <a href="https://github.com/Jaiparmar940/rlenv/blob/main/WRITEUP.md" target="_blank" rel="noopener">Benchmark writeup</a>
-            <a href="https://github.com/Jaiparmar940/rlenv/blob/main/DOMAIN_TRUTH.md" target="_blank" rel="noopener">Domain truth docs</a>
-            <a href="https://github.com/Jaiparmar940/rlenv" target="_blank" rel="noopener">GitHub</a>
-          </div>
-          <div class="foot-col">
-            <h4>Company</h4>
-            <a href="#contact">Contact</a>
-          </div>
-        </div>
-      </div>
-      <div class="foot-legal">
-        <span>© 2026 Second Nature Labs. All rights reserved.</span>
-        <span>Built to survive contact with reality.</span>
-      </div>
+    <div class="wrap footer-row">
+      <a class="footer-brand" href="#top"><img src="logo-300.svg" alt=""><span>Second Nature Labs</span></a>
+      <span class="footer-copy">Robot-operated coverage for the shift that doesn't exist. © 2026.</span>
+      <div class="footer-links"><a href="#jobs">Jobs</a><a href="#faq">FAQ</a><a href="mailto:founders@snlabs.dev">Contact</a></div>
     </div>
   </footer>
 
-</div><!-- /.dark -->
+  <script>
+    const menuButton = document.querySelector('.menu-toggle');
+    const menu = document.getElementById('nav-links');
 
-<script>
-(() => {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mobileScroll = matchMedia('(hover: none) and (pointer: coarse)').matches;
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const navEl = document.getElementById('nav');
-  function syncNavSurface() {
-    navEl.classList.toggle('is-scrolled', scrollY > 4);
-  }
-  syncNavSurface();
-  addEventListener('scroll', syncNavSurface, { passive: true });
-
-  /* ---------- hero art: interactive causal vector field ---------- */
-  const canvas = document.getElementById('hero-art');
-  const hctx = canvas.getContext('2d');
-  const heroShell = document.querySelector('.hero-shell');
-  const heroH1 = document.querySelector('.hero-copy h1');
-  const sectionNavLabel = document.querySelector('.section-nav-label');
-  const sectionNavUp = document.querySelector('.section-nav-up');
-  const sectionNavDown = document.querySelector('.section-nav-down');
-  let W = 0, H = 0, DPR = 1, heroVectors = [];
-  const heroPointer = { x: -9999, y: -9999, tx: -9999, ty: -9999, energy: 0 };
-
-  function buildHeroField() {
-    heroVectors = [];
-    const spacing = W < 720 ? 22 : 28;
-    for (let y = spacing * 0.5; y < H; y += spacing) {
-      for (let x = spacing * 0.5; x < W; x += spacing) {
-        const phase = Math.sin(x * 11.731 + y * 61.117) * 32741.193;
-        heroVectors.push({ x, y, phase: phase - Math.floor(phase) });
-      }
-    }
-  }
-
-  function drawHeroField(t) {
-    const seconds = t / 1000;
-    const centerX = W * 0.5;
-    const centerY = H * 0.48;
-    const clearX = Math.min(W * 0.38, 575);
-    const clearY = Math.min(H * 0.24, 210);
-    const levels = 18;
-    const neutral = Array(levels);
-    const amber = Array(levels);
-    const teal = Array(levels);
-
-    heroPointer.x += (heroPointer.tx - heroPointer.x) * 0.12;
-    heroPointer.y += (heroPointer.ty - heroPointer.y) * 0.12;
-    heroPointer.energy *= 0.955;
-
-    for (const point of heroVectors) {
-      const nx = (point.x - centerX) / clearX;
-      const ny = (point.y - centerY) / clearY;
-      const radius = Math.sqrt(nx * nx + ny * ny);
-      const copyClear = clamp((radius - 0.74) / 0.36, 0, 1);
-      if (copyClear <= 0.015) continue;
-
-      const wave = Math.sin(point.x * 0.0044 + seconds * 0.55) * 0.48
-        + Math.sin(point.y * 0.006 - seconds * 0.36 + point.x * 0.002) * 0.31
-        + Math.sin((point.x + point.y) * 0.0025 + seconds * 0.2) * 0.2;
-      let vx = Math.cos(wave);
-      let vy = Math.sin(wave);
-
-      const boundary = Math.exp(-Math.pow((radius - 1.02) / 0.32, 2)) * 0.86;
-      const tangent = Math.atan2(ny, nx) + Math.PI / 2;
-      vx += (Math.cos(tangent) - vx) * boundary;
-      vy += (Math.sin(tangent) - vy) * boundary;
-
-      const dx = point.x - heroPointer.x;
-      const dy = point.y - heroPointer.y;
-      const pointerInfluence = heroPointer.energy * Math.exp(-(dx * dx + dy * dy) / (180 * 180));
-      if (pointerInfluence > 0.003) {
-        const pointerTangent = Math.atan2(dy, dx) + Math.PI / 2;
-        vx += (Math.cos(pointerTangent) - vx) * pointerInfluence;
-        vy += (Math.sin(pointerTangent) - vy) * pointerInfluence;
-      }
-
-      const crest = 0.5 + 0.5 * Math.sin(
-        point.x * 0.0056 - seconds * 0.88 + Math.sin(point.y * 0.0042 + seconds * 0.25) * 1.4
-      );
-      const edgeFade = clamp(Math.min(point.x, W - point.x, point.y, H - point.y) / 64, 0, 1);
-      const alpha = copyClear * edgeFade * (0.06 + crest * 0.4 + pointerInfluence * 0.48);
-      const level = Math.min(levels - 1, Math.floor(alpha * levels));
-      if (level < 1) continue;
-
-      const norm = Math.hypot(vx, vy) || 1;
-      const length = (7 + crest * 9 + pointerInfluence * 6) / 2;
-      const ux = vx / norm * length;
-      const uy = vy / norm * length;
-      const colorWave = Math.sin(point.x * 0.007 - seconds * 0.52 + point.y * 0.003 + point.phase * 1.8);
-      const buckets = colorWave > 0.92 ? amber : colorWave < -0.94 ? teal : neutral;
-      const path = buckets[level] || (buckets[level] = new Path2D());
-      path.moveTo(point.x - ux, point.y - uy);
-      path.lineTo(point.x + ux, point.y + uy);
+    function closeMenu() {
+      menu.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Open navigation');
+      menuButton.textContent = '☰';
+      document.body.classList.remove('menu-open');
     }
 
-    hctx.lineWidth = 1;
-    hctx.lineCap = 'round';
-    for (let level = 1; level < levels; level += 1) {
-      const strength = level / levels;
-      if (neutral[level]) {
-        hctx.strokeStyle = `rgba(198,203,214,${strength * 0.72})`;
-        hctx.stroke(neutral[level]);
-      }
-      if (amber[level]) {
-        hctx.strokeStyle = `rgba(245,179,1,${strength * 0.86})`;
-        hctx.stroke(amber[level]);
-      }
-      if (teal[level]) {
-        hctx.strokeStyle = `rgba(58,161,137,${strength * 0.9})`;
-        hctx.stroke(teal[level]);
-      }
-    }
-  }
-
-  function drawHero(t) {
-    hctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    hctx.globalAlpha = 1;
-    hctx.clearRect(0, 0, W, H);
-    drawHeroField(t);
-  }
-
-  function sizeHero() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
-    W = canvas.clientWidth; H = canvas.clientHeight;
-    canvas.width = W * DPR; canvas.height = H * DPR;
-    buildHeroField();
-    if (reduced) drawHero(4300);
-  }
-  sizeHero();
-  addEventListener('resize', sizeHero);
-  if (!reduced) {
-    // The canvas is a fixed viewport layer now, so pointer position maps to it
-    // directly — listen on the window so the field reacts everywhere.
-    addEventListener('pointermove', (event) => {
-      heroPointer.tx = event.clientX;
-      heroPointer.ty = event.clientY;
-      if (heroPointer.x < -9000) {
-        heroPointer.x = heroPointer.tx;
-        heroPointer.y = heroPointer.ty;
-      }
-      heroPointer.energy = Math.min(1, heroPointer.energy + 0.12);
-    }, { passive: true });
-    document.documentElement.addEventListener('pointerleave', () => {
-      heroPointer.tx = -9999;
-      heroPointer.ty = -9999;
+    menuButton.addEventListener('click', () => {
+      const willOpen = !menu.classList.contains('open');
+      menu.classList.toggle('open', willOpen);
+      menuButton.setAttribute('aria-expanded', String(willOpen));
+      menuButton.setAttribute('aria-label', willOpen ? 'Close navigation' : 'Open navigation');
+      menuButton.textContent = willOpen ? '×' : '☰';
+      document.body.classList.toggle('menu-open', willOpen);
     });
-  }
 
-  /* ---------- training-gap art: calm deep-field drift ---------- */
-  const statementCanvas = document.getElementById('statement-art');
-  const sctx = statementCanvas.getContext('2d');
-  let SW = 0, SH = 0, SDPR = 1, statementDust = [];
-
-  function buildStatementDust() {
-    let seed = 113;
-    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    statementDust = Array.from({ length: 300 }, () => {
-      const roll = rnd();
-      return {
-        x: rnd(), y: rnd(),
-        z: 0.25 + rnd() * 0.75,
-        phase: rnd() * 6.28,
-        tint: roll < 0.08 ? 'violet' : roll < 0.16 ? 'blue' : 'paper'
-      };
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+    addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
     });
-  }
-
-  function drawTrainingField(t, progress) {
-    if (!SW || !SH) return;
-    sctx.setTransform(SDPR, 0, 0, SDPR, 0, 0);
-    sctx.clearRect(0, 0, SW, SH);
-    const scene = 0.32 + clamp(progress / 0.55, 0, 1) * 0.68;
-
-    for (const point of statementDust) {
-      const x = ((point.x + (t / 90000) * point.z) % 1) * (SW + 40) - 20;
-      const y = ((point.y + (t / 260000) * point.z) % 1) * (SH + 40) - 20;
-      const twinkle = 0.55 + Math.sin(t / 1600 + point.phase) * 0.45;
-      const alpha = (0.09 + point.z * 0.46) * twinkle * scene;
-      sctx.fillStyle = point.tint === 'violet'
-        ? `rgba(168,110,210,${alpha})`
-        : point.tint === 'blue'
-          ? `rgba(74,127,212,${alpha})`
-          : `rgba(226,222,210,${alpha})`;
-      sctx.beginPath();
-      sctx.arc(x, y, point.z * (point.tint === 'paper' ? 1.65 : 2.1), 0, Math.PI * 2);
-      sctx.fill();
-    }
-  }
-  function sizeStatementArt() {
-    SDPR = Math.min(devicePixelRatio || 1, 2);
-    SW = statementCanvas.clientWidth; SH = statementCanvas.clientHeight;
-    statementCanvas.width = SW * SDPR; statementCanvas.height = SH * SDPR;
-    buildStatementDust();
-    if (reduced) drawTrainingField(5200, 1);
-  }
-  sizeStatementArt();
-  addEventListener('resize', sizeStatementArt);
-
-  /* ---------- reveal ---------- */
-  const io = new IntersectionObserver((es) => {
-    for (const e of es) if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
-
-  /* ---------- environment window: prepare early, run once expanded ---------- */
-  const envWindow = document.getElementById('env-window');
-  const envFrame = document.getElementById('env-frame');
-  const envSrc = 'decision-layer/index.html?embed=1';
-  let envReady = false, envEpisodeQueued = false;
-  function markEnvReady() {
-    envReady = true;
-    envWindow.classList.add('is-live');
-    if (envEpisodeQueued) startEnvEpisode();
-  }
-  envFrame.addEventListener('load', () => {
-    if (envFrame.getAttribute('src') === envSrc) markEnvReady();
-  });
-  addEventListener('message', (event) => {
-    if (event.source !== envFrame.contentWindow || event.origin !== location.origin ||
-        event.data?.type !== 'snl-env-ready') return;
-    markEnvReady();
-  });
-  function startEnvEpisode() {
-    if (!envReady) {
-      envEpisodeQueued = true;
-      if (envFrame.getAttribute('src') !== envSrc) envFrame.src = envSrc;
-      return;
-    }
-    envEpisodeQueued = false;
-    envFrame.contentWindow.postMessage({ type: 'snl-start-trained' }, location.origin);
-  }
-  function resetEnvEpisode() {
-    envEpisodeQueued = false;
-    envWindow.classList.remove('is-expanded');
-    if (envReady) {
-      envFrame.contentWindow.postMessage({ type: 'snl-reset-preview' }, location.origin);
-    }
-  }
-  let envStarted = false, envStartTimer = 0, envWasInView = false;
-  // Prepare the compact preview before the visitor reaches it. The embedded
-  // view stays visually idle until the scroll expansion starts the trained run.
-  envFrame.src = envSrc;
-  if (reduced) {
-    envStarted = true;
-    envEpisodeQueued = true;
-    envWindow.classList.add('is-expanded');
-  }
-
-  /* ---------- expanded environment switcher + no-start episode ---------- */
-  const noStartView = document.getElementById('no-start-view');
-  const noStartLines = [...document.querySelectorAll('#no-start-terminal .no-start-line')];
-  const noStartBody = document.querySelector('#no-start-terminal .no-start-body');
-  const noStartReplay = document.getElementById('no-start-replay');
-  const envSwitchPrev = document.getElementById('env-switch-prev');
-  const envSwitchNext = document.getElementById('env-switch-next');
-  const decisionCaption = document.getElementById('decision-caption');
-  const noStartCaption = document.getElementById('no-start-caption');
-  const noStartCaret = document.createElement('span');
-  noStartCaret.className = 'no-start-caret';
-  const noStartTypeSeq = noStartLines.slice(1).map((line) => {
-    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let node;
-    while ((node = walker.nextNode())) nodes.push({ node, text: node.nodeValue });
-    return { line, nodes, isAgent: !!line.querySelector('.no-start-agent') };
-  });
-  let activeEnvironment = 'decision';
-  let environmentSwitchReady = false;
-  let environmentSwitching = false;
-  let environmentSwitchToken = 0;
-  let noStartRun = 0;
-  let noStartFollowQueued = false;
-
-  function followNoStartOutput() {
-    if (noStartFollowQueued) return;
-    noStartFollowQueued = true;
-    requestAnimationFrame(() => {
-      noStartFollowQueued = false;
-      if (activeEnvironment === 'no-start' && noStartBody.scrollHeight > noStartBody.clientHeight) {
-        noStartBody.scrollTop = noStartBody.scrollHeight;
-      }
+    addEventListener('resize', () => {
+      if (innerWidth > 760) closeMenu();
     });
-  }
 
-  function resetNoStartTranscript() {
-    noStartRun += 1;
-    noStartCaret.remove();
-    noStartLines[0].classList.add('on');
-    noStartTypeSeq.forEach(({ line, nodes }) => {
-      line.classList.remove('on');
-      nodes.forEach((part) => { part.node.nodeValue = ''; });
-    });
-    if (!reduced) noStartLines[0].appendChild(noStartCaret);
-    noStartBody.scrollTop = 0;
-  }
-
-  function typeNoStartEpisode() {
-    if (reduced) {
-      noStartTypeSeq.forEach(({ line, nodes }) => {
-        nodes.forEach((part) => { part.node.nodeValue = part.text; });
-        line.classList.add('on');
-      });
-      followNoStartOutput();
-      return;
+    const motionTargets = document.querySelectorAll('[data-motion]');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+      const motionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+      }, { threshold: 0.16, rootMargin: '8% 0px 8%' });
+      motionTargets.forEach((target) => motionObserver.observe(target));
     }
-    resetNoStartTranscript();
-    const run = noStartRun;
-    const later = (fn, delay) => setTimeout(() => {
-      if (run === noStartRun && activeEnvironment === 'no-start') fn();
-    }, delay);
-    let lineIndex = 0;
-    (function nextLine() {
-      if (lineIndex >= noStartTypeSeq.length) {
-        noStartTypeSeq[noStartTypeSeq.length - 1].line.appendChild(noStartCaret);
-        return;
-      }
-      const { line, nodes, isAgent } = noStartTypeSeq[lineIndex++];
-      if (!isAgent) {
-        later(() => {
-          nodes.forEach((part) => { part.node.nodeValue = part.text; });
-          line.classList.add('on');
-          line.appendChild(noStartCaret);
-          followNoStartOutput();
-          later(nextLine, 500);
-        }, 60);
-        return;
-      }
-      line.classList.add('on');
-      line.appendChild(noStartCaret);
-      followNoStartOutput();
-      let nodeIndex = 0, charIndex = 0;
-      (function typeCharacter() {
-        if (run !== noStartRun || activeEnvironment !== 'no-start') return;
-        if (nodeIndex >= nodes.length) { later(nextLine, 45); return; }
-        const part = nodes[nodeIndex];
-        charIndex += 1;
-        part.node.nodeValue = part.text.slice(0, charIndex);
-        followNoStartOutput();
-        if (charIndex >= part.text.length) { nodeIndex += 1; charIndex = 0; }
-        later(typeCharacter, 4);
-      })();
-    })();
-  }
-
-  function updateEnvironmentSwitches() {
-    const canSwitch = environmentSwitchReady && !environmentSwitching;
-    envSwitchPrev.classList.toggle('is-visible', canSwitch && activeEnvironment === 'no-start');
-    envSwitchNext.classList.toggle('is-visible', canSwitch && activeEnvironment === 'decision');
-  }
-
-  function applyEnvironmentView(view, replay = true) {
-    activeEnvironment = view === 'no-start' ? 'no-start' : 'decision';
-    const showNoStart = activeEnvironment === 'no-start';
-    envWindow.classList.toggle('show-no-start', showNoStart);
-    noStartView.setAttribute('aria-hidden', String(!showNoStart));
-    decisionCaption.classList.toggle('is-active', !showNoStart);
-    decisionCaption.setAttribute('aria-hidden', String(showNoStart));
-    noStartCaption.classList.toggle('is-active', showNoStart);
-    noStartCaption.setAttribute('aria-hidden', String(!showNoStart));
-    if (showNoStart && replay) typeNoStartEpisode();
-    if (!showNoStart) {
-      noStartRun += 1;
-      noStartCaret.remove();
-    }
-    updateEnvironmentSwitches();
-  }
-
-  function cancelEnvironmentTransition() {
-    environmentSwitchToken += 1;
-    environmentSwitching = false;
-    envWindow.removeAttribute('aria-busy');
-    envWindow.classList.remove('is-switching', 'is-powering-off', 'is-powering-on');
-  }
-
-  function setEnvironmentView(view, replay = true) {
-    cancelEnvironmentTransition();
-    applyEnvironmentView(view, replay);
-  }
-
-  function transitionEnvironmentView(view) {
-    const nextView = view === 'no-start' ? 'no-start' : 'decision';
-    if (nextView === activeEnvironment || environmentSwitching) return;
-    if (reduced) {
-      applyEnvironmentView(nextView, nextView === 'no-start');
-      if (nextView === 'decision') startEnvEpisode();
-      return;
-    }
-
-    const token = ++environmentSwitchToken;
-    environmentSwitching = true;
-    envWindow.setAttribute('aria-busy', 'true');
-    noStartRun += 1;
-    noStartCaret.remove();
-    updateEnvironmentSwitches();
-    envWindow.classList.remove('is-powering-on');
-    envWindow.classList.add('is-switching', 'is-powering-off');
-
-    setTimeout(() => {
-      if (token !== environmentSwitchToken) return;
-      applyEnvironmentView(nextView, false);
-      if (nextView === 'no-start') {
-        resetNoStartTranscript();
-      } else if (envReady) {
-        envFrame.contentWindow.postMessage({ type: 'snl-reset-preview' }, location.origin);
-      }
-
-      envWindow.classList.remove('is-powering-off');
-      envWindow.classList.add('is-powering-on');
-
-      setTimeout(() => {
-        if (token !== environmentSwitchToken) return;
-        if (nextView === 'no-start') typeNoStartEpisode();
-        else startEnvEpisode();
-      }, 1500);
-
-      setTimeout(() => {
-        if (token !== environmentSwitchToken) return;
-        environmentSwitching = false;
-        envWindow.removeAttribute('aria-busy');
-        envWindow.classList.remove('is-switching', 'is-powering-on');
-        updateEnvironmentSwitches();
-      }, 430);
-    }, 300);
-  }
-
-  resetNoStartTranscript();
-  envSwitchNext.addEventListener('click', () => transitionEnvironmentView('no-start'));
-  envSwitchPrev.addEventListener('click', () => transitionEnvironmentView('decision'));
-  noStartReplay.addEventListener('click', typeNoStartEpisode);
-  if (reduced) {
-    environmentSwitchReady = true;
-    updateEnvironmentSwitches();
-  }
-
-  /* ---------- scroll direction ---------- */
-  let lastY = scrollY, scrollDir = 1;
-  addEventListener('scroll', () => {
-    const y = scrollY;
-    if (y !== lastY) scrollDir = y > lastY ? 1 : -1;
-    lastY = y;
-  }, { passive: true });
-
-  /* ---------- smooth wheel scroll + snap assist (Scale/Lenis-style) ---------- */
-  // Wheel deltas move a virtual target; frame() eases the real scroll toward it
-  // with an exponential lerp (~110ms time constant — same feel as Lenis on
-  // scale.com), so flicks glide and the pinned animations play at a comfortable
-  // speed instead of jumping. Two assists on top of that:
-  //  1. One continuous wheel gesture (events < 300ms apart, momentum included)
-  //     can advance at most to the top of the NEXT section boundary — a hard
-  //     flick lands exactly on the next section, never through it.
-  //  2. When input goes idle with a showcase partially entered, the target
-  //     moves to the section top and the glide carries you in (forward-only),
-  //     briskly after a fast gesture, gently after a slow one.
-  // Keyboard, scrollbar, and touch scrolling stay native. Anything that ends
-  // up parked mid-way through a data scene after momentum settles is finished
-  // by the idle assist. Disabled under reduced motion.
-  const statementSection = document.getElementById('training-gap');
-  const termSection = document.getElementById('environments');
-  const benchSection = document.getElementById('benchmark');
-  const statementSnapThreshold = 0.25;
-  const snapTargets = [
-    { el: statementSection, threshold: statementSnapThreshold, desktopOnly: true },
-    { el: termSection, threshold: 0.35 },
-    { el: benchSection, threshold: 0.25 }
-  ];
-  const sectionNavTargets = [
-    heroShell,
-    statementSection,
-    termSection,
-    benchSection,
-    document.getElementById('platform'),
-    document.getElementById('customers'),
-    document.getElementById('quickstart'),
-    document.getElementById('contact')
-  ].filter(Boolean);
-  const gestureBounds = ['.statement', '#environments', '#benchmark', '#platform',
-    '#customers', '#quickstart', '#contact']
-    .map((s) => document.querySelector(s)).filter(Boolean);
-  // The pinned scenes play their animation across the section's extra
-  // height; a boundary at top + (height − viewport) is the exact point where
-  // the animation has fully played — stop there too, so leaving the finished
-  // demo/results takes its own gesture.
-  const stickyEnds = [termSection, benchSection].filter(Boolean);
-  const boundaryTops = (y0) => {
-    const tops = gestureBounds.map((el) => el.getBoundingClientRect().top + y0);
-    for (const el of stickyEnds) {
-      tops.push(el.getBoundingClientRect().top + y0 + el.offsetHeight - innerHeight);
-    }
-    return tops;
-  };
-  const smooth = { target: scrollY, current: scrollY, active: false, tau: 110 };
-  const maxScroll = () => document.documentElement.scrollHeight - innerHeight;
-  let snapTimer = 0, gestureTimer = 0, lastWheelT = 0, touchActive = false;
-  let mobileSettleTimer = 0, mobileProgrammatic = false, mobileTarget = scrollY;
-  let statementSnapLock = false, statementSnapLastWheelT = 0;
-  let statementSnapStartedAt = 0, statementSnapLastAbsDy = 0;
-  let inGesture = false, gestureCap = Infinity, wheelVel = 0, lastAbsDy = 0, capHitT = 0;
-  function glideTo(y, tau) {
-    smooth.target = clamp(y, 0, maxScroll());
-    smooth.current = scrollY;
-    smooth.tau = tau || 110;
-    if (mobileScroll) {
-      smooth.active = false;
-      mobileProgrammatic = true;
-      mobileTarget = smooth.target;
-      scrollTo({ top: mobileTarget, behavior: 'smooth' });
-      return;
-    }
-    smooth.active = true;
-  }
-  // Nav links into a sticky section land on its first frame, where the stage is
-  // still at its deepest tilt and nothing has filled in. These play the section
-  // instead: glide to the top, then walk the sticky range at a readable pace so
-  // the tilt settles and the episode/bars run. Constant-ish speed (eased at
-  // both ends) rather than the exponential glide, which would crawl through the
-  // last stretch — exactly where the payoff is.
-  const autoplayHrefs = ['#environments', '#benchmark'];
-  const autoplay = { active: false, from: 0, to: 0, t0: 0, dur: 0 };
-  let pendingAutoplay = 0;
-  function cancelAutoplay() {
-    autoplay.active = false;
-    pendingAutoplay = 0;
-    if (mobileScroll) {
-      mobileProgrammatic = false;
-      clearTimeout(mobileSettleTimer);
-    }
-  }
-  function startAutoplay(from, to, now, msPerViewport = 2560) {
-    const dist = clamp(to, 0, maxScroll()) - from;
-    if (dist <= 4) return;
-    autoplay.from = from;
-    autoplay.to = from + dist;
-    // ~2.56s per viewport of travel: a sticky range is ~0.7vh, so ≈1.8s end to
-    // end (25% quicker than the first pass, which read as sluggish)
-    const minDur = msPerViewport < 2000 ? 720 : 960;
-    autoplay.dur = clamp((dist / innerHeight) * msPerViewport, minDur, 3360);
-    autoplay.t0 = now;
-    autoplay.active = true;
-  }
-  function playRemainingRange(to, now, msPerViewport) {
-    scrollDir = 1;
-    clearTimeout(snapTimer);
-    clearTimeout(gestureTimer);
-    clearTimeout(mobileSettleTimer);
-    inGesture = false;
-    if (mobileScroll) {
-      cancelAutoplay();
-      smooth.target = smooth.current = scrollY;
-      smooth.active = false;
-      glideTo(to, 0);
-      return;
-    }
-    if (!autoplay.active) {
-      cancelAutoplay();
-      smooth.target = smooth.current = scrollY;
-      smooth.active = false;
-      startAutoplay(scrollY, to, now, msPerViewport);
-    }
-  }
-  let sectionNavIndex = 0;
-  const sectionTop = (el) => el.getBoundingClientRect().top + scrollY;
-  const isAutoplaySection = (el) => el === termSection || el === benchSection;
-  function updateSectionNav() {
-    const probe = scrollY + innerHeight * 0.5;
-    let index = 0;
-    for (let i = 1; i < sectionNavTargets.length; i++) {
-      if (sectionTop(sectionNavTargets[i]) <= probe) index = i;
-      else break;
-    }
-    sectionNavIndex = index;
-    sectionNavLabel.hidden = index !== 0;
-    sectionNavUp.hidden = index === 0;
-    const atLastSection = index === sectionNavTargets.length - 1;
-    sectionNavDown.classList.toggle('is-invisible', atLastSection);
-    sectionNavDown.disabled = atLastSection;
-    sectionNavDown.setAttribute('aria-hidden', String(atLastSection));
-  }
-  function goToAdjacentSection(direction) {
-    const index = clamp(sectionNavIndex + direction, 0, sectionNavTargets.length - 1);
-    if (index === sectionNavIndex) return;
-    const el = sectionNavTargets[index];
-    const top = sectionTop(el);
-    const rangeEnd = top + Math.max(0, el.offsetHeight - innerHeight);
-    const autoplayForward = direction > 0 && isAutoplaySection(el);
-    const target = direction < 0 && isAutoplaySection(el) ? rangeEnd : top;
-
-    cancelAutoplay();
-    statementSnapLock = false;
-    clearTimeout(snapTimer);
-    clearTimeout(gestureTimer);
-    inGesture = false;
-    scrollDir = direction;
-    if (reduced) {
-      scrollTo(0, target);
-    } else {
-      glideTo(target, autoplayForward ? 90 : 110);
-      if (autoplayForward) pendingAutoplay = rangeEnd;
-    }
-  }
-  sectionNavUp.addEventListener('click', () => goToAdjacentSection(-1));
-  sectionNavDown.addEventListener('click', () => goToAdjacentSection(1));
-  function startGesture() {
-    inGesture = true;
-    capHitT = 0;
-    const y0 = scrollY;
-    // a boundary within ~20% of a viewport counts as "already here", so a
-    // gesture starting on a section top can carry into the next section
-    const margin = innerHeight * 0.2;
-    gestureCap = Infinity;
-    for (const top of boundaryTops(y0)) {
-      if (top > y0 + margin && top < gestureCap) gestureCap = top;
-    }
-  }
-  function maybeSnap() {
-    if (scrollDir < 0) return;
-    // never assist mid-playback, or while a finger is still on the screen —
-    // completing a scene under a resting finger reads as the page moving on
-    // its own, and the finger's next move would fight the autoplay
-    if (autoplay.active || touchActive || mobileProgrammatic) return;
-    // parked at a section boundary (a capped flick or a takeover landed
-    // there)? that's a deliberate stop — never chain-snap into the next
-    // section. Deliberate landings sit within a couple of px of the
-    // boundary; a wider window would also swallow touch momentum that
-    // happens to die just past one, which should get the assists below.
-    const restY = smooth.active ? smooth.target : scrollY;
-    for (const top of boundaryTops(scrollY)) {
-      const d = restY - top;
-      if (d >= -2 && d < 6) return;
-    }
-    // Glide pace tracks how hard the user was scrolling.
-    const tau = clamp(260 - wheelVel, 120, 260);
-    // parked mid-way through a pinned data scene: finish it the way a
-    // downward wheel would (half-tilted panels are never a resting pose)
-    for (const el of [termSection, benchSection]) {
-      const top = el.getBoundingClientRect().top + scrollY;
-      const end = top + el.offsetHeight - innerHeight;
-      if (restY > top && restY < end - 4) {
-        playRemainingRange(end, performance.now());
-        return;
-      }
-    }
-    for (const { el, threshold, desktopOnly } of snapTargets) {
-      if (desktopOnly && !matchMedia('(hover: hover) and (pointer: fine)').matches) continue;
-      const top = el.getBoundingClientRect().top;
-      const finalTop = smooth.active ? top - (smooth.target - scrollY) : top;
-      const entered = (innerHeight - finalTop) / innerHeight;
-      if (finalTop > 2 && entered >= threshold) {
-        const landingTop = scrollY + top;
-        if (isAutoplaySection(el)) {
-          // Keep the entry glide and sticky playback in one uninterrupted
-          // motion. Starting from the current position avoids the old pause at
-          // the section top, while stickyProgress naturally remains at zero
-          // until that boundary is crossed and then begins the animation.
-          const rangeEnd = landingTop + Math.max(0, el.offsetHeight - innerHeight);
-          playRemainingRange(rangeEnd, performance.now());
-        } else {
-          glideTo(landingTop, tau);
-        }
-        return;
-      }
-    }
-  }
-  function queueSnap(delay) { clearTimeout(snapTimer); snapTimer = setTimeout(maybeSnap, delay); }
-  function finishMobileScroll() {
-    clearTimeout(mobileSettleTimer);
-    if (!mobileScroll || touchActive) return;
-    smooth.target = smooth.current = scrollY;
-    smooth.active = false;
-    if (mobileProgrammatic) {
-      mobileProgrammatic = false;
-      // Native smooth scrolling can finish on a fractional CSS pixel. Pin the
-      // final frame to the requested integer so sticky progress reaches the
-      // exact 0/1 boundary instead of stopping just short.
-      const exactTarget = clamp(Math.round(mobileTarget), 0, maxScroll());
-      if (Math.abs(scrollY - exactTarget) > 0.5) scrollTo(0, exactTarget);
-      smooth.target = smooth.current = exactTarget;
-    }
-    if (pendingAutoplay) {
-      const rangeEnd = pendingAutoplay;
-      pendingAutoplay = 0;
-      requestAnimationFrame(() => playRemainingRange(rangeEnd, performance.now()));
-      return;
-    }
-    queueSnap(0);
-  }
-  function queueMobileSettle(delay = 280) {
-    clearTimeout(mobileSettleTimer);
-    mobileSettleTimer = setTimeout(finishMobileScroll, delay);
-  }
-  if (!reduced) {
-    addEventListener('wheel', (e) => {
-      if (mobileScroll) return;
-      if (e.ctrlKey) return;                                    // pinch-zoom
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;      // horizontal panes
-      e.preventDefault();
-      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
-      const dy = e.deltaY * unit;
-      // Once the statement snap starts, absorb the tail of the same downward
-      // trackpad gesture so momentum cannot drag the page past its centered
-      // landing. A gap, upward input, or a renewed high-amplitude swipe
-      // immediately returns control without requiring pointer movement.
-      if (statementSnapLock) {
-        const absDy = Math.abs(dy);
-        const renewedSwipe = dy > 0 && e.timeStamp - statementSnapStartedAt > 220 &&
-          absDy > Math.max(10, statementSnapLastAbsDy * 1.5);
-        const renewedWheel = e.deltaMode !== 0 && !smooth.active;
-        if (dy < 0 || e.timeStamp - statementSnapLastWheelT > 300 ||
-            renewedSwipe || renewedWheel) {
-          statementSnapLock = false;
-        } else {
-          statementSnapLastWheelT = e.timeStamp;
-          statementSnapLastAbsDy = absDy;
-          scrollDir = 1;
-          return;
-        }
-      }
-      // Do not wait for trackpad momentum to decay before completing the
-      // hero-to-statement handoff. As soon as the same entry threshold used by
-      // the idle snap is crossed, take over with the short exponential glide.
-      if (dy > 0 && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        const statementTop = sectionTop(statementSection);
-        const projectedY = (smooth.active ? smooth.target : scrollY) + dy;
-        const entered = (innerHeight - (statementTop - projectedY)) / innerHeight;
-        if (scrollY < statementTop - 2 && entered >= statementSnapThreshold) {
-          cancelAutoplay();
-          clearTimeout(snapTimer);
-          clearTimeout(gestureTimer);
-          inGesture = false;
-          scrollDir = 1;
-          statementSnapLock = true;
-          statementSnapStartedAt = e.timeStamp;
-          statementSnapLastWheelT = e.timeStamp;
-          statementSnapLastAbsDy = Math.abs(dy);
-          glideTo(statementTop, 110);
-          return;
-        }
-      }
-      // Once a pinned scene has begun moving, any downward wheel input
-      // plays its remaining range exactly like the matching nav link does.
-      // Downward input during playback leaves it running; upward input falls
-      // through and retains the normal user-takeover behavior below.
-      let activeStickyEnd = 0;
-      for (const el of stickyEnds) {
-        const top = el.getBoundingClientRect().top + scrollY;
-        const end = top + el.offsetHeight - innerHeight;
-        if (scrollY >= top - 2 && scrollY < end - 4) {
-          activeStickyEnd = end;
-          break;
-        }
-      }
-      if (dy > 0 && activeStickyEnd) {
-        playRemainingRange(activeStickyEnd, e.timeStamp);
-        return;
-      }
-      // a wheel during nav-link playback is the user taking over: drop the
-      // playback and let this event seed a normal gesture from where we are
-      if (autoplay.active || pendingAutoplay) {
-        cancelAutoplay();
-        smooth.target = smooth.current = scrollY;
-        inGesture = false;
-      }
-      if (!inGesture || e.timeStamp - lastWheelT > 300) startGesture();
-      // trackpad momentum can keep a gesture "alive" (< 300ms between events)
-      // long after the flick landed on its cap, so a fresh swipe would stay
-      // pinned to the old boundary and the page felt stuck. Momentum deltas
-      // only ever decay — a delta that JUMPS ≥1.5× over the previous event is
-      // a new finger swipe. But near boundaries the target hits the cap while
-      // the finger is still down and finger deltas are jumpy, so the jump
-      // test alone leaks; require the cap to have been held ≥350ms first.
-      else if (dy > 0 && smooth.target >= gestureCap - 2 &&
-               capHitT && e.timeStamp - capHitT > 350 &&
-               Math.abs(dy) > Math.max(10, lastAbsDy * 1.5)) startGesture();
-      lastAbsDy = Math.abs(dy);
-      lastWheelT = e.timeStamp;
-      clearTimeout(gestureTimer);
-      gestureTimer = setTimeout(() => { inGesture = false; }, 300);
-      wheelVel = wheelVel * 0.7 + Math.abs(dy) * 0.3;
-      if (!smooth.active) { smooth.target = smooth.current = scrollY; }
-      smooth.tau = 110;
-      smooth.target = clamp(smooth.target + dy, 0, Math.min(maxScroll(), gestureCap));
-      if (smooth.target < gestureCap - 2) capHitT = 0;
-      else if (!capHitT) capHitT = e.timeStamp; // target just landed on the cap
-      smooth.active = true;
-      if (dy) scrollDir = dy > 0 ? 1 : -1;
-      queueSnap(200);
-    }, { passive: false });
-    addEventListener('scroll', () => {
-      if (mobileScroll) {
-        smooth.target = smooth.current = scrollY;
-        smooth.active = false;
-        if (!touchActive) queueMobileSettle();
-        return;
-      }
-      // scroll we didn't write (touch, keys, scrollbar, anchor) → adopt it,
-      // and drop any nav-link playback it interrupted
-      if (Math.abs(scrollY - smooth.current) > 1.5) {
-        cancelAutoplay();
-        smooth.target = smooth.current = scrollY;
-        smooth.active = false;
-        queueSnap(160);
-      }
-    }, { passive: true });
-    // in-page anchors ride the same glide instead of jumping
-    document.querySelectorAll('a[href^="#"]').forEach((a) => {
-      a.addEventListener('click', (e) => {
-        const href = a.getAttribute('href');
-        const el = document.querySelector(href);
-        if (!el) return;
-        e.preventDefault();
-        cancelAutoplay();
-        statementSnapLock = false;
-        const top = scrollY + el.getBoundingClientRect().top;
-        const play = autoplayHrefs.includes(href);
-        // sections that go on to autoplay get a brisker approach: the arrival is
-        // a beat before the real motion, not the main event
-        glideTo(top, play ? 90 : 150);
-        // queued, not started: frame() kicks it off once the glide has landed
-        if (play) pendingAutoplay = top + (el.offsetHeight - innerHeight);
-      });
-    });
-    // Mobile touch remains native while the finger and inertial scrolling are
-    // active. Once the browser reports that motion has settled, the assist uses
-    // the browser's composited smooth scroll instead of the desktop rAF lerp.
-    // This avoids two scroll engines fighting during iOS/Android momentum.
-    let touchY = 0;
-    addEventListener('touchstart', (e) => {
-      cancelAutoplay();
-      mobileProgrammatic = false;
-      mobileTarget = scrollY;
-      clearTimeout(mobileSettleTimer);
-      statementSnapLock = false;
-      touchActive = true;
-      touchY = e.touches[0] ? e.touches[0].clientY : 0;
-    }, { passive: true });
-    addEventListener('touchmove', (e) => {
-      const touch = e.touches[0];
-      if (!touch) return;
-      const dy = touchY - touch.clientY;
-      touchY = touch.clientY;
-      // record intent even before the scroll position moves (e.g. an upward
-      // drag while parked at a scene end must block the forward-only assist)
-      if (dy > 2) scrollDir = 1;
-      else if (dy < -2) scrollDir = -1;
-    }, { passive: true });
-    addEventListener('touchend', (e) => {
-      touchActive = e.touches.length > 0;
-      if (!touchActive) {
-        if (mobileScroll) queueMobileSettle();
-        else queueSnap(180);
-      }
-    }, { passive: true });
-    addEventListener('touchcancel', (e) => {
-      touchActive = e.touches.length > 0;
-      if (!touchActive) {
-        if (mobileScroll) queueMobileSettle();
-        else queueSnap(180);
-      }
-    }, { passive: true });
-    if ('onscrollend' in window) {
-      addEventListener('scrollend', finishMobileScroll, { passive: true });
-    }
-    addEventListener('keydown', cancelAutoplay, { passive: true });
-  }
-
-  /* ---------- scroll-driven 3D stages ---------- */
-  const statementCopy = document.getElementById('statement-copy');
-  const benchPanel = document.getElementById('bench-panel');
-  const benchF1 = document.getElementById('bench-frame-1');
-  const benchF2 = document.getElementById('bench-frame-2');
-  const benchCap = document.getElementById('bench-caption');
-  const benchBars = document.querySelectorAll('.bench-row');
-
-  const termStage = document.getElementById('term-stage');
-  const termPanel = document.getElementById('env-window');
-  const termF1 = document.getElementById('term-frame-1');
-  const termF2 = document.getElementById('term-frame-2');
-  const termCap = document.getElementById('term-caption');
-  const termContours = document.getElementById('term-contours');
-  const termBins = [document.getElementById('term-bin-1'), document.getElementById('term-bin-2')];
-  const siteNav = document.querySelector('nav');
-
-  const splitStage = document.getElementById('split-stage');
-  const splitPanel = document.getElementById('split-panel');
-  const splitF1 = document.getElementById('split-frame-1');
-  const splitF2 = document.getElementById('split-frame-2');
-
-  function stickyProgress(el) {
-    const r = el.getBoundingClientRect();
-    return clamp(-r.top / (r.height - innerHeight), 0, 1);
-  }
-  function viewProgress(el) {
-    const r = el.getBoundingClientRect();
-    return clamp((innerHeight - r.top) / (innerHeight + r.height), 0, 1);
-  }
-
-  let lastFrameT = 0;
-  function frame(now) {
-    now = now || 0;
-    // smooth-scroll step first, so the stages below read the eased position
-    if (!reduced && autoplay.active) {
-      // nav-link playback through a sticky section, keeping smooth.* in step so
-      // the wheel/scroll handlers see a position they wrote and don't fight it.
-      // Trapezoid velocity — short ramp, cruise, long settle — rather than a
-      // symmetric ease: a symmetric one is still near-motionless a fifth of the
-      // way in, which reads as the page having stalled at the section top.
-      const k = clamp((now - autoplay.t0) / autoplay.dur, 0, 1);
-      const A = 0.15, D = 0.35, V = 1 / (1 - (A + D) / 2); // V = peak, so ∫ = 1
-      const eK = k < A ? V * k * k / (2 * A)
-        : k < 1 - D ? V * (k - A / 2)
-        : 1 - V * (1 - k) * (1 - k) / (2 * D);
-      smooth.current = smooth.target = lerp(autoplay.from, autoplay.to, eK);
-      scrollTo(0, smooth.current);
-      if (k >= 1) autoplay.active = false;
-    } else if (!reduced && smooth.active) {
-      const dt = Math.min(64, now - lastFrameT) || 16;
-      const k = 1 - Math.exp(-dt / smooth.tau);
-      smooth.current += (smooth.target - smooth.current) * k;
-      const rest = Math.abs(smooth.target - smooth.current);
-      // An exponential approach spends its whole tail creeping the last few
-      // pixels, which read as a dead pause at the section top before playback.
-      // Hand off at 12px instead — the closing jump is imperceptible, and it
-      // cuts several hundred ms of nothing-happening.
-      if (rest < (pendingAutoplay ? 12 : 0.4)) {
-        smooth.current = smooth.target;
-        smooth.active = false;
-        if (pendingAutoplay) {
-          startAutoplay(smooth.current, pendingAutoplay, now);
-          pendingAutoplay = 0;
-        }
-      }
-      scrollTo(0, smooth.current);
-    }
-    lastFrameT = now;
-    if (!reduced) {
-      // The field is the fixed page background now — draw it every frame.
-      drawHero(now);
-      // Hero: the headline floats out as the Polanyi statement approaches.
-      const hr = heroShell.getBoundingClientRect();
-      const sp = clamp(-hr.top / (hr.height - innerHeight), 0, 1);
-      const aOut = clamp(sp / 0.90, 0, 1);
-      heroH1.style.transform = `translateY(${-aOut * 150}px) scale(${1 - aOut * 0.06})`;
-      heroH1.style.opacity = 1 - aOut;
-
-      // The statement rises into place while its section enters the viewport,
-      // so the hero hands directly to readable copy without another long
-      // pinned-scroll animation.
-      const statementRect = statementSection.getBoundingClientRect();
-      const statementIn = clamp(
-        (innerHeight - statementRect.top) / (innerHeight * 0.8), 0, 1);
-      if (statementRect.bottom > -100 && statementRect.top < innerHeight + 100) {
-        drawTrainingField(now, statementIn);
-      }
-      const statementEase = 1 - Math.pow(1 - statementIn, 3);
-      statementCopy.style.opacity = Math.min(1, statementIn * 1.5);
-      statementCopy.style.transform = `translateY(${lerp(180, 0, statementEase)}px)`;
-
-      // Benchmark stage: settle from a deep tilt to nearly flat.
-      // On phones, damp the 3D amplitude — full-size tilts overshoot the small
-      // stages and ride panels over the captions below them.
-      const mob = innerWidth < 640 ? 0.35 : 1;
-      let p = stickyProgress(benchSection);
-      let e = 1 - Math.pow(1 - p, 2);
-      // The stage itself is centered by .showcase-sticky; finish the main
-      // results window at translateY(0) so the completed pose shares that
-      // exact viewport center. The wireframes keep their depth/parallax offsets.
-      benchPanel.style.transform =
-        `rotateY(${lerp(-22, -6, e) * mob}deg) rotateX(${lerp(10, 2, e) * mob}deg) translateY(${lerp(70, 0, e) * mob}px) translateZ(${lerp(-80, 0, e) * mob}px)`;
-      benchF1.style.transform =
-        `rotateY(${lerp(-26, -9, e) * mob}deg) rotateX(${lerp(12, 3, e) * mob}deg) translateY(${lerp(100, 6, e) * mob}px) translateZ(${lerp(-160, -40, e) * mob}px)`;
-      benchF2.style.transform =
-        `rotateY(${lerp(-30, -12, e) * mob}deg) rotateX(${lerp(14, 4, e) * mob}deg) translateY(${lerp(140, 24, e) * mob}px) translateZ(${lerp(-240, -90, e) * mob}px)`;
-      const bp = p; // bars track the full sticky animation: empty at start, score% at end
-      benchBars.forEach((row) => {
-        const s = parseFloat(row.dataset.score) * bp;
-        row.querySelector('.bar').style.width = s + '%';
-        row.querySelector('.scorenum b').textContent = s.toFixed(1);
-      });
-      benchCap.style.opacity = clamp((p - 0.55) / 0.25, 0, 1);
-      benchCap.style.transform = `translateY(${lerp(24, 0, clamp((p - 0.55) / 0.25, 0, 1))}px)`;
-
-      // Environment stage: small angled window grows to fill the viewport,
-      // then the live episode starts. Opposite tilt from the benchmark.
-      const termRect = termSection.getBoundingClientRect();
-      const termInView = termRect.top < innerHeight && termRect.bottom > 0;
-      if (termInView && !envWasInView && scrollDir > 0) {
-        clearTimeout(envStartTimer);
-        envStartTimer = 0;
-        envStarted = false;
-        environmentSwitchReady = false;
-        setEnvironmentView('decision', false);
-        resetEnvEpisode();
-      }
-      envWasInView = termInView;
-      p = stickyProgress(termSection);
-      e = 1 - Math.pow(1 - p, 2);
-      const phone = innerWidth < 640;
-      const w0 = phone ? innerWidth - 48 : Math.min(640, innerWidth * 0.62);
-      const h0 = phone ? Math.min(320, innerHeight * 0.38) : Math.min(380, innerHeight * 0.42);
-      const captionGap = phone ? 18 : 26;
-      const headerGap = (siteNav ? siteNav.offsetHeight : (phone ? 60 : 68)) + (phone ? 12 : 20);
-      // The preview opens enough to make the two live reasoning streams easy
-      // to follow, but remains a framed object in the page. Cap its height to
-      // the actual band between the sticky header and the caption so short
-      // viewports cannot push the outer frame underneath the navigation.
-      const w1 = phone ? innerWidth - 20 : Math.min(1400, innerWidth * 0.74);
-      const preferredH1 = phone ? Math.min(440, innerHeight * 0.62) : Math.min(680, innerHeight * 0.64);
-      const captionTop = termCap.offsetTop || (innerHeight - 190);
-      const safeExpandedH = Math.max(h0, (captionTop - captionGap - headerGap) / 1.08);
-      const h1 = Math.min(preferredH1, safeExpandedH);
-      termStage.style.width = lerp(w0, w1, e) + 'px';
-      termStage.style.height = lerp(h0, h1, e) + 'px';
-      const stageSettle = clamp((p - 0.62) / 0.32, 0, 1);
-      const animatedStageLift = -stageSettle * innerHeight * (phone ? 0.02 : 0.025);
-      // The caption can grow (for example when its CTA is present), so derive
-      // the final lift from its real top edge instead of assuming a fixed copy
-      // height. Account for the outer wireframe and preserve a readable gap.
-      const stageOuterBottom = termStage.offsetTop + termStage.offsetHeight * 1.04;
-      const clearCaptionLift = termCap.offsetTop - captionGap - stageOuterBottom;
-      const captionClearance = clamp((p - 0.78) / 0.18, 0, 1);
-      const desiredStageLift = lerp(
-        animatedStageLift,
-        Math.min(animatedStageLift, clearCaptionLift),
-        captionClearance
-      );
-      const stageOuterTop = termStage.offsetTop - termStage.offsetHeight * 0.04;
-      const headerClearanceLift = headerGap - stageOuterTop;
-      const stageLift = Math.max(desiredStageLift, headerClearanceLift);
-      termStage.style.transform = `translateY(${stageLift}px)`;
-      // The single-stream diagnostic transcript needs less horizontal room
-      // than the side-by-side planner. Narrow it symmetrically while keeping
-      // the full height available for the longer compound-failure diagnosis.
-      const terminalSideInset = activeEnvironment === 'no-start' ? (phone ? 4 : 14) : 0;
-      termPanel.style.inset = `${lerp(5, 1.4, e)}% ${lerp(6, 1.2, e) + terminalSideInset}%`;
-      termPanel.style.transform =
-        `rotateY(${lerp(22, 0, e) * mob}deg) rotateX(${lerp(-10, 0, e) * mob}deg) translateY(${lerp(48, 0, e) * mob}px)`;
-      termF1.style.transform =
-        `rotateY(${lerp(26, 2, e) * mob}deg) rotateX(${lerp(-12, 0, e) * mob}deg) translateY(${lerp(72, 6, e) * mob}px) translateZ(${lerp(-80, -16, e) * mob}px)`;
-      termF2.style.transform =
-        `rotateY(${lerp(30, 4, e) * mob}deg) rotateX(${lerp(-14, 0, e) * mob}deg) translateY(${lerp(100, 14, e) * mob}px) translateZ(${lerp(-150, -40, e) * mob}px)`;
-      termCap.classList.toggle('is-visible', p >= 0.96);
-      termCap.style.pointerEvents = p >= 0.96 ? 'auto' : 'none';
-      const switchReady = p >= 0.96;
-      if (environmentSwitchReady !== switchReady) {
-        environmentSwitchReady = switchReady;
-        if (!switchReady && activeEnvironment === 'no-start') setEnvironmentView('decision', false);
-        else updateEnvironmentSwitches();
-      }
-      const deco = 1 - clamp((p - 0.45) / 0.4, 0, 1);
-      termContours.style.opacity = String(deco);
-      termBins.forEach((el) => { if (el) el.style.opacity = String(deco); });
-      // Hysteresis keeps the compact and expanded states deterministic: the
-      // streams begin only once fully opened, then return to a blank initial
-      // state once the visitor collapses the window again.
-      if (!envStarted && p >= 0.88) {
-        envStarted = true;
-        envWindow.classList.add('is-expanded');
-        envStartTimer = setTimeout(startEnvEpisode, 80);
-      } else if (envStarted && p <= 0.12) {
-        clearTimeout(envStartTimer);
-        envStartTimer = 0;
-        envStarted = false;
-        resetEnvEpisode();
-      }
-
-      // Split stage: gentle parallax tilt as it crosses the viewport.
-      p = viewProgress(splitStage);
-      splitPanel.style.transform =
-        `rotateY(${lerp(-14, -4, p) * mob}deg) rotateX(${lerp(6, 1, p) * mob}deg) translateY(${lerp(40, -20, p) * mob}px)`;
-      splitF1.style.transform = `rotateY(${lerp(-18, -7, p) * mob}deg) translateY(${lerp(60, -6, p) * mob}px) translateZ(${-50 * mob}px)`;
-      splitF2.style.transform = `rotateY(${lerp(-22, -10, p) * mob}deg) translateY(${lerp(80, 6, p) * mob}px) translateZ(${-110 * mob}px)`;
-    } else {
-      benchBars.forEach((row) => {
-        row.querySelector('.bar').style.width = row.dataset.score + '%';
-      });
-      benchCap.style.opacity = 1;
-    }
-    updateSectionNav();
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-})();
-</script>
-
+  </script>
 </body>
 </html>

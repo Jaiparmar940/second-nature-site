@@ -6,46 +6,54 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1200px; height: 630px; overflow: hidden; }
   body {
-    background: #0a0a0a;
+    background: #f4f0e6;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     position: relative;
-    color: #f2f0eb;
+    color: #12231d;
   }
   .glow {
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse 900px 560px at 78% 30%, rgba(58, 74, 92, 0.30), transparent 65%);
+    background:
+      radial-gradient(circle at 12% 18%, rgba(211, 243, 121, 0.38), transparent 34%),
+      radial-gradient(circle at 92% 78%, rgba(61, 155, 133, 0.22), transparent 32%);
   }
   .frame {
     position: absolute; inset: 26px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(18, 35, 29, 0.16);
   }
-  .tick { position: absolute; width: 13px; height: 13px; border: 1px solid rgba(255,255,255,0.38); }
+  .tick { position: absolute; width: 13px; height: 13px; border: 1px solid rgba(18,35,29,0.38); }
   .tick.tl { top: -7px; left: -7px; border-right: none; border-bottom: none; }
   .tick.tr { top: -7px; right: -7px; border-left: none; border-bottom: none; }
   .tick.bl { bottom: -7px; left: -7px; border-right: none; border-top: none; }
   .tick.br { bottom: -7px; right: -7px; border-left: none; border-top: none; }
   .content {
-    position: absolute; left: 96px; top: 50%; transform: translateY(-50%);
-    max-width: 760px;
+    position: absolute; left: 82px; top: 74px;
+    max-width: 880px;
   }
-  .mark { display: block; margin-bottom: 44px; object-fit: contain; }
+  .brand { display: flex; align-items: center; gap: 18px; margin-bottom: 64px; }
+  .mark { display: block; object-fit: contain; }
+  .brand-name { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px;
+    color: #296c5d; font-size: 16px; font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .eyebrow::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #3d9b85; }
   h1 {
-    font-size: 66px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.05;
-    margin-bottom: 26px;
+    font-size: 72px; font-weight: 760; letter-spacing: -0.055em; line-height: 0.96;
+    margin-bottom: 28px; max-width: 760px;
   }
   p {
-    font-size: 31px; font-weight: 400; color: #9b9890; line-height: 1.4;
-    max-width: 640px;
+    font-size: 25px; font-weight: 500; color: #486057; line-height: 1.4;
+    max-width: 760px;
   }
   .bin {
     position: absolute; right: 52px; bottom: 48px;
-    font-family: "Consolas", "Menlo", monospace;
-    font-size: 17px; letter-spacing: 0.14em; color: #5c5a54;
+    font-size: 17px; font-weight: 700; letter-spacing: 0.08em; color: #296c5d;
   }
   .ringart {
-    position: absolute; right: -170px; top: 50%; transform: translateY(-50%);
-    opacity: 0.14;
-    object-fit: contain;
+    position: absolute; right: -190px; top: 50%; transform: translateY(-50%);
+    opacity: 0.08; object-fit: contain;
   }
 </style>
 </head>
@@ -57,9 +65,13 @@
     <div class="tick bl"></div><div class="tick br"></div>
   </div>
   <div class="content">
-    <img class="mark" src="logo-300.svg" alt="" width="104" height="104">
-    <h1>Second Nature Labs</h1>
-    <p>Physics-grounded environments and evals for AI that touches the real world.</p>
+    <div class="brand">
+      <img class="mark" src="logo-300.svg" alt="" width="72" height="72">
+      <div class="brand-name">Second Nature Labs</div>
+    </div>
+    <div class="eyebrow">For Central Coast facilities</div>
+    <h1>We run the shift<br>that doesn't exist.</h1>
+    <p>Robot-operated coverage for overnight quality, sorting, packing, and rework.</p>
   </div>
   <div class="bin">snlabs.dev</div>
 </body>
