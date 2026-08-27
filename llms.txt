@@ -24,6 +24,8 @@ automation.
 - One-time deployment and training fee
 - Monthly rate per robot-shift
 - Target price below the loaded cost of the unfilled role
+- Additional training and task execution available for an added fee
+- Outright purchase option with a one-time charge and a small recurring model-access subscription
 - Three-month minimum
 
 Final scope and price depend on the station, cycle time, safety requirements, and robot fit.
