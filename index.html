@@ -106,7 +106,7 @@
       font-weight: 760;
       letter-spacing: -0.025em;
     }
-    .brand img { width: 42px; height: 42px; border-radius: 11px; }
+    .brand img { width: 29.4px; height: 29.4px; border-radius: 7.7px; transform: translateX(5px); }
     .nav-links { display: flex; align-items: center; gap: 28px; margin-left: auto; }
     .nav-links a {
       color: var(--ink-2);
@@ -289,11 +289,39 @@
       border: 1px solid rgba(255,255,255,0.12);
       overflow: hidden;
     }
+    .workcell-photo,
+    .job-photo,
+    .operator-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .workcell-photo { position: absolute; inset: 0; filter: saturate(0.88) brightness(0.74); }
+    .workcell::after {
+      content: "Illustrative pilot setup";
+      position: absolute;
+      z-index: 6;
+      right: 12px;
+      bottom: 11px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15,45,37,0.84);
+      color: #dce7df;
+      font-size: 7px;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
     .workcell .station-label {
       position: absolute;
+      z-index: 6;
       left: 16px;
       top: 14px;
-      color: #9db0a4;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15,45,37,0.82);
+      color: #dce7df;
       font-size: 10px;
       font-weight: 750;
       letter-spacing: 0.12em;
@@ -539,7 +567,7 @@
       overflow: hidden;
     }
     .job-scene::after {
-      content: "Illustrative job";
+      content: "Illustrative pilot setup";
       position: absolute;
       top: 14px;
       left: 14px;
@@ -552,6 +580,7 @@
       letter-spacing: 0.09em;
       text-transform: uppercase;
     }
+    .job-photo { position: absolute; inset: 0; }
     .scene-events {
       position: absolute;
       z-index: 8;
@@ -660,6 +689,22 @@
     .operator-top strong { font-size: 13px; letter-spacing: 0.04em; }
     .operator-state { color: var(--lime); font-size: 11px; font-weight: 780; letter-spacing: 0.08em; text-transform: uppercase; }
     .camera-view { position: relative; min-height: 320px; border-radius: 18px; background: #d7ded7; overflow: hidden; }
+    .operator-photo { position: absolute; inset: 0; }
+    .camera-view::after {
+      content: "Illustrative pilot setup";
+      position: absolute;
+      z-index: 2;
+      left: 14px;
+      top: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(251,250,245,0.88);
+      color: var(--ink-2);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
     .camera-view .scene-belt { bottom: 22%; }
     .camera-view .scene-item { bottom: 34%; }
     .camera-view .mini-arm { top: 10%; right: 7%; }
@@ -921,7 +966,7 @@
       .wrap { width: min(100% - 28px, var(--max)); }
       .site-header { top: 9px; }
       .nav { min-height: 58px; padding: 7px 8px 7px 9px; }
-      .brand img { width: 40px; height: 40px; }
+      .brand img { width: 28px; height: 28px; }
       .brand span { font-size: 14px; }
       .nav > .nav-cta { display: none; }
       .menu-toggle { display: grid; place-items: center; }
@@ -1027,7 +1072,7 @@
     <section class="hero" id="top">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <div class="eyebrow">For Central Coast facilities</div>
+          <div class="eyebrow">Now Serving Central Coast facilities</div>
           <h1>We run the shift that doesn't exist.</h1>
           <p>We place a robot at your station and run the job with a remote operator from the first shift. Start with overnight quality, sorting, packing, or rework.</p>
           <div class="hero-actions">
@@ -1045,24 +1090,19 @@
           <h2 class="shift-title">Overnight quality line</h2>
           <div class="shift-time">10:00 PM → 6:00 AM</div>
           <div class="shift-tasks">
-            <div class="shift-task"><span class="num">01</span><span><strong>Inspect cases</strong><small>Check seal and label</small></span><span class="covered">Covered</span></div>
+            <div class="shift-task"><span class="num">01</span><span><strong>Inspect produce</strong><small>Check color and surface</small></span><span class="covered">Covered</span></div>
             <div class="shift-task"><span class="num">02</span><span><strong>Sort exceptions</strong><small>Route failed checks</small></span><span class="covered">Covered</span></div>
             <div class="shift-task"><span class="num">03</span><span><strong>Rework seals</strong><small>Operator handles edge cases</small></span><span class="covered">Covered</span></div>
           </div>
           <div class="workcell" aria-hidden="true">
+            <img class="workcell-photo" src="assets/stills/hero-quality-line.jpg" alt="" width="1672" height="941" decoding="async" fetchpriority="high">
             <span class="station-label">Station view · Quality line 02</span>
             <div class="inspection-feed">
               <span class="feed-title">Inspection / action</span>
-              <span class="inspection-entry" style="--item-delay:0s"><b>021</b><span>Seal + label</span><strong>Pass →</strong></span>
-              <span class="inspection-entry" style="--item-delay:-2.4s"><b>022</b><span>Label skew</span><strong>Rework ↗</strong></span>
-              <span class="inspection-entry" style="--item-delay:-4.8s"><b>023</b><span>Seal + label</span><strong>Pass →</strong></span>
+              <span class="inspection-entry" style="--item-delay:0s"><b>021</b><span>Color + surface</span><strong>Pass →</strong></span>
+              <span class="inspection-entry" style="--item-delay:-2.4s"><b>022</b><span>Surface mark</span><strong>Rework ↗</strong></span>
+              <span class="inspection-entry" style="--item-delay:-4.8s"><b>023</b><span>Color + stem</span><strong>Pass →</strong></span>
             </div>
-            <div class="belt"></div>
-            <span class="case one"></span><span class="case two"></span><span class="case three"></span>
-            <span class="scan-line"></span>
-            <span class="robot-arm arm-visual tool-vision">
-              <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-            </span>
           </div>
         </div>
       </div>
@@ -1106,14 +1146,8 @@
 
         <div class="job-grid">
           <article class="job-card">
-            <div class="job-scene quality-scene" data-motion style="--scene-bg:#d9e8de" aria-hidden="true">
-              <div class="station-floor"></div><div class="scene-belt"></div>
-              <span class="scene-item i1"></span><span class="scene-item i2"></span><span class="scene-item i3"></span>
-              <span class="vision-frame"></span>
-              <span class="mini-arm arm-visual tool-vision">
-                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-              </span>
-              <div class="scene-events"><span class="scene-event">Item 021 · Pass →</span><span class="scene-event">Item 022 · Rework ↗</span><span class="scene-event">Item 023 · Pass →</span></div>
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/quality-checks.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
             </div>
             <div class="job-copy">
               <div><h3>Quality checks</h3><p>Present each item, check a visible condition, and route failures for review.</p></div>
@@ -1122,13 +1156,8 @@
           </article>
 
           <article class="job-card">
-            <div class="job-scene sort-scene" data-motion style="--scene-bg:#f0e4cf" aria-hidden="true">
-              <div class="station-floor"></div><div class="sort-items"><span class="grade-a"></span><span class="grade-b"></span><span class="grade-c"></span></div>
-              <div class="bins"><span class="bin"></span><span class="bin"></span><span class="bin"></span></div>
-              <span class="mini-arm arm-visual tool-vacuum">
-                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-              </span>
-              <div class="scene-events"><span class="scene-event">Grade A · Bin 1</span><span class="scene-event">Grade B · Bin 2</span><span class="scene-event">Grade C · Bin 3</span></div>
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/sorting-grading.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
             </div>
             <div class="job-copy">
               <div><h3>Sorting & grading</h3><p>Separate items by visible grade, destination, or exception category.</p></div>
@@ -1137,13 +1166,8 @@
           </article>
 
           <article class="job-card">
-            <div class="job-scene pack-scene" data-motion style="--scene-bg:#dce4f2" aria-hidden="true">
-              <div class="station-floor"></div><div class="box-stack"><span></span><span></span><span></span></div>
-              <div class="packing-list"><strong>CASE 014</strong><i></i><i></i><i></i><i></i></div><span class="pack-item"></span>
-              <span class="mini-arm arm-visual tool-vacuum">
-                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-              </span>
-              <div class="scene-events"><span class="scene-event">Pick 01 · Placed</span><span class="scene-event">Pick 02 · Placed</span><span class="scene-event">Pattern · Verified</span></div>
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/packing-case-loading.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
             </div>
             <div class="job-copy">
               <div><h3>Packing & case loading</h3><p>Place finished items into a repeatable pack pattern and flag mismatches.</p></div>
@@ -1152,12 +1176,8 @@
           </article>
 
           <article class="job-card">
-            <div class="job-scene rework-scene" data-motion style="--scene-bg:#eadcd6" aria-hidden="true">
-              <div class="station-floor"></div><div class="rework-table"></div><div class="rework-item"></div>
-              <span class="mini-arm arm-visual tool-seal">
-                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-              </span>
-              <div class="scene-events"><span class="scene-event">Check · Seal low</span><span class="scene-event">Action · Reseal</span><span class="scene-event">Verify · Passed</span></div>
+            <div class="job-scene" aria-hidden="true">
+              <img class="job-photo" src="assets/stills/rework-exceptions.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
             </div>
             <div class="job-copy">
               <div><h3>Rework & exceptions</h3><p>Redo a bounded step, verify the result, and hand unusual cases to a person.</p></div>
@@ -1195,14 +1215,10 @@
           <p>A jammed item, a bad seal, or something new should not stop the shift. The operator sees the station, guides the robot through the case, and returns control when the job is ready.</p>
           <p>Each intervention becomes an example for the next similar case. The goal is fewer takeovers, not a floor with no people.</p>
         </div>
-        <div class="operator-panel" data-motion aria-label="Illustrative remote intervention screen">
+        <div class="operator-panel" aria-label="Illustrative remote intervention screen">
           <div class="operator-top"><strong>Remote operator · Station 02</strong><span class="operator-state">Intervening</span></div>
           <div class="camera-view" aria-hidden="true">
-            <div class="scene-belt"></div><span class="scene-item i1"></span><span class="scene-item i2"></span>
-            <span class="mini-arm arm-visual tool-gripper">
-              <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
-            </span>
-            <div class="camera-overlay"><span class="camera-alert">Seal misaligned</span><span class="camera-control">Operator correcting →</span></div>
+            <img class="operator-photo" src="assets/stills/human-supervision.jpg" alt="" width="1672" height="941" loading="lazy" decoding="async">
           </div>
           <div class="operator-log">
             <div class="log-item"><small>Detected</small><strong>10:42:13 PM</strong></div>
