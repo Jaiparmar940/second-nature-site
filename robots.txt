@@ -1,4 +1,26 @@
+# AI search and user-directed retrieval crawlers.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Keep the existing open-crawl policy for all other agents.
 User-agent: *
 Allow: /
 
 Sitemap: https://snlabs.dev/sitemap.xml
+
+# AI-readable company and site summary: https://snlabs.dev/llms.txt

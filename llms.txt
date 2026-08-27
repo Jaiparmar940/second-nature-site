@@ -1,13 +1,24 @@
 # Second Nature Labs
 
-> We run the shift that doesn't exist.
+> Robot-operated shifts for hard-to-staff facility jobs.
 
-Second Nature Labs runs hard-to-staff facility shifts with robots and remote operators. A
-trained operator controls the robot from the first shift. Each intervention becomes an
-example that helps the robot handle more of the job over time.
+Last updated: 2026-08-26
+
+Second Nature Labs provides robot-operated shift coverage for hard-to-staff facility jobs.
+A trained remote operator controls the robot from the first shift. Each intervention becomes
+an example that helps the robot handle more of the job over time.
 
 The company is selecting its first pilot sites at food processing and packing facilities on
 California's Central Coast. There are no customer deployments yet.
+
+## How it works
+
+1. The facility walks Second Nature Labs through one station, including pace, exceptions,
+   safety requirements, and the definition of a good shift.
+2. A trained person operates the robot remotely while the work and recovery examples are
+   collected.
+3. Routine actions can move toward autonomy while the operator remains available for judgment
+   and new edge cases.
 
 ## Starting jobs
 
@@ -19,6 +30,13 @@ California's Central Coast. There are no customer deployments yet.
 The best first job repeats at one station, has a clear finish, and already sits near existing
 automation.
 
+## Pilot fit
+
+- Work is hard to staff, intermittently unfilled, or additive to the current team.
+- The task is bounded, repetitive, and observable at one station.
+- Success and exceptions can be defined clearly.
+- The site can support a robot workcell and safe remote operation.
+
 ## Pilot format
 
 - One-time deployment and training fee
@@ -29,6 +47,18 @@ automation.
 - Three-month minimum
 
 Final scope and price depend on the station, cycle time, safety requirements, and robot fit.
+
+## Public pages and technical evidence
+
+- Homepage: https://snlabs.dev/
+- Robot planning and recovery demo: https://snlabs.dev/decision-layer/
+- Garment packaging simulation: https://snlabs.dev/hospitality-env/
+- Open technical environment: https://github.com/Jaiparmar940/rlenv
+
+The two website demos are simulated task-level illustrations. They do not show a customer
+deployment, measured robot performance, or low-level robot physics. The open no-start
+environment demonstrates causal, outcome-based evaluation machinery; it is technical evidence,
+not customer traction.
 
 ## Contact
 
