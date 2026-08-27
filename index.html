@@ -354,19 +354,138 @@
     .case.two { left: 165px; --item-delay: -2.4s; background: var(--yellow); }
     .case.three { left: 255px; --item-delay: -4.8s; background: var(--orange); }
     .scan-line { position: absolute; left: 185px; bottom: 59px; width: 2px; height: 98px; background: var(--lime); box-shadow: 0 0 18px var(--lime); }
-    .robot-arm {
+    .arm-visual {
       position: absolute;
-      right: 72px;
-      top: 22px;
-      width: 22px;
-      height: 86px;
-      border-radius: 12px;
-      background: #dce1dc;
-      transform: rotate(24deg);
-      transform-origin: bottom center;
+      z-index: 6;
+      width: 132px;
+      height: 140px;
+      transform-origin: 108px 119px;
+      filter: drop-shadow(0 5px 5px rgba(23,32,25,0.12));
     }
-    .robot-arm::before { content: ""; position: absolute; left: -19px; bottom: -13px; width: 54px; height: 27px; border-radius: 14px; background: #e8ece8; }
-    .robot-arm::after { content: ""; position: absolute; left: 1px; top: -12px; width: 20px; height: 26px; border-radius: 8px; background: var(--teal); }
+    .arm-visual i { position: absolute; display: block; }
+    .arm-base {
+      right: 0;
+      bottom: 2px;
+      width: 58px;
+      height: 21px;
+      border: 3px solid var(--ink);
+      border-radius: 7px 7px 15px 15px;
+      background: #aebbb4;
+      box-shadow: inset 0 5px rgba(255,255,255,0.42);
+    }
+    .arm-base::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      bottom: -8px;
+      height: 8px;
+      border-radius: 0 0 5px 5px;
+      background: var(--ink);
+    }
+    .arm-shoulder {
+      right: 20px;
+      bottom: 17px;
+      width: 31px;
+      height: 31px;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: inset 0 0 0 4px #cfe1d9;
+    }
+    .arm-link {
+      height: 19px;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #f4f6f3 0 45%, #c9d2cd 46% 100%);
+      box-shadow: inset 8px 0 rgba(58,161,137,0.16);
+      transform-origin: right center;
+    }
+    .arm-lower { right: 38px; bottom: 37px; width: 76px; transform: rotate(54deg); }
+    .arm-elbow {
+      left: 43px;
+      top: 31px;
+      width: 29px;
+      height: 29px;
+      border: 4px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: inset 0 0 0 5px var(--teal);
+    }
+    .arm-upper { left: 2px; top: 38px; width: 61px; transform: rotate(-30deg); }
+    .arm-wrist {
+      left: 0;
+      top: 65px;
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: #dfe5e1;
+    }
+    .arm-tool { left: -12px; top: 79px; }
+    .tool-vision .arm-tool {
+      width: 34px;
+      height: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 6px;
+      background: #f4f6f3;
+    }
+    .tool-vision .arm-tool::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 4px;
+      width: 9px;
+      height: 9px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: var(--teal);
+    }
+    .tool-vision .arm-tool::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      bottom: -8px;
+      width: 19px;
+      height: 7px;
+      border-radius: 0 0 5px 5px;
+      background: var(--lime);
+    }
+    .tool-vacuum .arm-tool {
+      width: 27px;
+      height: 18px;
+      border: 3px solid var(--ink);
+      border-radius: 7px;
+      background: #dfe5e1;
+    }
+    .tool-vacuum .arm-tool::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 14px;
+      width: 5px;
+      height: 15px;
+      background: var(--ink);
+    }
+    .tool-vacuum .arm-tool::after {
+      content: "";
+      position: absolute;
+      left: 1px;
+      top: 26px;
+      width: 21px;
+      height: 9px;
+      border: 3px solid var(--ink);
+      border-radius: 50% 50% 7px 7px;
+      background: var(--teal);
+    }
+    .tool-gripper .arm-tool { width: 23px; height: 17px; border: 3px solid var(--ink); border-radius: 6px; background: #dfe5e1; }
+    .tool-gripper .arm-tool::before,
+    .tool-gripper .arm-tool::after { content: ""; position: absolute; top: 13px; width: 5px; height: 20px; border-radius: 3px; background: var(--ink); }
+    .tool-gripper .arm-tool::before { left: 1px; transform: rotate(14deg); }
+    .tool-gripper .arm-tool::after { right: 1px; transform: rotate(-14deg); }
+    .tool-seal .arm-tool { width: 29px; height: 13px; border: 3px solid var(--ink); border-radius: 7px; background: #dfe5e1; transform: rotate(-8deg); }
+    .tool-seal .arm-tool::after { content: ""; position: absolute; left: 5px; top: 10px; width: 17px; height: 11px; border: 3px solid var(--ink); border-radius: 50%; background: var(--orange); }
+    .robot-arm { right: 17px; top: 24px; transform: scale(0.66); transform-origin: bottom right; }
 
     section { padding: 112px 0; }
     .section-kicker { color: var(--teal); font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -490,8 +609,7 @@
     .vision-frame::before, .vision-frame::after { content: ""; position: absolute; width: 14px; height: 3px; background: var(--lime); top: 50%; }
     .vision-frame::before { left: -8px; }
     .vision-frame::after { right: -8px; }
-    .mini-arm { position: absolute; z-index: 4; right: 14%; top: 22%; width: 22px; height: 110px; border-radius: 13px; background: var(--ink); transform: rotate(28deg); transform-origin: bottom; }
-    .mini-arm::after { content: ""; position: absolute; left: -12px; bottom: -12px; width: 48px; height: 28px; border-radius: 10px 10px 16px 16px; background: var(--ink); }
+    .mini-arm { right: 7%; top: 18%; }
 
     .bins { position: absolute; left: 8%; right: 8%; bottom: 13%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
     .bin { height: 112px; border: 4px solid var(--ink); border-top-width: 12px; border-radius: 8px 8px 18px 18px; background: rgba(255,255,255,0.28); }
@@ -544,7 +662,7 @@
     .camera-view { position: relative; min-height: 320px; border-radius: 18px; background: #d7ded7; overflow: hidden; }
     .camera-view .scene-belt { bottom: 22%; }
     .camera-view .scene-item { bottom: 34%; }
-    .camera-view .mini-arm { top: 14%; right: 21%; }
+    .camera-view .mini-arm { top: 10%; right: 7%; }
     .camera-overlay { position: absolute; z-index: 8; left: 18px; right: 18px; bottom: 18px; display: flex; justify-content: space-between; gap: 10px; }
     .camera-alert, .camera-control { padding: 12px 14px; border-radius: 12px; backdrop-filter: blur(10px); font-size: 12px; font-weight: 700; }
     .camera-alert { background: rgba(23,32,25,0.9); color: white; }
@@ -623,8 +741,8 @@
       48%, 54% { opacity: 1; box-shadow: 0 0 24px 5px var(--lime); }
     }
     @keyframes heroArm {
-      0%, 54%, 100% { transform: rotate(24deg); }
-      61%, 70% { transform: rotate(42deg); }
+      0%, 54%, 100% { transform: scale(0.66) rotate(0deg); }
+      61%, 70% { transform: scale(0.66) rotate(7deg); }
     }
     @keyframes eventPrint {
       0%, 4% { opacity: 0; transform: translateY(8px); }
@@ -640,8 +758,8 @@
       46%, 56% { border-color: var(--teal); box-shadow: 0 0 0 6px rgba(58,161,137,0.18); }
     }
     @keyframes qualityArm {
-      0%, 56%, 100% { transform: rotate(28deg); }
-      64%, 74% { transform: rotate(42deg); }
+      0%, 56%, 100% { transform: rotate(0deg); }
+      64%, 74% { transform: rotate(6deg); }
     }
     @keyframes sceneEvent {
       0%, 4% { opacity: 0; transform: translateY(8px); }
@@ -667,8 +785,8 @@
       78%, 100% { left: 75%; top: 64%; opacity: 0; }
     }
     @keyframes sortArm {
-      0%, 100% { transform: rotate(28deg); }
-      45%, 62% { transform: rotate(4deg); }
+      0%, 100% { transform: rotate(-6deg); }
+      45%, 62% { transform: rotate(10deg); }
     }
     @keyframes packMove {
       0%, 10% { right: 21%; bottom: 22%; opacity: 0; transform: rotate(0); }
@@ -678,9 +796,9 @@
       88%, 100% { right: 58%; bottom: 43%; opacity: 0; }
     }
     @keyframes packArm {
-      0%, 18%, 100% { transform: rotate(28deg); }
-      40%, 56% { transform: rotate(5deg); }
-      76%, 86% { transform: rotate(-22deg); }
+      0%, 18%, 100% { transform: rotate(0deg); }
+      40%, 56% { transform: rotate(9deg); }
+      76%, 86% { transform: rotate(-7deg); }
     }
     @keyframes listCheck {
       0%, 18% { background: var(--line); transform: scaleX(0.82); transform-origin: left; }
@@ -688,9 +806,9 @@
       84%, 100% { background: var(--line); }
     }
     @keyframes reworkArm {
-      0%, 18%, 100% { transform: rotate(28deg); }
-      34%, 62% { transform: rotate(52deg); }
-      76%, 88% { transform: rotate(18deg); }
+      0%, 18%, 100% { transform: rotate(0deg); }
+      34%, 62% { transform: rotate(11deg); }
+      76%, 88% { transform: rotate(-4deg); }
     }
     @keyframes reworkItem {
       0%, 29%, 70%, 100% { transform: translateX(0); }
@@ -714,8 +832,8 @@
       82%, 100% { left: calc(100% + 8px); }
     }
     @keyframes interventionArm {
-      0%, 25%, 72%, 100% { transform: rotate(28deg); }
-      38%, 57% { transform: rotate(58deg); }
+      0%, 25%, 72%, 100% { transform: rotate(0deg); }
+      38%, 57% { transform: rotate(12deg); }
     }
     @keyframes alertCycle {
       0%, 24%, 72%, 100% { opacity: 0; transform: translateY(6px); }
@@ -941,7 +1059,10 @@
             </div>
             <div class="belt"></div>
             <span class="case one"></span><span class="case two"></span><span class="case three"></span>
-            <span class="scan-line"></span><span class="robot-arm"></span>
+            <span class="scan-line"></span>
+            <span class="robot-arm arm-visual tool-vision">
+              <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+            </span>
           </div>
         </div>
       </div>
@@ -988,7 +1109,10 @@
             <div class="job-scene quality-scene" data-motion style="--scene-bg:#d9e8de" aria-hidden="true">
               <div class="station-floor"></div><div class="scene-belt"></div>
               <span class="scene-item i1"></span><span class="scene-item i2"></span><span class="scene-item i3"></span>
-              <span class="vision-frame"></span><span class="mini-arm"></span>
+              <span class="vision-frame"></span>
+              <span class="mini-arm arm-visual tool-vision">
+                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+              </span>
               <div class="scene-events"><span class="scene-event">Item 021 · Pass →</span><span class="scene-event">Item 022 · Rework ↗</span><span class="scene-event">Item 023 · Pass →</span></div>
             </div>
             <div class="job-copy">
@@ -1001,7 +1125,9 @@
             <div class="job-scene sort-scene" data-motion style="--scene-bg:#f0e4cf" aria-hidden="true">
               <div class="station-floor"></div><div class="sort-items"><span class="grade-a"></span><span class="grade-b"></span><span class="grade-c"></span></div>
               <div class="bins"><span class="bin"></span><span class="bin"></span><span class="bin"></span></div>
-              <span class="mini-arm"></span>
+              <span class="mini-arm arm-visual tool-vacuum">
+                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+              </span>
               <div class="scene-events"><span class="scene-event">Grade A · Bin 1</span><span class="scene-event">Grade B · Bin 2</span><span class="scene-event">Grade C · Bin 3</span></div>
             </div>
             <div class="job-copy">
@@ -1013,7 +1139,10 @@
           <article class="job-card">
             <div class="job-scene pack-scene" data-motion style="--scene-bg:#dce4f2" aria-hidden="true">
               <div class="station-floor"></div><div class="box-stack"><span></span><span></span><span></span></div>
-              <div class="packing-list"><strong>CASE 014</strong><i></i><i></i><i></i><i></i></div><span class="pack-item"></span><span class="mini-arm"></span>
+              <div class="packing-list"><strong>CASE 014</strong><i></i><i></i><i></i><i></i></div><span class="pack-item"></span>
+              <span class="mini-arm arm-visual tool-vacuum">
+                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+              </span>
               <div class="scene-events"><span class="scene-event">Pick 01 · Placed</span><span class="scene-event">Pick 02 · Placed</span><span class="scene-event">Pattern · Verified</span></div>
             </div>
             <div class="job-copy">
@@ -1024,7 +1153,10 @@
 
           <article class="job-card">
             <div class="job-scene rework-scene" data-motion style="--scene-bg:#eadcd6" aria-hidden="true">
-              <div class="station-floor"></div><div class="rework-table"></div><div class="rework-item"></div><span class="mini-arm"></span>
+              <div class="station-floor"></div><div class="rework-table"></div><div class="rework-item"></div>
+              <span class="mini-arm arm-visual tool-seal">
+                <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+              </span>
               <div class="scene-events"><span class="scene-event">Check · Seal low</span><span class="scene-event">Action · Reseal</span><span class="scene-event">Verify · Passed</span></div>
             </div>
             <div class="job-copy">
@@ -1066,7 +1198,10 @@
         <div class="operator-panel" data-motion aria-label="Illustrative remote intervention screen">
           <div class="operator-top"><strong>Remote operator · Station 02</strong><span class="operator-state">Intervening</span></div>
           <div class="camera-view" aria-hidden="true">
-            <div class="scene-belt"></div><span class="scene-item i1"></span><span class="scene-item i2"></span><span class="mini-arm"></span>
+            <div class="scene-belt"></div><span class="scene-item i1"></span><span class="scene-item i2"></span>
+            <span class="mini-arm arm-visual tool-gripper">
+              <i class="arm-base"></i><i class="arm-link arm-lower"></i><i class="arm-link arm-upper"></i><i class="arm-shoulder"></i><i class="arm-elbow"></i><i class="arm-wrist"></i><i class="arm-tool"></i>
+            </span>
             <div class="camera-overlay"><span class="camera-alert">Seal misaligned</span><span class="camera-control">Operator correcting →</span></div>
           </div>
           <div class="operator-log">
